@@ -3238,6 +3238,476 @@
             </div>
         </div>
     </section>
+    <script>
+// ==================== EmailJS Initialization ====================
+emailjs.init('k7NxkfEC3DngxJ291'); // Your EmailJS public key
+
+// ==================== Cross-Device Reviews Management ====================
+
+// Google Apps Script URL for saving reviews (for cross-device visibility)
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxtKAAnHlQyLT-zKpavztgQh1aLEQ8vY8huFKhW4ZpzT-Rbk3UZbOiBeHKRQ9ofW1Phew/exec';
+
+// Default reviews (local fallback)
+const defaultReviews = [
+    {
+        name: "Zainab Mwangi",
+        email: "zainab@example.com",
+        rating: 5,
+        text: "Dr Roy's clinic transformed my skin! The acne treatment was professional and the results are amazing. Highly recommend!",
+        date: "Jan 15, 2026"
+    },
+    {
+        name: "Amara Johnson",
+        email: "amara@example.com",
+        rating: 5,
+        text: "Best skin clinic in Uganda! They really understand melanin-rich skin. My hyperpigmentation is almost gone.",
+        date: "Dec 10, 2025"
+    },
+    {
+        name: "Patricia Okoro",
+        email: "patricia@example.com",
+        rating: 4,
+        text: "Great service and knowledgeable staff. The results took a bit longer than expected but they were worth the wait.",
+        date: "Nov 5, 2025"
+    },
+    {
+        name: "Grace Nkosi",
+        email: "grace@example.com",
+        rating: 5,
+        text: "The hair growth treatment really works! I've seen significant improvement in just 3 months. Wonderful clinic!",
+        date: "Dec 28, 2024"
+    }
+];
+
+let reviews = [];
+let selectedRating = 5;
+
+// ==================== FETCH REVIEWS (Cross-Device) ====================
+async function fetchReviews() {
+    try {
+        // Try to fetch from Google Sheets first
+        const response = await fetch(GOOGLE_SHEETS_URL + '?action=getReviews');
+        const data = await response.json();
+        
+        if (data && data.reviews && data.reviews.length > 0) {
+            reviews = data.reviews;
+            // Save to localStorage as backup
+            localStorage.setItem('drroy-reviews', JSON.stringify(reviews));
+            return reviews;
+        }
+    } catch (error) {
+        console.log('Google Sheets unavailable, using localStorage');
+    }
+    
+    // Fallback to localStorage
+    const localReviews = JSON.parse(localStorage.getItem('drroy-reviews'));
+    if (localReviews && localReviews.length > 0) {
+        reviews = localReviews;
+    } else {
+        reviews = defaultReviews;
+        localStorage.setItem('drroy-reviews', JSON.stringify(defaultReviews));
+    }
+    
+    return reviews;
+}
+
+// ==================== SAVE REVIEW (Cross-Device) ====================
+async function saveReview(newReview) {
+    // Add unique ID and timestamp
+    newReview.id = Date.now() + Math.random();
+    newReview.timestamp = Date.now();
+    
+    try {
+        // Try to save to Google Sheets (for cross-device)
+        const response = await fetch(GOOGLE_SHEETS_URL + '?action=addReview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newReview)
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            console.log('Review saved to Google Sheets successfully');
+        }
+    } catch (error) {
+        console.log('Could not save to Google Sheets, using localStorage only');
+    }
+    
+    // Always save locally
+    reviews.unshift(newReview);
+    localStorage.setItem('drroy-reviews', JSON.stringify(reviews));
+    
+    return true;
+}
+
+// ==================== REVIEW DISPLAY FUNCTIONS ====================
+function calculateAverageRating() {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / reviews.length).toFixed(1);
+}
+
+function displayStars(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    let stars = '★'.repeat(fullStars);
+    if (hasHalfStar) stars += '☆';
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    if (emptyStars > 0) stars += '☆'.repeat(emptyStars);
+    return stars;
+}
+
+function renderReviews() {
+    const reviewsList = document.getElementById('reviews-list');
+    if (!reviewsList) return;
+    
+    const avgRating = calculateAverageRating();
+    
+    // Update rating display
+    document.getElementById('avg-rating').textContent = avgRating;
+    document.getElementById('display-stars').textContent = displayStars(avgRating);
+    document.getElementById('review-count').textContent = `Based on ${reviews.length} reviews`;
+
+    // Sort by timestamp (newest first)
+    const sortedReviews = [...reviews].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    
+    // Render reviews
+    reviewsList.innerHTML = sortedReviews.map(review => `
+        <div class="review-card">
+            <div class="review-header">
+                <div>
+                    <div class="review-name">${review.name}</div>
+                    <div class="review-rating">${displayStars(review.rating)}</div>
+                </div>
+                <div class="review-date">${review.date}</div>
+            </div>
+            <p class="review-text">"${review.text}"</p>
+        </div>
+    `).join('');
+}
+
+// ==================== EMAIL VALIDATION ====================
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// ==================== SEND EMAIL FUNCTION ====================
+async function sendEmail(templateId, templateParams) {
+    try {
+        const response = await emailjs.send(
+            'service_fef1c5d', // Your service ID
+            templateId,
+            templateParams
+        );
+        return { success: true, response };
+    } catch (error) {
+        console.error('Email sending failed:', error);
+        return { success: false, error };
+    }
+}
+
+// ==================== INITIALIZE EVERYTHING ====================
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Initializing Dr Roy Skincare website...');
+    
+    // ==================== Mobile Menu ====================
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('nav-links');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const header = document.getElementById('main-header');
+    
+    function toggleMobileMenu() {
+        navLinks.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+        
+        if (navLinks.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+            mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+        } else {
+            document.body.style.overflow = '';
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+    }
+    
+    function closeMobileMenu() {
+        if (navLinks.classList.contains('active')) {
+            toggleMobileMenu();
+        }
+    }
+    
+    if (mobileMenuBtn && navLinks && menuOverlay) {
+        mobileMenuBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleMobileMenu();
+        });
+        
+        menuOverlay.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMobileMenu();
+        });
+        
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    }
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Header scroll effect
+    function handleScroll() {
+        if (header && window.scrollY > 100) {
+            header.classList.add('scrolled');
+        } else if (header) {
+            header.classList.remove('scrolled');
+        }
+    }
+    
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                e.preventDefault();
+                closeMobileMenu();
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    // ==================== Star Rating ====================
+    const starRating = document.getElementById('star-rating');
+    if (starRating) {
+        const stars = starRating.querySelectorAll('.star-btn');
+        const ratingText = document.getElementById('rating-text');
+        
+        const ratingLabels = {
+            1: 'Poor - 1 Star',
+            2: 'Fair - 2 Stars',
+            3: 'Good - 3 Stars',
+            4: 'Very Good - 4 Stars',
+            5: 'Excellent - 5 Stars'
+        };
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.value);
+                document.getElementById('review-rating').value = selectedRating;
+                
+                stars.forEach(s => s.classList.remove('active'));
+                stars.forEach((s, index) => {
+                    if (index < selectedRating) {
+                        s.classList.add('active');
+                    }
+                });
+                
+                if (ratingText) {
+                    ratingText.textContent = ratingLabels[selectedRating];
+                }
+            });
+            
+            star.addEventListener('mouseenter', function() {
+                const value = parseInt(this.dataset.value);
+                stars.forEach((s, index) => {
+                    s.style.color = index < value ? '#ffc107' : '#ddd';
+                });
+            });
+            
+            star.addEventListener('mouseleave', function() {
+                stars.forEach((s, index) => {
+                    s.style.color = index < selectedRating ? '#ffc107' : '#ddd';
+                });
+            });
+        });
+        
+        // Set initial state
+        stars.forEach((s, index) => {
+            if (index < 5) {
+                s.classList.add('active');
+                s.style.color = '#ffc107';
+            } else {
+                s.style.color = '#ddd';
+            }
+        });
+        
+        if (ratingText) {
+            ratingText.textContent = 'Excellent - 5 Stars';
+        }
+    }
+    
+    // ==================== Load Reviews ====================
+    await fetchReviews();
+    renderReviews();
+    
+    // ==================== Review Form ====================
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        // Character counter
+        const reviewText = document.getElementById('review-text');
+        const charCount = document.getElementById('char-count');
+        
+        if (reviewText && charCount) {
+            reviewText.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = length;
+                
+                if (length > 450) {
+                    charCount.style.color = '#e63946';
+                } else if (length > 400) {
+                    charCount.style.color = '#ffc107';
+                } else {
+                    charCount.style.color = '#666666';
+                }
+                
+                if (length > 500) {
+                    this.value = this.value.substring(0, 500);
+                    charCount.textContent = 500;
+                }
+            });
+        }
+        
+        // Form submission
+        reviewForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('review-name')?.value.trim() || '';
+            const email = document.getElementById('review-email')?.value.trim() || '';
+            const rating = parseInt(document.getElementById('review-rating')?.value || '5');
+            const text = document.getElementById('review-text')?.value.trim() || '';
+
+            // Validation
+            if (!name || name.length < 2) {
+                alert('Please enter a valid name (at least 2 characters)');
+                return;
+            }
+            
+            if (!email || !validateEmail(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            if (!text || text.length < 10) {
+                alert('Please write a review (at least 10 characters)');
+                return;
+            }
+
+            // Create new review
+            const newReview = {
+                name: name,
+                email: email,
+                rating: rating,
+                text: text,
+                date: new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                })
+            };
+
+            // Disable submit button
+            const submitBtn = reviewForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+            try {
+                // Save review (cross-device)
+                const saved = await saveReview(newReview);
+                
+                if (saved) {
+                    // Send email notification
+                    const templateParams = {
+                        to_email: 'drroyskincare@gmail.com',
+                        from_name: name,
+                        from_email: email,
+                        rating: rating,
+                        review_text: text,
+                        message_type: 'New Review Submitted',
+                        date: newReview.date
+                    };
+                    
+                    await sendEmail('template_qf4aw5j', templateParams);
+                    
+                    // Show success message
+                    const successMsg = document.getElementById('success-message');
+                    if (successMsg) {
+                        successMsg.classList.add('show');
+                        setTimeout(() => {
+                            successMsg.classList.remove('show');
+                        }, 4000);
+                    }
+
+                    // Reset form
+                    reviewForm.reset();
+                    selectedRating = 5;
+                    document.getElementById('review-rating').value = 5;
+                    
+                    // Reset stars
+                    const stars = document.querySelectorAll('#star-rating .star-btn');
+                    const ratingText = document.getElementById('rating-text');
+                    stars.forEach((s, index) => {
+                        s.classList.toggle('active', index < 5);
+                        s.style.color = index < 5 ? '#ffc107' : '#ddd';
+                    });
+                    
+                    if (ratingText) {
+                        ratingText.textContent = 'Excellent - 5 Stars';
+                    }
+                    
+                    if (charCount) {
+                        charCount.textContent = '0';
+                        charCount.style.color = '#666666';
+                    }
+
+                    // Re-render reviews
+                    renderReviews();
+                    
+                    // Scroll to reviews
+                    setTimeout(() => {
+                        const reviewsSection = document.getElementById('reviews');
+                        if (reviewsSection) {
+                            reviewsSection.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start' 
+                            });
+                        }
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('There was an issue submitting your review. Please try again or contact us directly.');
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    }
+    
+    console.log('Website initialization complete');
+});
+
+
+}
+</script>
 
 
     <section class="branches" id="branches">
