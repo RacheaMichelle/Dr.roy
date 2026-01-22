@@ -3239,360 +3239,6 @@
         </div>
     </section>
 
-<script>
-        (function() {
-            // ==================== Reviews Management ====================
-            // Default reviews with fallback
-            const defaultReviews = [
-                {
-                    name: "Zainab Mwangi",
-                    email: "zainab@example.com",
-                    rating: 5,
-                    text: "Dr Roy's clinic transformed my skin! The acne treatment was professional and the results are amazing. Highly recommend!",
-                    date: "Jan 15, 2024"
-                },
-                {
-                    name: "Amara Johnson",
-                    email: "amara@example.com",
-                    rating: 5,
-                    text: "Best skin clinic in Uganda! They really understand melanin-rich skin. My hyperpigmentation is almost gone.",
-                    date: "Jan 10, 2024"
-                },
-                {
-                    name: "Patricia Okoro",
-                    email: "patricia@example.com",
-                    rating: 4,
-                    text: "Great service and knowledgeable staff. The results took a bit longer than expected but they were worth the wait.",
-                    date: "Jan 5, 2024"
-                },
-                {
-                    name: "Grace Nkosi",
-                    email: "grace@example.com",
-                    rating: 5,
-                    text: "The hair growth treatment really works! I've seen significant improvement in just 3 months. Wonderful clinic!",
-                    date: "Dec 28, 2023"
-                },
-                {
-                    name: "Sarah Kimani",
-                    email: "sarah@example.com",
-                    rating: 5,
-                    text: "Absolutely love the results! My stretch marks have faded significantly after just 2 months of treatment.",
-                    date: "Dec 20, 2023"
-                },
-                {
-                    name: "Michael Osei",
-                    email: "michael@example.com",
-                    rating: 4,
-                    text: "Professional service and great results. The weight loss program really helped me get back in shape.",
-                    date: "Dec 15, 2023"
-                }
-            ];
-
-            // Google Apps Script deployment URL (replace with your actual URL)
-            const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxtKAAnHlQyLT-zKpavztgQh1aLEQ8vY8huFKhW4ZpzT-Rbk3UZbOiBeHKRQ9ofW1Phew/exec';
-
-            let reviewsData = defaultReviews;
-            let selectedRating = 5;
-
-            // Fetch reviews from Google Sheets
-            async function fetchReviewsFromSheet() {
-                try {
-                    const response = await fetch(GOOGLE_SHEETS_URL + '?action=getReviews');
-                    const data = await response.json();
-                    if (data && data.reviews && data.reviews.length > 0) {
-                        reviewsData = data.reviews;
-                        renderReviews();
-                    }
-                } catch (error) {
-                    console.log('Using local reviews (Google Sheets not available)');
-                    reviewsData = defaultReviews;
-                    renderReviews();
-                }
-            }
-
-            // Submit review to Google Sheets
-            async function submitReviewToSheet(review) {
-                try {
-                    const response = await fetch(GOOGLE_SHEETS_URL + '?action=addReview', {
-                        method: 'POST',
-                        body: JSON.stringify(review)
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        fetchReviewsFromSheet();
-                    }
-                } catch (error) {
-                    console.log('Review saved locally. Backend submission failed.');
-                    reviewsData.unshift(review);
-                    renderReviews();
-                }
-            }
-
-            // Calculate average rating
-            function calculateAverageRating() {
-                if (reviewsData.length === 0) return 0;
-                const sum = reviewsData.reduce((acc, review) => acc + review.rating, 0);
-                return (sum / reviewsData.length).toFixed(1);
-            }
-
-            // Display stars based on rating
-            function displayStars(rating) {
-                const fullStars = Math.floor(rating);
-                const hasHalfStar = rating % 1 >= 0.5;
-                let stars = '★'.repeat(fullStars);
-                if (hasHalfStar) stars += '☆';
-                return stars;
-            }
-
-            // Render reviews
-            function renderReviews() {
-                const reviewsList = document.getElementById('reviews-list');
-                if (!reviewsList) return;
-                
-                const avgRating = calculateAverageRating();
-                
-                // Update rating display
-                const avgRatingEl = document.getElementById('avg-rating');
-                const displayStarsEl = document.getElementById('display-stars');
-                const reviewCountEl = document.getElementById('review-count');
-                
-                if (avgRatingEl) avgRatingEl.textContent = avgRating;
-                if (displayStarsEl) displayStarsEl.textContent = displayStars(avgRating);
-                if (reviewCountEl) reviewCountEl.textContent = `Based on ${reviewsData.length} reviews`;
-
-                // Clear and render reviews
-                reviewsList.innerHTML = reviewsData.map(review => `
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div>
-                                <div class="review-name">${review.name}</div>
-                                <div class="review-rating">${displayStars(review.rating)}</div>
-                            </div>
-                            <div class="review-date">${review.date}</div>
-                        </div>
-                        <p class="review-text">"${review.text}"</p>
-                    </div>
-                `).join('');
-            }
-
-            // Initialize star rating
-            function initializeStarRating() {
-                const starBtns = document.querySelectorAll('#star-rating .star-btn');
-                const ratingLabel = document.getElementById('rating-text');
-                const ratingLabels = {
-                    1: 'Poor',
-                    2: 'Fair',
-                    3: 'Good',
-                    4: 'Very Good',
-                    5: 'Excellent'
-                };
-                
-                starBtns.forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        selectedRating = parseInt(this.dataset.value);
-                        const ratingInput = document.getElementById('review-rating');
-                        if (ratingInput) ratingInput.value = selectedRating;
-                        
-                        // Update visual feedback
-                        starBtns.forEach((b, index) => {
-                            if (index < selectedRating) {
-                                b.classList.add('active');
-                            } else {
-                                b.classList.remove('active');
-                            }
-                        });
-
-                        // Update label
-                        if (ratingLabel) {
-                            ratingLabel.textContent = ratingLabels[selectedRating] + '! ' + selectedRating + ' Star' + (selectedRating !== 1 ? 's' : '');
-                        }
-                    });
-
-                    btn.addEventListener('mouseenter', function() {
-                        const value = parseInt(this.dataset.value);
-                        starBtns.forEach((b, index) => {
-                            if (index < value) {
-                                b.style.color = '#ffc107';
-                            } else {
-                                b.style.color = '#ddd';
-                            }
-                        });
-                    });
-                });
-
-                const ratingContainer = document.getElementById('star-rating');
-                if (ratingContainer) {
-                    ratingContainer.addEventListener('mouseleave', function() {
-                        starBtns.forEach((b, index) => {
-                            if (index < selectedRating) {
-                                b.style.color = '#ffc107';
-                            } else {
-                                b.style.color = '#ddd';
-                            }
-                        });
-                    });
-                }
-
-                // Set initial star state
-                starBtns.forEach((b, index) => {
-                    if (index < 5) {
-                        b.classList.add('active');
-                        b.style.color = '#ffc107';
-                    } else {
-                        b.style.color = '#ddd';
-                    }
-                });
-            }
-
-            // Initialize review form
-            function initializeReviewForm() {
-                const form = document.getElementById('review-form');
-                if (!form) return;
-
-                const reviewTextarea = document.getElementById('review-text');
-                const charCount = document.getElementById('char-count');
-
-                // Character counter
-                if (reviewTextarea && charCount) {
-                    reviewTextarea.addEventListener('input', function() {
-                        charCount.textContent = this.value.length;
-                        if (this.value.length > 500) {
-                            this.value = this.value.substring(0, 500);
-                            charCount.textContent = 500;
-                        }
-                    });
-                }
-
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    const name = document.getElementById('review-name').value.trim();
-                    const email = document.getElementById('review-email').value.trim();
-                    const rating = parseInt(document.getElementById('review-rating').value);
-                    const text = document.getElementById('review-text').value.trim();
-
-                    // Clear all error messages
-                    document.querySelectorAll('.form-error').forEach(el => {
-                        el.classList.remove('show');
-                        el.textContent = '';
-                    });
-
-                    // Validation
-                    let isValid = true;
-
-                    if (!name) {
-                        document.getElementById('name-error').textContent = 'Please enter your name';
-                        document.getElementById('name-error').classList.add('show');
-                        isValid = false;
-                    } else if (name.length < 3) {
-                        document.getElementById('name-error').textContent = 'Name must be at least 3 characters';
-                        document.getElementById('name-error').classList.add('show');
-                        isValid = false;
-                    }
-
-                    if (!email) {
-                        document.getElementById('email-error').textContent = 'Please enter your email';
-                        document.getElementById('email-error').classList.add('show');
-                        isValid = false;
-                    } else if (!validateEmail(email)) {
-                        document.getElementById('email-error').textContent = 'Please enter a valid email address';
-                        document.getElementById('email-error').classList.add('show');
-                        isValid = false;
-                    }
-
-                    if (!text) {
-                        document.getElementById('review-error').textContent = 'Please write a review';
-                        document.getElementById('review-error').classList.add('show');
-                        isValid = false;
-                    } else if (text.length < 10) {
-                        document.getElementById('review-error').textContent = 'Review must be at least 10 characters';
-                        document.getElementById('review-error').classList.add('show');
-                        isValid = false;
-                    }
-
-                    if (!isValid) return;
-
-                    // Disable button during submission
-                    const submitBtn = form.querySelector('.submit-btn-modern');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-
-                    // Create new review
-                    const newReview = {
-                        name: name,
-                        email: email,
-                        rating: rating,
-                        text: text,
-                        date: new Date().toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'short', 
-                            day: 'numeric' 
-                        })
-                    };
-
-                    // Submit to Google Sheets
-                    submitReviewToSheet(newReview);
-
-                    // Show success message
-                    const successMessage = document.getElementById('success-message');
-                    if (successMessage) {
-                        successMessage.classList.add('show');
-                        setTimeout(() => {
-                            successMessage.classList.remove('show');
-                        }, 4000);
-                    }
-
-                    // Reset form
-                    form.reset();
-                    charCount.textContent = '0';
-                    selectedRating = 5;
-                    document.getElementById('review-rating').value = 5;
-                    
-                    // Reset stars
-                    const starBtns = document.querySelectorAll('#star-rating .star-btn');
-                    starBtns.forEach((btn, index) => {
-                        if (index < 5) {
-                            btn.classList.add('active');
-                            btn.style.color = '#ffc107';
-                        } else {
-                            btn.classList.remove('active');
-                            btn.style.color = '#ddd';
-                        }
-                    });
-
-                    // Reset rating label
-                    document.getElementById('rating-text').textContent = 'Excellent! 5 Stars';
-
-                    // Re-enable button
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-
-                    // Scroll to reviews
-                    setTimeout(() => {
-                        const reviewsList = document.getElementById('reviews-list');
-                        if (reviewsList) {
-                            reviewsList.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }, 1500);
-                });
-            }
-
-            // Email validation
-            function validateEmail(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            }
-
-            // Initialize everything on DOM load
-            document.addEventListener('DOMContentLoaded', function() {
-                fetchReviewsFromSheet();
-                initializeStarRating();
-                initializeReviewForm();
-            });
-        })();
-    </script>
 
     <section class="branches" id="branches">
         <div class="container">
@@ -4269,74 +3915,71 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('Website initialization complete');
 });
 
-    // ==================== Appointment Form - EmailJS ====================
-    const appointmentForm = document.getElementById('appointment-form');
+// ==================== Appointment Form - EmailJS ====================
+const appointmentForm = document.getElementById('appointment-form');
     
-    // Update appointment form submission
-    if (appointmentForm) {
-        // Get form elements
-        const nameInput = appointmentForm.querySelector('input[type="text"]');
-        const phoneInput = appointmentForm.querySelector('input[type="tel"]');
-        const branchSelect = appointmentForm.querySelector('select');
-        const messageInput = appointmentForm.querySelector('textarea');
+if (appointmentForm) {
+    // Get form elements
+    const nameInput = appointmentForm.querySelector('input[type="text"]');
+    const phoneInput = appointmentForm.querySelector('input[type="tel"]');
+    const branchSelect = appointmentForm.querySelector('select');
+    const messageInput = appointmentForm.querySelector('textarea');
+    
+    appointmentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const branch = branchSelect.value;
+        const message = messageInput.value.trim();
+
+        // Validation
+        if (!name || name.length < 2) {
+            alert('Please enter your full name (at least 2 characters)');
+            nameInput.focus();
+            return;
+        }
         
-        appointmentForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        if (!phone || phone.length < 9) {
+            alert('Please enter a valid phone number');
+            phoneInput.focus();
+            return;
+        }
 
-            const name = nameInput.value.trim();
-            const phone = phoneInput.value.trim();
-            const branch = branchSelect.value;
-            const message = messageInput.value.trim();
+        // Prepare email parameters
+        const templateParams = {
+            to_email: 'drroyskincare@gmail.com',
+            from_name: name,
+            from_email: phone, // Using phone as "from_email"
+            branch: branch || 'Not specified',
+            message: message || 'No additional message',
+            message_type: 'New Appointment Request',
+            date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString()
+        };
 
-            // Validation
-            if (!name || name.length < 2) {
-                alert('Please enter your full name (at least 2 characters)');
-                nameInput.focus();
-                return;
-            }
-            
-            if (!phone || phone.length < 9) {
-                alert('Please enter a valid phone number');
-                phoneInput.focus();
-                return;
-            }
+        // Disable submit button
+        const submitBtn = appointmentForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
 
-            // Prepare email parameters
-            const templateParams = {
-                to_email: 'drroyskincare@gmail.com',
-                from_name: name,
-                from_email: phone, // Using phone as "from_email"
-                branch: branch || 'Not specified',
-                message: message || 'No additional message',
-                message_type: 'New Appointment Request',
-                date: new Date().toLocaleDateString(),
-                time: new Date().toLocaleTimeString()
-            };
-
-            // Disable submit button
-            const submitBtn = appointmentForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-
-            // Send email notification
-            sendEmail('template_qf4aw5j', templateParams)
-                .then(result => {
-                    if (result.success) {
-                        // Also save to Google Sheets
-                        fallbackToGoogleAppsScript(templateParams, 'appointment');
-                        
-                        alert('✓ Thank you! Your appointment request has been sent. We will contact you shortly to confirm.');
-                        appointmentForm.reset();
-                    } else {
-                        alert('There was an issue sending your request. Please call us directly at 0742 017 575.');
-                    }
-                })
-                .finally(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                });
-        });
+        // Send email notification
+        sendEmail('template_qf4aw5j', templateParams)
+            .then(result => {
+                if (result.success) {
+                    alert('✓ Thank you! Your appointment request has been sent. We will contact you shortly to confirm.');
+                    appointmentForm.reset();
+                } else {
+                    alert('There was an issue sending your request. Please call us directly at 0742 017 575.');
+                }
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            });
+    });
+}
         
         // Phone validation function
         function validatePhone(phone) {
