@@ -1,6 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- SEO Meta Tags -->
+<meta name="description" content="Dr Roy Skincare - Professional dermatology & aesthetic clinic in Uganda. Specialized treatments for melanin-rich skin, including weight loss, hair growth, and skin rejuvenation.">
+<meta name="keywords" content="skincare Uganda, dermatology Kampala, skin treatments Uganda, hair growth treatment, weight loss clinic, African skincare, melanin-rich skin care">
+<meta name="author" content="Dr Roy Skincare">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://drroyskincare.com/">
+<meta property="og:title" content="Dr Roy Skincare - Professional Dermatology & Aesthetic Clinic">
+<meta property="og:description" content="Specialized dermatology and aesthetic treatments designed for melanin-rich skin in Uganda.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1556228578-9c360e1d8d34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://drroyskincare.com/">
+<meta property="twitter:title" content="Dr Roy Skincare - Professional Dermatology & Aesthetic Clinic">
+<meta property="twitter:description" content="Specialized dermatology and aesthetic treatments designed for melanin-rich skin in Uganda.">
+<meta property="twitter:image" content="https://images.unsplash.com/photo-1556228578-9c360e1d8d34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80">
+
+<!-- Structured Data / Schema Markup -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalBusiness",
+  "name": "Dr Roy Skincare",
+  "description": "Professional dermatology and aesthetic clinic offering specialized treatments for melanin-rich skin",
+  "url": "https://drroyskincare.com/",
+  "telephone": "+256-742-017-575",
+  "email": "drroyskincare@gmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Wilson Street, Wilson One Building",
+    "addressLocality": "Kampala",
+    "addressCountry": "Uganda"
+  },
+  "sameAs": [
+    "https://www.tiktok.com/@drroyskincare"
+  ],
+  "openingHours": "Mo-Fr 08:00-19:00, Sa 09:00-17:00, Su 10:00-17:00",
+  "priceRange": "$$"
+}
+</script>
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://drroyskincare.com/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dr Roy Skincare - Professional Dermatology & Aesthetic Clinic</title>
@@ -4054,8 +4100,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
-// ==================== Review Form Submission ====================
 document.addEventListener('DOMContentLoaded', function() {
     const reviewForm = document.getElementById('review-form');
     if (reviewForm) {
@@ -4085,6 +4129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
+        // Update the review form submission handler
         reviewForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -4123,96 +4168,115 @@ document.addEventListener('DOMContentLoaded', function() {
                 email: email,
                 rating: rating,
                 text: text,
-                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                date: new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                })
             };
 
-            // Add to reviews array
-            reviews.unshift(newReview);
-            localStorage.setItem('drroy-reviews', JSON.stringify(reviews));
-
-            // Send email notification to admin
+            // Prepare email parameters
             const templateParams = {
                 to_email: 'drroyskincare@gmail.com',
                 from_name: name,
                 from_email: email,
                 rating: rating,
                 review_text: text,
-                message_type: 'New Review Submitted'
+                message_type: 'New Review Submitted',
+                date: new Date().toLocaleDateString()
             };
 
-            emailjs.send('service_fef1c5d', 'template_qf4aw5j', templateParams)
-                .then(response => {
-                    console.log('Review notification sent successfully', response);
+            // Disable submit button
+            const submitBtn = reviewForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+            // Send email notification
+            sendEmail('template_qf4aw5j', templateParams)
+                .then(result => {
+                    if (result.success) {
+                        // Add to reviews array
+                        reviews.unshift(newReview);
+                        localStorage.setItem('drroy-reviews', JSON.stringify(reviews));
+
+                        // Also save to Google Sheets via Apps Script
+                        fallbackToGoogleAppsScript(templateParams, 'addReview');
+
+                        // Show success message
+                        const successMsg = document.getElementById('success-message');
+                        if (successMsg) {
+                            successMsg.classList.add('show');
+                            setTimeout(() => {
+                                successMsg.classList.remove('show');
+                            }, 4000);
+                        }
+
+                        // Reset form
+                        reviewForm.reset();
+                        selectedRating = 5;
+                        document.getElementById('review-rating').value = 5;
+                        
+                        // Reset stars
+                        const stars = document.querySelectorAll('#star-rating .star-btn');
+                        const ratingText = document.getElementById('rating-text');
+                        stars.forEach((s, index) => {
+                            s.classList.toggle('active', index < 5);
+                            s.style.color = index < 5 ? '#ffc107' : '#ddd';
+                        });
+                        
+                        // Reset rating text
+                        if (ratingText) {
+                            ratingText.textContent = 'Excellent - 5 Stars';
+                        }
+                        
+                        // Reset character counter
+                        if (charCount) {
+                            charCount.textContent = '0';
+                            charCount.style.color = '#666666';
+                        }
+
+                        // Re-render reviews
+                        renderReviews();
+                        
+                        // Scroll to reviews section
+                        setTimeout(() => {
+                            const reviewsSection = document.getElementById('reviews');
+                            if (reviewsSection) {
+                                reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }, 500);
+                    } else {
+                        alert('There was an issue submitting your review. Please try again or contact us directly.');
+                    }
                 })
-                .catch(error => {
-                    console.log('Failed to send notification (non-critical)', error);
+                .finally(() => {
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
                 });
-
-            // Show success message
-            const successMsg = document.getElementById('success-message');
-            if (successMsg) {
-                successMsg.classList.add('show');
-                setTimeout(() => {
-                    successMsg.classList.remove('show');
-                }, 4000);
+            
+            // Email validation function
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
             }
-
-            // Reset form
-            this.reset();
-            selectedRating = 5;
-            document.getElementById('review-rating').value = 5;
-            
-            // Reset stars
-            const stars = document.querySelectorAll('#star-rating .star-btn');
-            const ratingText = document.getElementById('rating-text');
-            stars.forEach((s, index) => {
-                s.classList.toggle('active', index < 5);
-                s.style.color = index < 5 ? '#ffc107' : '#ddd';
-            });
-            
-            // Reset rating text
-            if (ratingText) {
-                ratingText.textContent = 'Excellent - 5 Stars';
-            }
-            
-            // Reset character counter
-            if (charCount) {
-                charCount.textContent = '0';
-                charCount.style.color = '#666666';
-            }
-
-            // Re-render reviews
-            renderReviews();
-            
-            // Scroll to reviews section
-            setTimeout(() => {
-                const reviewsSection = document.getElementById('reviews');
-                if (reviewsSection) {
-                    reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 500);
         });
     }
-    
-    // Email validation function
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
-});
 
-// ==================== Appointment Form - EmailJS ====================
-document.addEventListener('DOMContentLoaded', function() {
+    // ==================== Appointment Form - EmailJS ====================
     const appointmentForm = document.getElementById('appointment-form');
+    
+    // Update appointment form submission
     if (appointmentForm) {
+        // Get form elements
+        const nameInput = appointmentForm.querySelector('input[type="text"]');
+        const phoneInput = appointmentForm.querySelector('input[type="tel"]');
+        const branchSelect = appointmentForm.querySelector('select');
+        const messageInput = appointmentForm.querySelector('textarea');
+        
         appointmentForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
-            const form = this;
-            const nameInput = form.querySelector('input[type="text"]');
-            const phoneInput = form.querySelector('input[type="tel"]');
-            const branchSelect = form.querySelector('select');
-            const messageInput = form.querySelector('textarea');
 
             const name = nameInput.value.trim();
             const phone = phoneInput.value.trim();
@@ -4221,12 +4285,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Validation
             if (!name || name.length < 2) {
-                alert('Please enter your full name');
+                alert('Please enter your full name (at least 2 characters)');
                 nameInput.focus();
                 return;
             }
             
-            if (!phone || !validatePhone(phone)) {
+            if (!phone || phone.length < 9) {
                 alert('Please enter a valid phone number');
                 phoneInput.focus();
                 return;
@@ -4236,138 +4300,139 @@ document.addEventListener('DOMContentLoaded', function() {
             const templateParams = {
                 to_email: 'drroyskincare@gmail.com',
                 from_name: name,
-                from_email: phone,
+                from_email: phone, // Using phone as "from_email"
                 branch: branch || 'Not specified',
                 message: message || 'No additional message',
-                message_type: 'New Appointment Request'
+                message_type: 'New Appointment Request',
+                date: new Date().toLocaleDateString(),
+                time: new Date().toLocaleTimeString()
             };
 
-            // Send email via EmailJS
-            const submitBtn = form.querySelector('button[type="submit"]');
+            // Disable submit button
+            const submitBtn = appointmentForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
             submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
 
-            emailjs.send('service_fef1c5d', 'template_qf4aw5j', templateParams)
-                .then(response => {
-                    console.log('Appointment request sent successfully', response);
-                    alert('✓ Thank you! Your appointment request has been sent. We will contact you shortly to confirm.');
-                    form.reset();
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
+            // Send email notification
+            sendEmail('template_qf4aw5j', templateParams)
+                .then(result => {
+                    if (result.success) {
+                        // Also save to Google Sheets
+                        fallbackToGoogleAppsScript(templateParams, 'appointment');
+                        
+                        alert('✓ Thank you! Your appointment request has been sent. We will contact you shortly to confirm.');
+                        appointmentForm.reset();
+                    } else {
+                        alert('There was an issue sending your request. Please call us directly at 0742 017 575.');
+                    }
                 })
-                .catch(error => {
-                    console.error('Failed to send appointment request:', error);
-                    alert('✓ Thank you! Your appointment request has been recorded. We will contact you shortly to confirm.');
-                    form.reset();
-                    submitBtn.textContent = originalText;
+                .finally(() => {
                     submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                 });
         });
+        
+        // Phone validation function
+        function validatePhone(phone) {
+            // Basic phone validation - accepts numbers, spaces, dashes, plus sign
+            const re = /^[\+]?[1-9][\d\s\-\(\)]{8,}$/;
+            return re.test(phone);
+        }
     }
     
-    // Phone validation function
-    function validatePhone(phone) {
-        // Basic phone validation - accepts numbers, spaces, dashes, plus sign
-        const re = /^[\+]?[1-9][\d\s\-\(\)]{8,}$/;
-        return re.test(phone);
-    }
-});
-// Slideshow functionality
-let slideIndex = 1;
-let slideInterval;
+    // Slideshow functionality
+    let slideIndex = 1;
+    let slideInterval;
 
-// Initialize slideshow
-document.addEventListener('DOMContentLoaded', function() {
+    // Initialize slideshow
     showSlides(slideIndex);
     startAutoSlide();
-});
 
-// Next/previous controls
-function plusSlides(n) {
-    showSlides(slideIndex += n);
-    resetAutoSlide();
-}
-
-// Thumbnail image controls
-function currentSlide(n) {
-    showSlides(slideIndex = n);
-    resetAutoSlide();
-}
-
-function showSlides(n) {
-    let i;
-    let slides = document.getElementsByClassName("mySlides");
-    let dots = document.getElementsByClassName("dot");
-    
-    if (n > slides.length) {slideIndex = 1}
-    if (n < 1) {slideIndex = slides.length}
-    
-    for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
+    // Next/previous controls
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+        resetAutoSlide();
     }
-    
-    for (i = 0; i < dots.length; i++) {
-        dots[i].className = dots[i].className.replace(" active", "");
+
+    // Thumbnail image controls
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+        resetAutoSlide();
     }
-    
-    slides[slideIndex-1].style.display = "block";
-    dots[slideIndex-1].className += " active";
-}
 
-// Auto slide functionality
-function startAutoSlide() {
-    slideInterval = setInterval(function() {
-        plusSlides(1);
-    }, 5000); // Change slide every 5 seconds
-}
+    function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        let dots = document.getElementsByClassName("dot");
+        
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+    }
 
-function resetAutoSlide() {
-    clearInterval(slideInterval);
-    startAutoSlide();
-}
+    // Auto slide functionality
+    function startAutoSlide() {
+        slideInterval = setInterval(function() {
+            plusSlides(1);
+        }, 5000); // Change slide every 5 seconds
+    }
 
-// Pause auto-slide on hover
-const slideshowContainer = document.querySelector('.slideshow-container');
-if (slideshowContainer) {
-    slideshowContainer.addEventListener('mouseenter', function() {
+    function resetAutoSlide() {
         clearInterval(slideInterval);
-    });
-    
-    slideshowContainer.addEventListener('mouseleave', function() {
         startAutoSlide();
-    });
-}
-
-// Touch swipe for mobile
-let touchStartX = 0;
-let touchEndX = 0;
-
-if (slideshowContainer) {
-    slideshowContainer.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-
-    slideshowContainer.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-}
-
-function handleSwipe() {
-    const swipeThreshold = 50;
-    
-    if (touchStartX - touchEndX > swipeThreshold) {
-        // Swipe left - next slide
-        plusSlides(1);
-    } else if (touchEndX - touchStartX > swipeThreshold) {
-        // Swipe right - previous slide
-        plusSlides(-1);
     }
-}
 
-// ==================== Service Cards Interactivity ====================
-document.addEventListener('DOMContentLoaded', function() {
+    // Pause auto-slide on hover
+    const slideshowContainer = document.querySelector('.slideshow-container');
+    if (slideshowContainer) {
+        slideshowContainer.addEventListener('mouseenter', function() {
+            clearInterval(slideInterval);
+        });
+        
+        slideshowContainer.addEventListener('mouseleave', function() {
+            startAutoSlide();
+        });
+    }
+
+    // Touch swipe for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    if (slideshowContainer) {
+        slideshowContainer.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        slideshowContainer.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+    }
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        
+        if (touchStartX - touchEndX > swipeThreshold) {
+            // Swipe left - next slide
+            plusSlides(1);
+        } else if (touchEndX - touchStartX > swipeThreshold) {
+            // Swipe right - previous slide
+            plusSlides(-1);
+        }
+    }
+
+    // ==================== Service Cards Interactivity ====================
     document.querySelectorAll('.service-card, .category-item').forEach(card => {
         card.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-10px)';
@@ -4379,10 +4444,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.boxShadow = '';
         });
     });
-});
 
-// ==================== Initialize Everything on Page Load ====================
-document.addEventListener('DOMContentLoaded', function() {
     // Initialize reviews
     renderReviews();
     
@@ -4448,6 +4510,7 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
     debugBtn.onclick = window.debugMenu;
     document.body.appendChild(debugBtn);
 }
+
 // ==================== DYNAMIC VISUAL EFFECTS ====================
 
 // Create floating particles
@@ -4602,15 +4665,15 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.remove('glow-on-hover');
         });
     });
-});
+}); // <-- This closes the visual effects DOMContentLoaded
 
 // Rainbow border animation for special elements
 function createRainbowBorder(element) {
     if (!element) return;
-    
+
     const colors = ['#e63946', '#ff9a00', '#ffd700', '#00ff88', '#0099ff', '#a855f7'];
     let currentColor = 0;
-    
+
     setInterval(() => {
         element.style.borderColor = colors[currentColor];
         element.style.boxShadow = `0 0 15px ${colors[currentColor]}`;
@@ -4618,13 +4681,23 @@ function createRainbowBorder(element) {
     }, 1000);
 }
 
-// Apply to special elements
-document.addEventListener('DOMContentLoaded', function() {
+// Check if DOM is already loaded
+if (document.readyState === 'loading') {
+    // Still loading, wait for it
+    document.addEventListener('DOMContentLoaded', function() {
+        const specialCards = document.querySelectorAll('.service-card:nth-child(odd)');
+        specialCards.forEach(card => {
+            createRainbowBorder(card);
+        });
+    });
+} else {
+    // DOM already loaded, run immediately
     const specialCards = document.querySelectorAll('.service-card:nth-child(odd)');
     specialCards.forEach(card => {
         createRainbowBorder(card);
     });
-});
+}
 </script>
+
 </body>
 </html>
