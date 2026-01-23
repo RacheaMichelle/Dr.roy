@@ -2883,6 +2883,309 @@
 .refresh-btn i {
     font-size: 0.9rem;
 }
+         /* About Us Section */
+.about-us {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 50%, #fff0f1 100%);
+    padding: 100px 0;
+    position: relative;
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+.about-text h3 {
+    font-size: 2.2rem;
+    color: var(--dark);
+    margin-bottom: 25px;
+    background: linear-gradient(135deg, var(--dark), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 25px;
+}
+
+.mission-vision {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.mission, .vision {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(230, 57, 70, 0.08);
+    border-left: 4px solid var(--primary);
+}
+
+.mission h4, .vision h4 {
+    color: var(--dark);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mission h4 i {
+    color: var(--primary);
+}
+
+.vision h4 i {
+    color: var(--accent);
+}
+
+.values {
+    margin-top: 40px;
+}
+
+.values h4 {
+    color: var(--dark);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+}
+
+.values h4 i {
+    color: var(--primary);
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.value-item {
+    text-align: center;
+    padding: 25px 20px;
+    background: white;
+    border-radius: 12px;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.value-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(230, 57, 70, 0.12);
+    border-color: var(--accent);
+}
+
+.value-item i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.value-item h5 {
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.value-item p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.about-image {
+    position: relative;
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+}
+
+.experience-badge {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    background: linear-gradient(135deg, var(--primary), #ff5757);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(230, 57, 70, 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+.exp-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.exp-text {
+    font-size: 0.9rem;
+    margin-top: 5px;
+    opacity: 0.9;
+}
+
+/* Team Section */
+.team-section {
+    background: white;
+    padding: 50px;
+    border-radius: 20px;
+    margin: 60px 0;
+    box-shadow: 0 10px 30px rgba(230, 57, 70, 0.08);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.team-member {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 15px;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.team-member:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(230, 57, 70, 0.12);
+    border-color: var(--accent);
+}
+
+.member-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 25px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+}
+
+.team-member h4 {
+    color: var(--dark);
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+}
+
+.member-role {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.member-bio {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Achievements */
+.achievements {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark-accent) 100%);
+    padding: 50px;
+    border-radius: 20px;
+    color: white;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    text-align: center;
+}
+
+.stat-item {
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: var(--transition);
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.stat-text {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .mission-vision {
+        grid-template-columns: 1fr;
+    }
+    
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .experience-badge {
+        position: relative;
+        bottom: 0;
+        right: 0;
+        margin-top: 20px;
+        width: fit-content;
+    }
+}
+
+@media (max-width: 768px) {
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .team-section, .achievements {
+        padding: 30px 20px;
+    }
+}
 
     </style>
 </head>
@@ -2920,12 +3223,12 @@
             <!-- Navigation Links -->
             <ul class="nav-links" id="nav-links">
                 <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#about"><i class="fas fa-info-circle"></i> About Us</a></li>
                 <li><a href="#services"><i class="fas fa-spa"></i> Services</a></li>
                 <li><a href="#specialized"><i class="fas fa-star"></i> Specialized</a></li>
                 <li><a href="#reviews"><i class="fas fa-comment-dots"></i> Reviews</a></li>
                 <li><a href="#branches"><i class="fas fa-map-marker-alt"></i> Branches</a></li>
                 <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                <li><a href="#contact" class="btn"><i class="fas fa-calendar-check"></i> Book Now</a></li>
             </ul>
         </div>
         
@@ -3708,6 +4011,126 @@ document.addEventListener('DOMContentLoaded', function() {
     init();
 });
 </script>
+    <!-- About Us Section -->
+<section class="about-us" id="about">
+    <div class="container">
+        <div class="section-title">
+            <h2>About Dr Roy Skincare</h2>
+            <p>Celebrating Beauty, Enhancing Confidence</p>
+        </div>
+        
+        <div class="about-container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Your Journey to Radiant Skin Starts Here</h3>
+                    <p>At <strong>Dr Roy Skincare</strong>, we believe that every skin tells a unique story. Founded with a passion for dermatology and aesthetics, our clinic specializes in treatments specifically designed for melanin-rich skin.</p>
+                    
+                    <p>With years of expertise in African skincare, we understand the unique challenges and beauty of darker skin tones. Our treatments are carefully curated to address hyperpigmentation, acne scars, stretch marks, and other common concerns while celebrating your natural beauty.</p>
+                    
+                    <div class="mission-vision">
+                        <div class="mission">
+                            <h4><i class="fas fa-bullseye"></i> Our Mission</h4>
+                            <p>To provide accessible, specialized skincare solutions that empower individuals to feel confident and beautiful in their own skin.</p>
+                        </div>
+                        
+                        <div class="vision">
+                            <h4><i class="fas fa-eye"></i> Our Vision</h4>
+                            <p>To be Uganda's leading dermatology clinic, setting the standard for melanin-focused skincare and aesthetic treatments.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="values">
+                        <h4><i class="fas fa-heart"></i> Our Core Values</h4>
+                        <div class="values-grid">
+                            <div class="value-item">
+                                <i class="fas fa-user-md"></i>
+                                <h5>Expertise</h5>
+                                <p>Professional treatments backed by medical expertise</p>
+                            </div>
+                            <div class="value-item">
+                                <i class="fas fa-hand-holding-heart"></i>
+                                <h5>Care</h5>
+                                <p>Personalized attention for each client</p>
+                            </div>
+                            <div class="value-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <h5>Safety</h5>
+                                <p>Highest standards of hygiene and safety</p>
+                            </div>
+                            <div class="value-item">
+                                <i class="fas fa-star"></i>
+                                <h5>Excellence</h5>
+                                <p>Commitment to exceptional results</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1556228578-9c360e1d8d34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Dr Roy Skincare Clinic" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                    <div class="experience-badge">
+                        <div class="exp-number">5+</div>
+                        <div class="exp-text">Years of Experience</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Team Section -->
+            <div class="team-section">
+                <h3 style="text-align: center; margin: 50px 0 30px;">Meet Our Expert Team</h3>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-image">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h4>Dr. Roy</h4>
+                        <p class="member-role">Lead Dermatologist</p>
+                        <p class="member-bio">Specialized in melanin-rich skin treatments with 5+ years of experience</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-image">
+                            <i class="fas fa-user-nurse"></i>
+                        </div>
+                        <h4>Skincare Experts</h4>
+                        <p class="member-role">Certified Aestheticians</p>
+                        <p class="member-bio">Trained professionals in advanced skin treatments</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-image">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                        <h4>Consultation Team</h4>
+                        <p class="member-role">Patient Care Specialists</p>
+                        <p class="member-bio">Dedicated to your comfort and satisfaction</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Achievements -->
+            <div class="achievements">
+                <h3 style="text-align: center; margin: 50px 0 30px;">Our Achievements</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">1000+</div>
+                        <div class="stat-text">Happy Clients</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-text">Satisfaction Rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">2</div>
+                        <div class="stat-text">Clinic Locations</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-text">Support Available</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
     <section class="branches" id="branches">
         <div class="container">
             <div class="section-title">
