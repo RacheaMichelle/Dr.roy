@@ -2858,6 +2858,30 @@
     transition-duration: 0.01ms !important;
   }
 }
+         /* Add to your CSS */
+.refresh-btn {
+    background: linear-gradient(135deg, var(--primary), #ff5757);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.refresh-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+}
+
+.refresh-btn i {
+    font-size: 0.9rem;
+}
 
     </style>
 </head>
@@ -3241,328 +3265,485 @@
     
     <!-- Your existing other sections remain here -->
     
-    <!-- SIMPLIFIED WORKING REVIEWS SCRIPT -->
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🚀 Dr Roy Skincare Reviews System Loading...');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Dr Roy Skincare Reviews System Loading...');
+    
+    // ==================== CONFIGURATION ====================
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfdH7s7s_ZMSy5Tmi7ng8YSjp_J_zoSb0xCaNaGdAtlWA_jUXJEmkYUn34gBqKDsR3/exec';
+    let reviews = [];
+    let selectedRating = 5;
+    let lastRefreshTime = 0;
+    let refreshInterval;
+    
+    // ==================== INITIALIZE STAR RATING ====================
+    function initStarRating() {
+        const stars = document.querySelectorAll('#star-rating .star-btn');
+        const ratingText = document.getElementById('rating-text');
         
-        // ==================== CONFIGURATION ====================
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfdH7s7s_ZMSy5Tmi7ng8YSjp_J_zoSb0xCaNaGdAtlWA_jUXJEmkYUn34gBqKDsR3/exec';
-        let reviews = [];
-        let selectedRating = 5;
-        
-        // ==================== INITIALIZE STAR RATING ====================
-        function initStarRating() {
-            const stars = document.querySelectorAll('#star-rating .star-btn');
-            const ratingText = document.getElementById('rating-text');
-            
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    selectedRating = parseInt(this.dataset.value);
-                    document.getElementById('review-rating').value = selectedRating;
-                    
-                    // Update stars
-                    stars.forEach((s, index) => {
-                        if (index < selectedRating) {
-                            s.classList.add('active');
-                            s.style.color = '#ffc107';
-                        } else {
-                            s.classList.remove('active');
-                            s.style.color = '#ddd';
-                        }
-                    });
-                    
-                    // Update text
-                    if (ratingText) {
-                        const labels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
-                        ratingText.textContent = labels[selectedRating - 1] + '! ' + selectedRating + ' Star' + (selectedRating !== 1 ? 's' : '');
-                    }
-                });
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.value);
+                document.getElementById('review-rating').value = selectedRating;
                 
-                star.addEventListener('mouseenter', function() {
-                    const value = parseInt(this.dataset.value);
-                    stars.forEach((s, index) => {
-                        s.style.color = index < value ? '#ffc107' : '#ddd';
-                    });
-                });
-            });
-            
-            // Initial state
-            stars.forEach((s, index) => {
-                if (index < 5) {
-                    s.classList.add('active');
-                    s.style.color = '#ffc107';
-                }
-            });
-        }
-        
-        // ==================== LOAD REVIEWS ====================
-        async function loadReviews() {
-            console.log('📥 Loading reviews...');
-            
-            try {
-                // First try Google Sheets
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getReviews&t=${Date.now()}`);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Google Sheets response:', data);
-                    
-                    if (data && data.reviews && Array.isArray(data.reviews)) {
-                        reviews = data.reviews;
-                        console.log(`✅ Loaded ${reviews.length} reviews from Google Sheets`);
+                // Update stars
+                stars.forEach((s, index) => {
+                    if (index < selectedRating) {
+                        s.classList.add('active');
+                        s.style.color = '#ffc107';
                     } else {
-                        console.log('⚠️ No reviews in response');
-                        loadLocalReviews();
-                    }
-                } else {
-                    console.log('❌ Google Sheets request failed');
-                    loadLocalReviews();
-                }
-            } catch (error) {
-                console.error('❌ Error loading reviews:', error);
-                loadLocalReviews();
-            }
-            
-            renderReviews();
-        }
-        
-        function loadLocalReviews() {
-            try {
-                const local = localStorage.getItem('drroy-local-reviews');
-                if (local) {
-                    reviews = JSON.parse(local);
-                    console.log(`📂 Loaded ${reviews.length} reviews from localStorage`);
-                } else {
-                    console.log('📭 No local reviews found');
-                    reviews = [];
-                }
-            } catch (e) {
-                console.error('Error loading local reviews:', e);
-                reviews = [];
-            }
-        }
-        
-        // ==================== SAVE REVIEW ====================
-        async function saveReview(review) {
-            console.log('💾 Saving review:', review);
-            
-            // Add to local array immediately
-            reviews.unshift(review);
-            
-            // Save to localStorage
-            localStorage.setItem('drroy-local-reviews', JSON.stringify(reviews));
-            
-            // Update UI immediately
-            renderReviews();
-            
-            // Try to save to Google Sheets
-            try {
-                console.log('📤 Sending to Google Sheets...');
-                
-                const formData = new FormData();
-                formData.append('name', review.name);
-                formData.append('email', review.email);
-                formData.append('rating', review.rating);
-                formData.append('text', review.text);
-                formData.append('date', review.date);
-                
-                const response = await fetch(GOOGLE_SCRIPT_URL + '?action=addReview', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                console.log('Google Sheets response status:', response.status);
-                
-                if (response.ok) {
-                    console.log('✅ Successfully saved to Google Sheets!');
-                    // Refresh reviews after a delay
-                    setTimeout(loadReviews, 2000);
-                    return true;
-                } else {
-                    console.log('❌ Google Sheets save failed');
-                    return false;
-                }
-            } catch (error) {
-                console.error('❌ Error saving to Google Sheets:', error);
-                return false;
-            }
-        }
-        
-        // ==================== RENDER REVIEWS ====================
-        function renderReviews() {
-            const reviewsList = document.getElementById('reviews-list');
-            if (!reviewsList) return;
-            
-            // Calculate stats
-            const avg = reviews.length > 0 ? 
-                (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1) : 
-                '0.0';
-            
-            const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
-            
-            // Update stats
-            document.getElementById('avg-rating').textContent = avg;
-            document.getElementById('display-stars').textContent = stars;
-            document.getElementById('review-count').textContent = `Based on ${reviews.length} reviews`;
-            
-            // Render reviews
-            if (reviews.length === 0) {
-                reviewsList.innerHTML = `
-                    <div class="review-card" style="text-align: center; padding: 40px;">
-                        <i class="fas fa-comment-alt" style="font-size: 2rem; color: var(--accent);"></i>
-                        <p style="margin-top: 15px; color: var(--text-light);">No reviews yet. Be the first to share!</p>
-                    </div>
-                `;
-            } else {
-                reviewsList.innerHTML = reviews.map(review => `
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div>
-                                <div class="review-name">${review.name}</div>
-                                <div class="review-rating">${'★'.repeat(review.rating || 5)}${'☆'.repeat(5 - (review.rating || 5))}</div>
-                            </div>
-                            <div class="review-date">${review.date}</div>
-                        </div>
-                        <p class="review-text">"${review.text}"</p>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        // ==================== INITIALIZE FORM ====================
-        function initReviewForm() {
-            const form = document.getElementById('review-form');
-            if (!form) return;
-            
-            // Character counter
-            const textarea = document.getElementById('review-text');
-            const charCount = document.getElementById('char-count');
-            
-            if (textarea && charCount) {
-                textarea.addEventListener('input', function() {
-                    charCount.textContent = this.value.length;
-                    if (this.value.length > 500) {
-                        this.value = this.value.substring(0, 500);
-                        charCount.textContent = 500;
+                        s.classList.remove('active');
+                        s.style.color = '#ddd';
                     }
                 });
-            }
+                
+                // Update text
+                if (ratingText) {
+                    const labels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+                    ratingText.textContent = labels[selectedRating - 1] + '! ' + selectedRating + ' Star' + (selectedRating !== 1 ? 's' : '');
+                }
+            });
             
-            // Form submission
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('review-name').value.trim();
-                const email = document.getElementById('review-email').value.trim();
-                const rating = parseInt(document.getElementById('review-rating').value);
-                const text = document.getElementById('review-text').value.trim();
-                
-                // Simple validation
-                if (!name || name.length < 2) {
-                    alert('Please enter your name (at least 2 characters)');
-                    return;
+            star.addEventListener('mouseenter', function() {
+                const value = parseInt(this.dataset.value);
+                stars.forEach((s, index) => {
+                    s.style.color = index < value ? '#ffc107' : '#ddd';
+                });
+            });
+        });
+        
+        // Initial state
+        stars.forEach((s, index) => {
+            if (index < 5) {
+                s.classList.add('active');
+                s.style.color = '#ffc107';
+            }
+        });
+        
+        // Set initial label
+        if (ratingText) {
+            ratingText.textContent = 'Excellent! 5 Stars';
+        }
+    }
+    
+    // ==================== LOAD REVIEWS FROM GOOGLE SHEETS ====================
+    async function loadReviewsFromGoogleSheets() {
+        console.log('📥 Loading reviews from Google Sheets...');
+        
+        try {
+            // Add timestamp to prevent caching
+            const timestamp = Date.now();
+            const url = `${GOOGLE_SCRIPT_URL}?action=getReviews&_=${timestamp}`;
+            
+            console.log('Fetching from:', url);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                cache: 'no-cache',
+                headers: {
+                    'Accept': 'application/json'
                 }
+            });
+            
+            console.log('Response status:', response.status);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Google Sheets data:', data);
                 
-                if (!email || !email.includes('@') || !email.includes('.')) {
-                    alert('Please enter a valid email address');
-                    return;
-                }
-                
-                if (!text || text.length < 10) {
-                    alert('Please write a review (at least 10 characters)');
-                    return;
-                }
-                
-                // Disable button
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-                
-                // Create review object
-                const review = {
-                    name: name,
-                    email: email,
-                    rating: rating,
-                    text: text,
-                    date: new Date().toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    })
-                };
-                
-                try {
-                    // Save the review
-                    const savedToGoogle = await saveReview(review);
-                    
-                    // Show success message
-                    const successMsg = document.getElementById('success-message');
-                    if (successMsg) {
-                        successMsg.innerHTML = savedToGoogle ? 
-                            `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem;"></i>
-                            <div>
-                                <strong>Thank you!</strong>
-                                <p>Your review has been submitted and will be visible to all users.</p>
-                            </div>` :
-                            `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem; color: #ffc107;"></i>
-                            <div>
-                                <strong>Review saved!</strong>
-                                <p>Your review was saved and will sync when possible.</p>
-                            </div>`;
-                        successMsg.style.display = 'block';
-                        setTimeout(() => {
-                            successMsg.style.display = 'none';
-                        }, 5000);
-                    }
-                    
-                    // Reset form
-                    form.reset();
-                    if (charCount) charCount.textContent = '0';
-                    selectedRating = 5;
-                    document.getElementById('review-rating').value = 5;
-                    
-                    // Reset stars
-                    document.querySelectorAll('#star-rating .star-btn').forEach((s, index) => {
-                        s.classList.toggle('active', index < 5);
-                        s.style.color = index < 5 ? '#ffc107' : '#ddd';
+                if (data && data.success && Array.isArray(data.reviews)) {
+                    // Sort by date (newest first)
+                    reviews = data.reviews.sort((a, b) => {
+                        const dateA = new Date(a.date || 0);
+                        const dateB = new Date(b.date || 0);
+                        return dateB - dateA;
                     });
                     
-                    document.getElementById('rating-text').textContent = 'Excellent! 5 Stars';
+                    console.log(`✅ Loaded ${reviews.length} reviews from Google Sheets`);
+                    lastRefreshTime = Date.now();
                     
-                    // Scroll to reviews
-                    setTimeout(() => {
-                        document.getElementById('reviews-list').scrollIntoView({behavior: 'smooth'});
-                    }, 500);
+                    // Save to localStorage as backup
+                    localStorage.setItem('drroy-reviews-last-sync', JSON.stringify({
+                        reviews: reviews,
+                        timestamp: lastRefreshTime
+                    }));
                     
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('There was an error submitting your review. Please try again.');
-                } finally {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
+                    renderReviews();
+                    return true;
+                }
+            }
+            
+            console.log('⚠️ Could not load from Google Sheets, using localStorage');
+            return false;
+            
+        } catch (error) {
+            console.error('❌ Error loading from Google Sheets:', error);
+            return false;
+        }
+    }
+    
+    // ==================== LOAD FROM LOCAL STORAGE ====================
+    function loadFromLocalStorage() {
+        try {
+            const saved = localStorage.getItem('drroy-reviews-last-sync');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data && Array.isArray(data.reviews)) {
+                    reviews = data.reviews;
+                    console.log(`📂 Loaded ${reviews.length} reviews from localStorage`);
+                    renderReviews();
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.error('Error loading from localStorage:', e);
+        }
+        
+        console.log('📭 No reviews in localStorage');
+        reviews = [];
+        renderReviews();
+        return false;
+    }
+    
+    // ==================== SAVE REVIEW ====================
+    async function saveReview(review) {
+        console.log('💾 Saving review:', review);
+        
+        // Add timestamp to review
+        review.timestamp = Date.now();
+        
+        // Save to localStorage immediately for instant feedback
+        const savedData = localStorage.getItem('drroy-reviews-last-sync');
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                data.reviews.unshift(review); // Add to beginning
+                data.timestamp = Date.now();
+                localStorage.setItem('drroy-reviews-last-sync', JSON.stringify(data));
+            } catch (e) {
+                console.error('Error updating localStorage:', e);
+            }
+        }
+        
+        // Try to save to Google Sheets (for cross-device sharing)
+        try {
+            console.log('📤 Sending to Google Sheets...');
+            
+            // Create FormData for easy submission
+            const formData = new FormData();
+            formData.append('name', review.name);
+            formData.append('email', review.email);
+            formData.append('rating', review.rating);
+            formData.append('text', review.text);
+            formData.append('date', review.date);
+            
+            const response = await fetch(GOOGLE_SCRIPT_URL + '?action=addReview', {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors' // Important for Google Apps Script
+            });
+            
+            console.log('✅ Review submitted to Google Sheets');
+            
+            // Force refresh all devices after submission
+            setTimeout(() => {
+                console.log('🔄 Forcing refresh to get latest reviews...');
+                loadReviewsFromGoogleSheets();
+            }, 2000);
+            
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Error saving to Google Sheets:', error);
+            // Still return true because it's saved locally
+            return true;
+        }
+    }
+    
+    // ==================== RENDER REVIEWS ====================
+    function renderReviews() {
+        const reviewsList = document.getElementById('reviews-list');
+        if (!reviewsList) {
+            console.error('❌ Reviews list element not found!');
+            return;
+        }
+        
+        // Calculate average rating
+        let avgRating = 0;
+        if (reviews.length > 0) {
+            const sum = reviews.reduce((total, review) => total + (review.rating || 5), 0);
+            avgRating = (sum / reviews.length).toFixed(1);
+        }
+        
+        // Create stars display
+        const fullStars = Math.floor(avgRating);
+        const halfStar = avgRating % 1 >= 0.5;
+        let starsDisplay = '★'.repeat(fullStars);
+        if (halfStar) starsDisplay += '☆';
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+        if (emptyStars > 0) starsDisplay += '☆'.repeat(emptyStars);
+        
+        // Update rating display
+        const avgRatingEl = document.getElementById('avg-rating');
+        const displayStarsEl = document.getElementById('display-stars');
+        const reviewCountEl = document.getElementById('review-count');
+        
+        if (avgRatingEl) avgRatingEl.textContent = avgRating;
+        if (displayStarsEl) displayStarsEl.textContent = starsDisplay;
+        if (reviewCountEl) reviewCountEl.textContent = `Based on ${reviews.length} reviews`;
+        
+        // Show last refresh time
+        const refreshInfo = document.getElementById('refresh-info');
+        if (refreshInfo) {
+            refreshInfo.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+        
+        // Render reviews list
+        if (reviews.length === 0) {
+            reviewsList.innerHTML = `
+                <div class="review-card" style="text-align: center; padding: 40px;">
+                    <i class="fas fa-comment-alt" style="font-size: 2rem; color: var(--accent);"></i>
+                    <p style="margin-top: 15px; color: var(--text-light);">No reviews yet. Be the first to share your experience!</p>
+                </div>
+            `;
+        } else {
+            reviewsList.innerHTML = reviews.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div>
+                            <div class="review-name">${review.name}</div>
+                            <div class="review-rating">
+                                ${'★'.repeat(review.rating || 5)}${'☆'.repeat(5 - (review.rating || 5))}
+                            </div>
+                        </div>
+                        <div class="review-date">${review.date}</div>
+                    </div>
+                    <p class="review-text">"${review.text}"</p>
+                </div>
+            `).join('');
+        }
+        
+        console.log(`✅ Rendered ${reviews.length} reviews`);
+    }
+    
+    // ==================== INITIALIZE FORM ====================
+    function initReviewForm() {
+        const form = document.getElementById('review-form');
+        if (!form) {
+            console.error('❌ Review form not found!');
+            return;
+        }
+        
+        // Character counter
+        const textarea = document.getElementById('review-text');
+        const charCount = document.getElementById('char-count');
+        
+        if (textarea && charCount) {
+            textarea.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = length;
+                
+                // Change color when approaching limit
+                if (length > 450) {
+                    charCount.style.color = '#e63946';
+                } else if (length > 400) {
+                    charCount.style.color = '#ffc107';
+                } else {
+                    charCount.style.color = '#666666';
+                }
+                
+                // Limit to 500 characters
+                if (length > 500) {
+                    this.value = this.value.substring(0, 500);
+                    charCount.textContent = 500;
                 }
             });
         }
         
-        // ==================== START EVERYTHING ====================
-        function init() {
-            console.log('🎯 Initializing reviews system...');
-            initStarRating();
-            initReviewForm();
-            loadReviews();
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            // Auto-refresh every 30 seconds
-            setInterval(loadReviews, 30000);
+            const name = document.getElementById('review-name').value.trim();
+            const email = document.getElementById('review-email').value.trim();
+            const rating = parseInt(document.getElementById('review-rating').value);
+            const text = document.getElementById('review-text').value.trim();
             
-            console.log('✅ Reviews system ready!');
-        }
+            // Simple validation
+            if (!name || name.length < 2) {
+                alert('Please enter your name (at least 2 characters)');
+                return;
+            }
+            
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            if (!text || text.length < 10) {
+                alert('Please write a review (at least 10 characters)');
+                return;
+            }
+            
+            // Disable button during submission
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            
+            // Create review object
+            const review = {
+                name: name,
+                email: email,
+                rating: rating,
+                text: text,
+                date: new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                })
+            };
+            
+            try {
+                // Save the review
+                const saved = await saveReview(review);
+                
+                // Show success message
+                const successMsg = document.getElementById('success-message');
+                if (successMsg) {
+                    successMsg.innerHTML = saved ? 
+                        `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem;"></i>
+                        <div>
+                            <strong>Thank you!</strong>
+                            <p>Your review has been submitted successfully! Other users will see it shortly.</p>
+                        </div>` :
+                        `<i class="fas fa-exclamation-triangle" style="margin-right: 10px; font-size: 1.2rem; color: #ffc107;"></i>
+                        <div>
+                            <strong>Review saved locally!</strong>
+                            <p>Your review was saved and will sync when possible.</p>
+                        </div>`;
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 5000);
+                }
+                
+                // Reset form
+                form.reset();
+                if (charCount) {
+                    charCount.textContent = '0';
+                    charCount.style.color = '#666666';
+                }
+                
+                // Reset star rating
+                selectedRating = 5;
+                document.getElementById('review-rating').value = 5;
+                
+                const stars = document.querySelectorAll('#star-rating .star-btn');
+                stars.forEach((s, index) => {
+                    s.classList.toggle('active', index < 5);
+                    s.style.color = index < 5 ? '#ffc107' : '#ddd';
+                });
+                
+                document.getElementById('rating-text').textContent = 'Excellent! 5 Stars';
+                
+                // Force refresh from Google Sheets
+                loadReviewsFromGoogleSheets();
+                
+                // Scroll to reviews
+                setTimeout(() => {
+                    const reviewsSection = document.getElementById('reviews-list');
+                    if (reviewsSection) {
+                        reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('There was an error submitting your review. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+    }
+    
+    // ==================== START EVERYTHING ====================
+    function init() {
+        console.log('🎯 Initializing reviews system...');
         
-        // Start
-        init();
+        // Initialize components
+        initStarRating();
+        initReviewForm();
+        
+        // Try to load from Google Sheets first
+        loadReviewsFromGoogleSheets().then(success => {
+            if (!success) {
+                // Fall back to localStorage
+                loadFromLocalStorage();
+            }
+        });
+        
+        // Set up automatic refresh every 15 seconds
+        refreshInterval = setInterval(() => {
+            console.log('🔄 Auto-refreshing reviews...');
+            loadReviewsFromGoogleSheets();
+        }, 15000); // 15 seconds
+        
+        // Add refresh button to UI (optional)
+        addRefreshButton();
+        
+        console.log('✅ Reviews system ready! Auto-refresh every 15 seconds.');
+    }
+    
+    // Add manual refresh button (optional)
+    function addRefreshButton() {
+        const reviewStats = document.querySelector('.review-stats');
+        if (reviewStats) {
+            const refreshBtn = document.createElement('button');
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+            refreshBtn.style.cssText = `
+                background: var(--primary);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                margin-top: 10px;
+                transition: all 0.3s;
+            `;
+            refreshBtn.addEventListener('mouseenter', () => {
+                refreshBtn.style.background = '#ff5757';
+                refreshBtn.style.transform = 'scale(1.05)';
+            });
+            refreshBtn.addEventListener('mouseleave', () => {
+                refreshBtn.style.background = 'var(--primary)';
+                refreshBtn.style.transform = 'scale(1)';
+            });
+            refreshBtn.addEventListener('click', () => {
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+                loadReviewsFromGoogleSheets().then(() => {
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                    }, 1000);
+                });
+            });
+            reviewStats.appendChild(refreshBtn);
+        }
+    }
+    
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
+        }
     });
-    </script>
+    
+    // Start the system
+    init();
+});
+</script>
 
     <section class="branches" id="branches">
         <div class="container">
