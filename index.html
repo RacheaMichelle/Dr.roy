@@ -158,6 +158,34 @@
         console.log("✅ EmailJS initialized successfully");
     })();
 </script>
+    <!-- Add this in your head section, after the EmailJS script -->
+<script>
+// Test EmailJS function
+function testEmailJS() {
+    console.log('Testing EmailJS...');
+    
+    // Make sure this matches your actual EmailJS template ID
+    const templateParams = {
+        to_name: 'Dr Roy Skincare',
+        from_name: 'Test User',
+        from_email: 'test@example.com',  // Using email field instead of phone
+        branch: 'Kampala Branch',
+        message: 'Test appointment request',
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+    };
+    
+    emailjs.send('service_fef1c5d', 'template_qf4aw5j', templateParams)
+        .then(response => {
+            console.log('SUCCESS!', response.status, response.text);
+            alert('✅ Email sent successfully!');
+        })
+        .catch(error => {
+            console.error('FAILED...', error);
+            alert('❌ Failed: ' + JSON.stringify(error));
+        });
+}
+</script>
     
     <!-- Additional SEO Meta -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -4892,186 +4920,117 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-<!-- =========== DR ROY SKINCARE CONTACT FORM =========== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Contact form script loaded');
+    console.log('📞 Contact form initialized');
     
-    const appointmentForm = document.getElementById('appointment-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const formMessage = document.getElementById('form-message');
-    
-    if (!appointmentForm) {
-        console.error('❌ Form not found');
+    const form = document.getElementById('appointment-form');
+    if (!form) {
+        console.error('Form not found');
         return;
     }
     
-    // Show message function
-    function showMessage(text, type) {
-        if (!formMessage) return;
-        
-        formMessage.innerHTML = text;
-        formMessage.style.display = 'block';
-        formMessage.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
-        formMessage.style.color = type === 'success' ? '#155724' : '#721c24';
-        formMessage.style.border = type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
-        formMessage.style.padding = '15px';
-        formMessage.style.borderRadius = '8px';
-        formMessage.style.margin = '15px 0';
-        
-        setTimeout(() => {
-            formMessage.style.display = 'none';
-        }, 8000);
-    }
-    
-    // Form submission handler
-    appointmentForm.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        console.log('📤 Form submitted');
-        
-        // Get form values
+        // Get values
         const name = document.getElementById('client-name').value.trim();
         const phone = document.getElementById('client-phone').value.trim();
         const branch = document.getElementById('client-branch').value;
         const message = document.getElementById('client-message').value.trim();
         
-        // Validation
-        if (!name || name.length < 2) {
-            showMessage('Please enter your full name (minimum 2 characters)', 'error');
+        // Validate
+        if (!name || !phone || !branch) {
+            alert('Please fill in all required fields');
             return;
         }
         
-        if (!phone || phone.length < 9) {
-            showMessage('Please enter a valid phone number (at least 9 digits)', 'error');
-            return;
-        }
-        
-        if (!branch) {
-            showMessage('Please select your preferred branch', 'error');
-            return;
-        }
-        
-        // Show loading state
-        const originalBtnText = submitBtn.innerHTML;
+        // Show loading
+        const submitBtn = document.getElementById('submit-btn');
+        const originalText = submitBtn.innerHTML;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         
-        // Prepare email data - MATCHING YOUR TEMPLATE
-        const templateParams = {
-            to_name: 'Dr Roy Skincare Team',
-            from_name: name,
-            from_email: phone,  // This is actually phone number
-            branch: branch === 'kampala' ? 'Kampala Branch (Wilson Street)' : 'Mbarara Branch',
-            message: message || 'No additional message provided',
-            date: new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            }),
-            time: new Date().toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit'
-            })
-        };
-        
-        console.log('📧 Sending email with:', templateParams);
-        
-        // Send email using EmailJS
-        emailjs.send('service_fef1c5d', 'template_qf4aw5j', templateParams)
-            .then(function(response) {
-                console.log('✅ SUCCESS! Email sent:', response);
-                
-                // Success message
-                showMessage(`✅ Thank you, ${name}! Your appointment request has been sent successfully. We will call you at ${phone} within 24 hours.`, 'success');
-                
-                // Reset form
-                appointmentForm.reset();
-                
-                // Optional: Show confirmation alert
-                alert('✅ Appointment request sent! We will contact you soon.');
-                
-            }, function(error) {
-                console.error('❌ FAILED to send email:', error);
-                
-                // WhatsApp fallback
-                const whatsappMessage = `Hello Dr Roy Skincare,%0A%0AI want to book an appointment:%0A%0A👤 Name: ${name}%0A📞 Phone: ${phone}%0A📍 Branch: ${branch}%0A💬 Message: ${message || 'No message'}%0A%0ASent from website`;
-                const whatsappUrl = `https://wa.me/256742017575?text=${whatsappMessage}`;
-                
-                showMessage(
-                    `❌ Email failed. Please <a href="${whatsappUrl}" target="_blank" style="color: #25D366; font-weight: bold;">click here to book via WhatsApp</a> or call 0742 017 575.`,
-                    'error'
-                );
-                
-            })
-            .finally(function() {
-                // Reset button
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
-            });
+        try {
+            // Try EmailJS first
+            console.log('📧 Trying to send via EmailJS...');
+            
+            const templateParams = {
+                to_name: 'Dr Roy Skincare',
+                from_name: name,
+                from_email: 'website@drroy.com',  // Sender email
+                phone: phone,
+                branch: branch === 'kampala' ? 'Kampala Branch' : 'Mbarara Branch',
+                message: message || 'No additional message',
+                date_time: new Date().toLocaleString(),
+                website_url: window.location.href
+            };
+            
+            // Send email
+            const response = await emailjs.send(
+                'service_fef1c5d',
+                'template_qf4aw5j',
+                templateParams
+            );
+            
+            console.log('✅ EmailJS success:', response);
+            
+            // Success message
+            alert(`✅ Thank you ${name}! Your appointment request has been sent. We will contact you at ${phone} soon.`);
+            form.reset();
+            
+        } catch (emailError) {
+            console.error('❌ EmailJS failed:', emailError);
+            
+            // Fallback to WhatsApp
+            const whatsappText = `📞 *Appointment Request*\n\n👤 Name: ${name}\n📱 Phone: ${phone}\n📍 Preferred Branch: ${branch}\n💬 Message: ${message || 'No message'}\n\nSent from website`;
+            const encodedText = encodeURIComponent(whatsappText);
+            const whatsappUrl = `https://wa.me/256742017575?text=${encodedText}`;
+            
+            // Ask user to use WhatsApp
+            const useWhatsApp = confirm(
+                'Email service is temporarily unavailable. Would you like to book via WhatsApp instead?'
+            );
+            
+            if (useWhatsApp) {
+                window.open(whatsappUrl, '_blank');
+            } else {
+                alert('You can also call us directly at 0742 017 575');
+            }
+            
+        } finally {
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
     });
-    
-    console.log('✅ Form handler ready');
 });
 
-// =========== TEST FUNCTION ===========
-function testEmailFromWebsite() {
-    console.log('🧪 Testing EmailJS from website...');
+// Test function for debugging
+window.testEmailJS = function() {
+    console.log('🧪 Testing EmailJS connection...');
     
     const testParams = {
-        to_name: 'Dr Roy Test',
+        to_name: 'TEST',
         from_name: 'Website Test',
-        from_email: '0742 017 575',
+        from_email: 'test@example.com',
+        phone: '0742000000',
         branch: 'Test Branch',
-        message: 'This is a test from the website to confirm EmailJS works!',
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString()
+        message: 'This is a test message from the website',
+        date_time: new Date().toLocaleString()
     };
     
     emailjs.send('service_fef1c5d', 'template_qf4aw5j', testParams)
-        .then(function(response) {
-            console.log('✅ Test email sent successfully!', response);
-            alert('✅ Test email sent! Check drroyskincare@gmail.com');
-        }, function(error) {
-            console.error('❌ Test failed:', error);
-            alert('❌ Test failed: ' + (error.text || error.message));
+        .then(response => {
+            alert('✅ Test successful! Check your EmailJS dashboard.');
+            console.log('Test success:', response);
+        })
+        .catch(error => {
+            alert('❌ Test failed. Check console for details.');
+            console.error('Test error:', error);
         });
-}
-</script>
- 
- 
-</script>
-    <script>
-// Debug script
-console.log('🔧 Debug: Checking EmailJS...');
-
-// Check if EmailJS is loaded
-if (typeof emailjs === 'undefined') {
-    console.error('❌ EmailJS not loaded! Check script tags');
-} else {
-    console.log('✅ EmailJS loaded');
-    
-    // Check initialization
-    setTimeout(() => {
-        console.log('📊 EmailJS user ID:', emailjs.user ? 'Initialized' : 'Not initialized');
-        console.log('📊 EmailJS version:', emailjs.version);
-    }, 1000);
-}
-
-// Check if form exists
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 Looking for form...');
-    const form = document.getElementById('appointment-form');
-    console.log('📋 Form found:', !!form);
-    
-    if (form) {
-        form.addEventListener('click', function() {
-            console.log('🖱️ Form clicked');
-        });
-    }
-});
+};
 </script>
 </body>
 </html>
- IN THE CONTACT US
+
