@@ -3260,16 +3260,12 @@
         </div>
     </section>
     
-    <!-- Your existing other sections remain here -->
-    
-   
-<!-- Firebase SDKs (Version 8 for compatibility) -->
+  <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
 // ==================== FIREBASE CONFIGURATION ====================
-// Your Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyA92x1_V8CeR5S36RvVgxao4pPjndoGdkw",
     authDomain: "drroyreviews.firebaseapp.com",
@@ -3280,46 +3276,52 @@ const firebaseConfig = {
     appId: "1:304907768153:web:fb4b8ee26d2d557101fc48"
 };
 
-// ==================== SIMPLE, WORKING REVIEWS SYSTEM ====================
+// ==================== WORKING REVIEWS SYSTEM ====================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Starting Dr Roy Reviews System...');
     
-    // Global variables
+    // Variables
     let reviews = [];
     let selectedRating = 5;
     let database = null;
+    let firebaseInitialized = false;
     
     // ==================== FIREBASE INITIALIZATION ====================
-    function initializeFirebase() {
+    function initFirebase() {
         try {
-            console.log('Attempting to initialize Firebase...');
+            console.log('Initializing Firebase...');
             
-            // Check if Firebase is available
             if (typeof firebase === 'undefined') {
-                console.error('❌ Firebase SDK not loaded');
+                console.error('Firebase SDK not loaded');
                 return false;
             }
             
-            console.log('✅ Firebase SDK is available');
+            // REMOVE DEBUG APP FIRST if it exists
+            try {
+                const debugApp = firebase.app('DebugApp');
+                if (debugApp) {
+                    debugApp.delete();
+                    console.log('Removed DebugApp');
+                }
+            } catch (e) {
+                // DebugApp doesn't exist, that's fine
+            }
             
-            // Initialize Firebase app
-            let firebaseApp;
-            
-            // Check if any Firebase app exists
+            // Initialize default Firebase app
+            let app;
             if (firebase.apps.length === 0) {
-                // No app exists, create default app
-                firebaseApp = firebase.initializeApp(firebaseConfig);
+                app = firebase.initializeApp(firebaseConfig);
                 console.log('✅ Created default Firebase app');
             } else {
-                // Use existing default app
-                firebaseApp = firebase.app();
+                app = firebase.app(); // Get default app
                 console.log('✅ Using existing default Firebase app');
             }
             
             // Get database reference
-            database = firebase.database(firebaseApp);
+            database = firebase.database();
+            firebaseInitialized = true;
             
-            console.log('✅ Database reference obtained');
+            console.log('✅ Firebase initialized successfully');
             
             // Test connection
             testConnection();
@@ -3327,7 +3329,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return true;
             
         } catch (error) {
-            console.error('❌ Firebase initialization failed:', error.message);
+            console.error('Firebase init error:', error.message);
             return false;
         }
     }
@@ -3335,31 +3337,26 @@ document.addEventListener('DOMContentLoaded', function() {
     function testConnection() {
         if (!database) return;
         
-        // Test database connection by writing a small test
         const testRef = database.ref('connection_test');
         testRef.set({
-            test: 'connection',
+            test: 'success',
             time: Date.now(),
-            message: 'Firebase is working!'
-        })
-        .then(() => {
-            console.log('✅ Firebase connection test successful');
+            url: window.location.href
+        }).then(() => {
+            console.log('✅ Firebase connection successful');
             
-            // Remove test data after 5 seconds
+            // Clean up test data
             setTimeout(() => {
                 testRef.remove();
-            }, 5000);
-        })
-        .catch(error => {
-            console.error('❌ Firebase connection test failed:', error);
+            }, 3000);
+        }).catch(error => {
+            console.error('Firebase connection failed:', error);
         });
     }
     
-    // ==================== REVIEWS MANAGEMENT ====================
+    // ==================== LOAD REVIEWS ====================
     function loadReviews() {
-        console.log('Loading reviews...');
-        
-        if (database) {
+        if (firebaseInitialized && database) {
             loadFromFirebase();
         } else {
             loadFromLocalStorage();
@@ -3368,70 +3365,72 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function loadFromFirebase() {
         database.ref('reviews').once('value')
-            .then((snapshot) => {
+            .then(snapshot => {
                 const data = snapshot.val();
                 reviews = [];
                 
                 if (data) {
-                    Object.keys(data).forEach((key) => {
-                        const review = data[key];
+                    Object.keys(data).forEach(key => {
                         // Skip test data
-                        if (key !== 'connection_test' && key !== 'test') {
+                        if (key.includes('test')) return;
+                        
+                        const review = data[key];
+                        if (review && review.name && review.text) {
                             reviews.push({
                                 id: key,
                                 name: review.name || 'Anonymous',
                                 email: review.email || '',
                                 rating: review.rating || 5,
-                                text: review.text || '',
+                                text: review.text,
                                 date: review.date || getCurrentDate(),
-                                timestamp: review.timestamp || Date.now()
+                                timestamp: review.timestamp || Date.now(),
+                                source: 'firebase'
                             });
                         }
                     });
                     
                     console.log(`✅ Loaded ${reviews.length} reviews from Firebase`);
                     
-                    // Sort by timestamp (newest first)
+                    // Sort newest first
                     reviews.sort((a, b) => b.timestamp - a.timestamp);
                     
-                    // Save to localStorage as backup
+                    // Save to localStorage
                     saveToLocalStorage();
                     
-                    // Setup real-time listener
+                    // Listen for new reviews
                     setupRealtimeListener();
                 }
                 
                 renderReviews();
             })
-            .catch((error) => {
-                console.warn('⚠️ Could not load from Firebase:', error.message);
+            .catch(error => {
+                console.warn('Firebase load failed:', error.message);
                 loadFromLocalStorage();
             });
     }
     
     function loadFromLocalStorage() {
         try {
-            const saved = localStorage.getItem('drroy-skincare-reviews');
+            const saved = localStorage.getItem('drroy-reviews');
             if (saved) {
                 const data = JSON.parse(saved);
-                if (data && Array.isArray(data.reviews)) {
+                if (data && data.reviews) {
                     reviews = data.reviews;
-                    console.log(`📱 Loaded ${reviews.length} reviews from local storage`);
+                    console.log(`📱 Loaded ${reviews.length} local reviews`);
                 }
             }
         } catch (e) {
-            console.error('Error loading from localStorage:', e);
-            reviews = [];
+            console.error('Error loading local reviews:', e);
         }
         
         renderReviews();
     }
     
+    // ==================== SAVE REVIEW ====================
     function saveReview(reviewData) {
         return new Promise((resolve, reject) => {
             console.log('Saving review...');
             
-            // Prepare review object
             const review = {
                 name: reviewData.name,
                 email: reviewData.email || '',
@@ -3441,44 +3440,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 timestamp: Date.now()
             };
             
-            // Try to save to Firebase
-            if (database) {
+            // Try Firebase first
+            if (firebaseInitialized && database) {
                 try {
                     const newReviewRef = database.ref('reviews').push();
                     newReviewRef.set(review)
                         .then(() => {
                             review.id = newReviewRef.key;
+                            review.source = 'firebase';
                             
-                            console.log('✅ Saved to Firebase with ID:', review.id);
-                            
-                            // Add to local array
                             reviews.unshift(review);
-                            
-                            // Save to localStorage
                             saveToLocalStorage();
-                            
-                            // Update UI
                             renderReviews();
+                            
+                            console.log('✅ Saved to Firebase:', review.id);
                             
                             resolve({
                                 success: true,
-                                savedToFirebase: true,
-                                message: 'Review saved! It will appear on all devices.'
+                                message: 'Review saved! It will sync across all devices.'
                             });
                         })
-                        .catch((error) => {
-                            console.warn('⚠️ Firebase save failed:', error);
+                        .catch(error => {
+                            console.warn('Firebase save failed:', error);
                             saveLocallyAndResolve(review, resolve);
                         });
                     
-                    return;
-                    
                 } catch (error) {
-                    console.warn('⚠️ Firebase error:', error);
+                    console.warn('Firebase error:', error);
                     saveLocallyAndResolve(review, resolve);
                 }
             } else {
-                // Firebase not available
                 saveLocallyAndResolve(review, resolve);
             }
         });
@@ -3486,22 +3477,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function saveLocallyAndResolve(review, resolve) {
         review.id = 'local_' + Date.now();
+        review.source = 'local';
+        
         reviews.unshift(review);
         saveToLocalStorage();
         renderReviews();
         
         resolve({
             success: true,
-            savedToFirebase: false,
-            message: 'Review saved locally.'
+            message: 'Review saved locally on this device.'
         });
     }
     
     function saveToLocalStorage() {
         try {
-            localStorage.setItem('drroy-skincare-reviews', JSON.stringify({
+            localStorage.setItem('drroy-reviews', JSON.stringify({
                 reviews: reviews.slice(0, 100),
-                lastUpdated: Date.now()
+                timestamp: Date.now()
             }));
         } catch (e) {
             console.error('Error saving to localStorage:', e);
@@ -3511,21 +3503,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupRealtimeListener() {
         if (!database) return;
         
-        // Listen for new reviews
-        database.ref('reviews').orderByChild('timestamp').limitToLast(1).on('child_added', (snapshot) => {
+        database.ref('reviews').limitToLast(1).on('child_added', snapshot => {
             const newReview = snapshot.val();
             const reviewId = snapshot.key;
             
-            // Skip if it's our own review
+            // Don't add if we already have it
             if (reviews.some(r => r.id === reviewId)) return;
             
             console.log('🔄 New review from another device!');
             
             newReview.id = reviewId;
+            newReview.source = 'firebase';
             reviews.unshift(newReview);
-            
-            // Keep only recent reviews
-            reviews = reviews.slice(0, 100);
             
             saveToLocalStorage();
             renderReviews();
@@ -3535,116 +3524,89 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==================== UI FUNCTIONS ====================
     function renderReviews() {
         const reviewsList = document.getElementById('reviews-list');
-        if (!reviewsList) {
-            console.error('Reviews list element not found');
-            return;
-        }
+        if (!reviewsList) return;
         
-        // Calculate average rating
-        let avgRating = 0;
-        if (reviews.length > 0) {
-            const total = reviews.reduce((sum, review) => sum + (review.rating || 5), 0);
-            avgRating = (total / reviews.length).toFixed(1);
-        }
+        // Calculate stats
+        const total = reviews.length;
+        const avgRating = total > 0 
+            ? (reviews.reduce((sum, r) => sum + r.rating, 0) / total).toFixed(1)
+            : '0.0';
         
-        // Update statistics
+        // Update display
         document.getElementById('avg-rating').textContent = avgRating;
         document.getElementById('review-count').textContent = 
-            `Based on ${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+            `Based on ${total} review${total !== 1 ? 's' : ''}`;
         
-        // Update stars display
-        const starsContainer = document.getElementById('display-stars');
-        if (starsContainer) {
-            starsContainer.innerHTML = '';
-            const ratingNum = parseFloat(avgRating);
+        // Update stars
+        const starsEl = document.getElementById('display-stars');
+        if (starsEl) {
+            starsEl.innerHTML = '';
+            const rating = parseFloat(avgRating);
             
             for (let i = 1; i <= 5; i++) {
                 const star = document.createElement('span');
-                if (i <= Math.floor(ratingNum)) {
+                if (i <= rating) {
                     star.innerHTML = '★';
                     star.style.color = '#ffc107';
-                } else if (i === Math.ceil(ratingNum) && ratingNum % 1 >= 0.5) {
-                    star.innerHTML = '★';
-                    star.style.color = '#ffc107';
-                    star.style.opacity = '0.7';
                 } else {
                     star.innerHTML = '☆';
                     star.style.color = '#ddd';
                 }
                 star.style.fontSize = '1.5rem';
                 star.style.margin = '0 2px';
-                starsContainer.appendChild(star);
+                starsEl.appendChild(star);
             }
         }
         
-        // Render reviews list
-        if (reviews.length === 0) {
+        // Render reviews
+        if (total === 0) {
             reviewsList.innerHTML = `
                 <div class="review-card" style="text-align: center; padding: 40px;">
-                    <i class="fas fa-comment-alt" style="font-size: 2rem; color: var(--accent); opacity: 0.5;"></i>
-                    <p style="margin-top: 15px; color: var(--text-light);">No reviews yet. Be the first to share your experience!</p>
+                    <i class="fas fa-comment-alt" style="font-size: 2rem; color: var(--accent);"></i>
+                    <p style="margin-top: 15px; color: var(--text-light);">No reviews yet. Be the first!</p>
                 </div>
             `;
         } else {
-            let html = '';
-            reviews.forEach((review) => {
-                const stars = '★'.repeat(review.rating || 5) + '☆'.repeat(5 - (review.rating || 5));
-                const isLocal = review.id && review.id.startsWith('local_');
+            reviewsList.innerHTML = reviews.map(review => {
+                const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                const sourceIcon = review.source === 'firebase' 
+                    ? '<i class="fas fa-cloud" style="margin-left: 5px; color: #28a745;" title="Synced online"></i>'
+                    : '<i class="fas fa-mobile-alt" style="margin-left: 5px; color: #666;" title="This device only"></i>';
                 
-                html += `
+                return `
                 <div class="review-card">
                     <div class="review-header">
                         <div>
-                            <div class="review-name">
-                                ${review.name || 'Anonymous'}
-                                ${isLocal ? '<span style="font-size: 0.8rem; color: #666; margin-left: 10px;"><i class="fas fa-mobile-alt"></i> This device</span>' : ''}
-                            </div>
-                            <div class="review-rating" style="color: #ffc107;">
-                                ${stars}
-                            </div>
+                            <div class="review-name">${review.name} ${sourceIcon}</div>
+                            <div class="review-rating" style="color: #ffc107;">${stars}</div>
                         </div>
-                        <div class="review-date">${review.date || 'Recently'}</div>
+                        <div class="review-date">${review.date}</div>
                     </div>
                     <p class="review-text">"${review.text}"</p>
                 </div>
                 `;
-            });
-            
-            reviewsList.innerHTML = html;
+            }).join('');
         }
     }
     
     function initForm() {
         const form = document.getElementById('review-form');
-        if (!form) {
-            console.error('Review form not found');
-            return;
-        }
+        if (!form) return;
         
-        // Initialize star rating
-        const starButtons = document.querySelectorAll('.star-btn');
-        starButtons.forEach((button) => {
-            button.addEventListener('click', function() {
-                selectedRating = parseInt(this.getAttribute('data-value'));
+        // Star rating
+        const stars = document.querySelectorAll('.star-btn');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.value);
                 document.getElementById('review-rating').value = selectedRating;
                 
-                // Update visual state
-                starButtons.forEach((star, index) => {
-                    if (index < selectedRating) {
-                        star.classList.add('active');
-                        star.style.color = '#ffc107';
-                    } else {
-                        star.classList.remove('active');
-                        star.style.color = '#ddd';
-                    }
+                stars.forEach((s, index) => {
+                    s.style.color = index < selectedRating ? '#ffc107' : '#ddd';
                 });
                 
-                // Update label
                 const labels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
-                const labelText = document.getElementById('rating-text');
-                if (labelText) {
-                    labelText.textContent = labels[selectedRating - 1] + '! ' + selectedRating + ' Stars';
-                }
+                document.getElementById('rating-text').textContent = 
+                    labels[selectedRating - 1] + '! ' + selectedRating + ' Stars';
             });
         });
         
@@ -3657,7 +3619,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 charCount.textContent = length;
                 if (length > 500) {
                     this.value = this.value.substring(0, 500);
-                    charCount.textContent = 500;
                 }
             });
         }
@@ -3666,150 +3627,84 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get form values
             const name = document.getElementById('review-name').value.trim();
             const email = document.getElementById('review-email').value.trim();
             const text = document.getElementById('review-text').value.trim();
             
-            // Validation
             if (!name || name.length < 2) {
-                alert('Please enter your name (at least 2 characters)');
+                alert('Please enter your name');
                 return;
             }
             
-            if (!validateEmail(email)) {
-                alert('Please enter a valid email address');
+            if (!email.includes('@')) {
+                alert('Please enter valid email');
                 return;
             }
             
             if (!text || text.length < 10) {
-                alert('Please write a review (at least 10 characters)');
+                alert('Please write a review (min 10 chars)');
                 return;
             }
             
-            // Disable submit button
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             
-            // Save the review
-            saveReview({
-                name: name,
-                email: email,
-                rating: selectedRating,
-                text: text
-            })
-            .then((result) => {
-                // Show success message
-                showSuccessMessage(result.message);
-                
-                // Reset form
-                form.reset();
-                if (charCount) charCount.textContent = '0';
-                
-                // Reset stars
-                selectedRating = 5;
-                document.getElementById('review-rating').value = '5';
-                starButtons.forEach((star, index) => {
-                    if (index < 5) {
-                        star.classList.add('active');
-                        star.style.color = '#ffc107';
-                    } else {
-                        star.classList.remove('active');
-                        star.style.color = '#ddd';
-                    }
+            saveReview({ name, email, rating: selectedRating, text })
+                .then(result => {
+                    alert(result.message);
+                    form.reset();
+                    charCount.textContent = '0';
+                    
+                    // Reset stars
+                    selectedRating = 5;
+                    document.getElementById('review-rating').value = '5';
+                    stars.forEach((s, index) => {
+                        s.style.color = index < 5 ? '#ffc107' : '#ddd';
+                    });
+                    document.getElementById('rating-text').textContent = 'Excellent! 5 Stars';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
                 });
-                
-                const labelText = document.getElementById('rating-text');
-                if (labelText) {
-                    labelText.textContent = 'Excellent! 5 Stars';
-                }
-                
-            })
-            .catch((error) => {
-                console.error('Save error:', error);
-                alert('Sorry, there was an error saving your review. Please try again.');
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            });
         });
     }
     
-    function showSuccessMessage(message) {
-        // Use existing success message div or create one
-        let successDiv = document.getElementById('success-message');
-        if (!successDiv) {
-            successDiv = document.createElement('div');
-            successDiv.id = 'success-message';
-            successDiv.style.cssText = `
-                background: #d4edda;
-                color: #155724;
-                padding: 15px;
-                border-radius: 5px;
-                margin: 15px 0;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            `;
-            
-            const form = document.getElementById('review-form');
-            form.parentNode.insertBefore(successDiv, form);
-        }
-        
-        successDiv.innerHTML = `
-            <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #28a745;"></i>
-            <div>
-                <strong>Thank you!</strong>
-                <p style="margin: 5px 0 0;">${message}</p>
-            </div>
-        `;
-        
-        successDiv.style.display = 'flex';
-        
-        // Hide after 5 seconds
-        setTimeout(() => {
-            successDiv.style.display = 'none';
-        }, 5000);
-    }
-    
     // ==================== HELPER FUNCTIONS ====================
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
-    
     function getCurrentDate() {
-        const now = new Date();
-        return now.toLocaleDateString('en-US', {
+        return new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
         });
     }
     
-    // ==================== INITIALIZE SYSTEM ====================
+    // ==================== INITIALIZE ====================
     function init() {
-        console.log('Initializing reviews system...');
+        console.log('Initializing...');
         
-        // Initialize Firebase
-        const firebaseInitialized = initializeFirebase();
+        // Remove debug script if present
+        const debugScript = document.querySelector('script[src*="firebase"] + script');
+        if (debugScript && debugScript.textContent.includes('DebugApp')) {
+            debugScript.remove();
+            console.log('Removed debug script');
+        }
         
-        // Initialize form
+        initFirebase();
         initForm();
         
-        // Load reviews with delay
         setTimeout(() => {
             loadReviews();
         }, 1000);
         
-        console.log('✅ Reviews system initialized');
-        console.log('Firebase initialized:', firebaseInitialized);
+        console.log('✅ System ready');
     }
     
-    // Start the system
     init();
 });
 </script>
