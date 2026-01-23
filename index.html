@@ -3451,6 +3451,38 @@ input:valid, textarea:valid, select:valid {
 .contact-info .btn i {
     margin-right: 8px;
 }
+         #whatsapp-booking-form input:focus,
+#whatsapp-booking-form select:focus,
+#whatsapp-booking-form textarea:focus {
+    outline: none;
+    border-color: #25D366 !important;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1) !important;
+    transform: translateY(-1px) !important;
+}
+
+#whatsapp-booking-form button[type="submit"] {
+    transition: all 0.3s ease !important;
+}
+
+#whatsapp-booking-form button[type="submit"]:hover {
+    background: #128C7E !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4) !important;
+}
+
+#whatsapp-booking-form button[type="submit"]:active {
+    transform: translateY(0) !important;
+}
+
+/* Animation for status message */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#whatsapp-status {
+    animation: fadeIn 0.3s ease;
+}
 
 
     </style>
@@ -4455,7 +4487,6 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </section>
 
-    <!-- Contact Section -->
 <section class="contact" id="contact">
     <div class="container">
         <div class="section-title">
@@ -4534,85 +4565,97 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             
             <!-- WhatsApp Booking Form -->
-<div class="contact-info">
-    <h3>Book Appointment via WhatsApp</h3>
-    <p>Fill details below and send directly to WhatsApp for fastest response</p>
-    
-    <!-- Status Message -->
-    <div id="booking-status" style="display: none; padding: 15px; border-radius: 8px; margin: 15px 0;"></div>
-    
-    <form id="whatsapp-booking-form">
-        <!-- Name Field -->
-        <div style="margin-bottom: 15px;">
-            <input type="text" id="client-name" placeholder="Your Full Name *" required 
-                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
+            <div class="contact-info">
+                <h3><i class="fab fa-whatsapp" style="color: #25D366;"></i> Book Appointment</h3>
+                <p>Fill details below to send directly via WhatsApp</p>
+                
+                <!-- Success Message -->
+                <div id="whatsapp-status" style="display: none; background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: center;">
+                    <i class="fab fa-whatsapp"></i> WhatsApp is opening! Please send the message to complete booking.
+                </div>
+                
+                <!-- WhatsApp Booking Form -->
+                <form id="whatsapp-booking-form">
+                    <!-- Name Field -->
+                    <div style="margin-bottom: 15px;">
+                        <input type="text" id="client-name" placeholder="Your Full Name *" required 
+                               style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
+                    </div>
+                    
+                    <!-- Phone Field -->
+                    <div style="margin-bottom: 15px;">
+                        <input type="tel" id="client-phone" placeholder="Phone Number (e.g., 0742 017 575) *" required 
+                               style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
+                    </div>
+                    
+                    <!-- Branch Selection -->
+                    <div style="margin-bottom: 15px;">
+                        <select id="client-branch" required 
+                                style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
+                            <option value="">Select Preferred Branch *</option>
+                            <option value="Kampala (Wilson Street)">Kampala Branch (Wilson Street)</option>
+                            <option value="Mbarara (Town)">Mbarara Branch (Town Location)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Treatment Selection -->
+                    <div style="margin-bottom: 15px;">
+                        <select id="client-treatment"
+                                style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
+                            <option value="">Select Treatment (Optional)</option>
+                            <option value="Weight Loss & Body Contouring">Weight Loss & Body Contouring</option>
+                            <option value="Hair Growth Treatment">Hair Growth Treatment</option>
+                            <option value="Skin Rejuvenation">Skin Rejuvenation</option>
+                            <option value="Skin Correction">Skin Correction</option>
+                            <option value="Consultation">General Consultation</option>
+                            <option value="Other">Other Treatment</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Message -->
+                    <div style="margin-bottom: 20px;">
+                        <textarea id="client-message" placeholder="Briefly describe your skin concern or desired treatment..." rows="4"
+                                  style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" style="width: 100%; background: #25D366; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <i class="fab fa-whatsapp"></i> SEND BOOKING VIA WHATSAPP
+                    </button>
+                    
+                    <div style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem;">
+                        <p><i class="fas fa-info-circle"></i> WhatsApp opens with pre-filled message. Just click send!</p>
+                    </div>
+                </form>
+                
+                <!-- Backup WhatsApp Link -->
+                <div id="whatsapp-backup-link" style="display: none; margin-top: 20px; text-align: center;">
+                    <a id="whatsapp-direct-link" target="_blank" 
+                       style="background: #25D366; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fab fa-whatsapp"></i> Click here if WhatsApp didn't open
+                    </a>
+                </div>
+                
+                <!-- Direct Quick Links -->
+                <div style="margin-top: 30px;">
+                    <p style="color: var(--text-light); margin-bottom: 15px; text-align: center;">Quick Book:</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%0A%0AI%20want%20to%20book%20a%20weight%20loss%20appointment.%0A%0APlease%20advise%20on%20available%20slots." 
+                           target="_blank" class="btn" style="background: var(--primary); padding: 10px 20px;">
+                            <i class="fas fa-weight"></i> Weight Loss
+                        </a>
+                        <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%0A%0AI%20want%20to%20book%20a%20hair%20growth%20appointment.%0A%0APlease%20advise%20on%20available%20slots." 
+                           target="_blank" class="btn" style="background: var(--dark-accent); padding: 10px 20px;">
+                            <i class="fas fa-spa"></i> Hair Growth
+                        </a>
+                        <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%0A%0AI%20want%20to%20book%20a%20skin%20consultation.%0A%0APlease%20advise%20on%20available%20slots." 
+                           target="_blank" class="btn" style="background: var(--accent); padding: 10px 20px;">
+                            <i class="fas fa-user-md"></i> Consultation
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <!-- Phone Field -->
-        <div style="margin-bottom: 15px;">
-            <input type="tel" id="client-phone" placeholder="Phone Number (e.g., 0742 017 575) *" required 
-                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
-        </div>
-        
-        <!-- Branch Selection -->
-        <div style="margin-bottom: 15px;">
-            <select id="client-branch" required 
-                    style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
-                <option value="">Select Preferred Branch *</option>
-                <option value="Kampala">Kampala Branch (Wilson Street)</option>
-                <option value="Mbarara">Mbarara Branch (Town Location)</option>
-            </select>
-        </div>
-        
-        <!-- Treatment Selection -->
-        <div style="margin-bottom: 15px;">
-            <select id="client-treatment"
-                    style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
-                <option value="">Select Treatment (Optional)</option>
-                <option value="Weight Loss & Body Contouring">Weight Loss & Body Contouring</option>
-                <option value="Hair Growth Treatment">Hair Growth Treatment</option>
-                <option value="Skin Rejuvenation">Skin Rejuvenation</option>
-                <option value="Skin Correction">Skin Correction</option>
-                <option value="Consultation">General Consultation</option>
-                <option value="Other">Other Treatment</option>
-            </select>
-        </div>
-        
-        <!-- Message -->
-        <div style="margin-bottom: 20px;">
-            <textarea id="client-message" placeholder="Briefly describe your skin concern or desired treatment..." rows="4"
-                      style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s; resize: vertical;"></textarea>
-        </div>
-        
-        <!-- Submit Button -->
-        <button type="submit" class="btn" style="width: 100%; background: #25D366; font-size: 1.1rem; padding: 15px;">
-            <i class="fab fa-whatsapp"></i> Send Booking Request via WhatsApp
-        </button>
-        
-        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem;">
-            <p><i class="fas fa-info-circle"></i> WhatsApp opens with pre-filled message. Just click send!</p>
-        </div>
-    </form>
-    
-    <!-- Direct Quick Links -->
-    <div style="margin-top: 30px;">
-        <p style="color: var(--text-light); margin-bottom: 15px; text-align: center;">Quick Book:</p>
-        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20a%20weight%20loss%20appointment" 
-               target="_blank" class="btn" style="background: var(--primary); padding: 10px 20px;">
-                <i class="fas fa-weight"></i> Weight Loss
-            </a>
-            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20a%20hair%20growth%20appointment" 
-               target="_blank" class="btn" style="background: var(--dark-accent); padding: 10px 20px;">
-                <i class="fas fa-spa"></i> Hair Growth
-            </a>
-            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20a%20skin%20consultation" 
-               target="_blank" class="btn" style="background: var(--accent); padding: 10px 20px;">
-                <i class="fas fa-user-md"></i> Consultation
-            </a>
-        </div>
-    </div>
-</div>
     </div>
 </section>
 
@@ -5029,187 +5072,156 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-<!-- WhatsApp Booking Form - COMPLETE WORKING VERSION -->
-<div class="contact-info">
-    <h3><i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp Booking</h3>
-    <p>Fill form and click button to open WhatsApp with your details</p>
-    
-    <!-- Success Message -->
-    <div id="success-message" style="display: none; background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin: 15px 0;">
-        ✅ WhatsApp opening! Please send the message to complete booking.
-    </div>
-    
-    <!-- WhatsApp Booking Form -->
-    <form id="whatsapp-form" onsubmit="return submitWhatsAppForm()">
-        <!-- Name -->
-        <div style="margin-bottom: 15px;">
-            <input type="text" id="name" placeholder="Your Full Name *" required 
-                   style="width: 100%; padding: 12px; border: 2px solid #25D366; border-radius: 8px; font-size: 1rem;">
-        </div>
-        
-        <!-- Phone -->
-        <div style="margin-bottom: 15px;">
-            <input type="tel" id="phone" placeholder="Phone Number *" required 
-                   style="width: 100%; padding: 12px; border: 2px solid #25D366; border-radius: 8px; font-size: 1rem;">
-        </div>
-        
-        <!-- Branch -->
-        <div style="margin-bottom: 15px;">
-            <select id="branch" required 
-                    style="width: 100%; padding: 12px; border: 2px solid #25D366; border-radius: 8px; font-size: 1rem;">
-                <option value="">Select Branch *</option>
-                <option value="Kampala (Wilson Street)">Kampala (Wilson Street)</option>
-                <option value="Mbarara (Town)">Mbarara (Town)</option>
-            </select>
-        </div>
-        
-        <!-- Treatment -->
-        <div style="margin-bottom: 15px;">
-            <select id="treatment"
-                    style="width: 100%; padding: 12px; border: 2px solid #25D366; border-radius: 8px; font-size: 1rem;">
-                <option value="">Select Treatment</option>
-                <option value="Weight Loss">Weight Loss</option>
-                <option value="Hair Growth">Hair Growth</option>
-                <option value="Skin Rejuvenation">Skin Rejuvenation</option>
-                <option value="Body Contouring">Body Contouring</option>
-                <option value="Skin Correction">Skin Correction</option>
-            </select>
-        </div>
-        
-        <!-- Message -->
-        <div style="margin-bottom: 20px;">
-            <textarea id="message" placeholder="Your message (optional)" rows="3"
-                      style="width: 100%; padding: 12px; border: 2px solid #25D366; border-radius: 8px; font-size: 1rem;"></textarea>
-        </div>
-        
-        <!-- Submit Button -->
-        <button type="submit" 
-                style="width: 100%; background: #25D366; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer;">
-            <i class="fab fa-whatsapp"></i> OPEN WHATSAPP TO SEND
-        </button>
-    </form>
-    
-    <!-- WhatsApp will open here -->
-    <div id="whatsapp-link" style="display: none; margin-top: 20px; text-align: center;">
-        <a id="whatsapp-btn" target="_blank" 
-           style="background: #25D366; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-size: 1.1rem; display: inline-block;">
-            <i class="fab fa-whatsapp"></i> Click here if WhatsApp didn't open
-        </a>
-    </div>
-    
-    <!-- Quick Book Buttons -->
-    <div style="margin-top: 30px; text-align: center;">
-        <p>Quick Book:</p>
-        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-            <!-- Weight Loss -->
-            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%0A%0AI%20want%20to%20book%20a%20weight%20loss%20appointment.%0A%0APlease%20advise%20on%20available%20slots." 
-               target="_blank" 
-               style="background: var(--primary); color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
-                <i class="fas fa-weight"></i> Weight Loss
-            </a>
-            
-            <!-- Hair Growth -->
-            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%0A%0AI%20want%20to%20book%20a%20hair%20growth%20appointment.%0A%0APlease%20advise%20on%20available%20slots." 
-               target="_blank" 
-               style="background: var(--dark-accent); color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
-                <i class="fas fa-spa"></i> Hair Growth
-            </a>
-            
-            <!-- Consultation -->
-            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%0A%0AI%20want%20to%20book%20a%20consultation%20appointment.%0A%0APlease%20advise%20on%20available%20slots." 
-               target="_blank" 
-               style="background: var(--accent); color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
-                <i class="fas fa-user-md"></i> Consultation
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript -->
+<!-- WhatsApp Booking JavaScript -->
 <script>
-// Function to handle form submission
-function submitWhatsAppForm() {
-    // Get form values
-    const name = document.getElementById('name').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const branch = document.getElementById('branch').value;
-    const treatment = document.getElementById('treatment').value;
-    const message = document.getElementById('message').value.trim();
+// WhatsApp Booking Form Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const whatsappForm = document.getElementById('whatsapp-booking-form');
+    const whatsappStatus = document.getElementById('whatsapp-status');
+    const whatsappBackupLink = document.getElementById('whatsapp-backup-link');
+    const whatsappDirectLink = document.getElementById('whatsapp-direct-link');
     
-    // Validate
-    if (!name || !phone || !branch) {
-        alert('Please fill in all required fields');
-        return false;
+    if (!whatsappForm) {
+        console.error('WhatsApp form not found');
+        return;
     }
     
-    // Create WhatsApp message
-    let whatsappMessage = `Hello Dr Roy Skincare,\n\n`;
-    whatsappMessage += `I want to book an appointment:\n\n`;
-    whatsappMessage += `👤 Name: ${name}\n`;
-    whatsappMessage += `📱 Phone: ${phone}\n`;
-    whatsappMessage += `📍 Branch: ${branch}\n`;
+    console.log('WhatsApp form loaded successfully');
     
-    if (treatment) {
-        whatsappMessage += `💆 Treatment: ${treatment}\n`;
-    }
-    
-    if (message) {
-        whatsappMessage += `💬 Message: ${message}\n`;
-    }
-    
-    whatsappMessage += `\nPlease advise on available slots.`;
-    
-    // Encode message for URL
-    const encodedMessage = encodeURIComponent(whatsappMessage);
-    const whatsappUrl = `https://wa.me/256742017575?text=${encodedMessage}`;
-    
-    // Show success message
-    document.getElementById('success-message').style.display = 'block';
-    
-    // Show WhatsApp link as backup
-    const whatsappBtn = document.getElementById('whatsapp-btn');
-    whatsappBtn.href = whatsappUrl;
-    document.getElementById('whatsapp-link').style.display = 'block';
-    
-    // Open WhatsApp immediately
-    setTimeout(() => {
+    // Handle form submission
+    whatsappForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('Form submit triggered');
+        
+        // Get form values
+        const name = document.getElementById('client-name').value.trim();
+        const phone = document.getElementById('client-phone').value.trim();
+        const branch = document.getElementById('client-branch').value;
+        const treatment = document.getElementById('client-treatment').value;
+        const message = document.getElementById('client-message').value.trim();
+        
+        // Validate
+        if (!name) {
+            alert('❌ Please enter your name');
+            document.getElementById('client-name').focus();
+            return false;
+        }
+        
+        if (!phone) {
+            alert('❌ Please enter your phone number');
+            document.getElementById('client-phone').focus();
+            return false;
+        }
+        
+        if (!branch) {
+            alert('❌ Please select a branch');
+            document.getElementById('client-branch').focus();
+            return false;
+        }
+        
+        // Clean phone number
+        let cleanPhone = phone.replace(/\s+/g, '').replace(/[^\d+]/g, '');
+        if (cleanPhone.startsWith('0')) {
+            cleanPhone = '+256' + cleanPhone.substring(1);
+        }
+        
+        // Create WhatsApp message
+        let whatsappMessage = `Hello Dr Roy Skincare,\n\n`;
+        whatsappMessage += `I want to book an appointment:\n\n`;
+        whatsappMessage += `👤 Name: ${name}\n`;
+        whatsappMessage += `📱 Phone: ${cleanPhone}\n`;
+        whatsappMessage += `📍 Branch: ${branch}\n`;
+        
+        if (treatment) {
+            whatsappMessage += `💆 Treatment: ${treatment}\n`;
+        }
+        
+        if (message) {
+            whatsappMessage += `💬 Message: ${message}\n`;
+        }
+        
+        whatsappMessage += `\nPlease advise on available slots.`;
+        
+        // Encode message for URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        const whatsappUrl = `https://wa.me/256742017575?text=${encodedMessage}`;
+        
+        // Show status message
+        whatsappStatus.style.display = 'block';
+        whatsappStatus.innerHTML = `<i class="fab fa-whatsapp"></i> Opening WhatsApp...`;
+        
+        // Set backup link
+        if (whatsappDirectLink) {
+            whatsappDirectLink.href = whatsappUrl;
+        }
+        if (whatsappBackupLink) {
+            whatsappBackupLink.style.display = 'block';
+        }
+        
+        // Open WhatsApp
         openWhatsApp(whatsappUrl);
-    }, 500);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-        document.getElementById('whatsapp-form').reset();
-        document.getElementById('success-message').style.display = 'none';
-    }, 3000);
-    
-    return false; // Prevent default form submission
-}
+        
+        // Reset form after 5 seconds
+        setTimeout(() => {
+            whatsappForm.reset();
+            whatsappStatus.style.display = 'none';
+            if (whatsappBackupLink) {
+                whatsappBackupLink.style.display = 'none';
+            }
+        }, 5000);
+        
+        return false;
+    });
+});
 
 // Function to open WhatsApp
 function openWhatsApp(url) {
-    // Method 1: Try to open in new tab
-    const newWindow = window.open(url, '_blank');
+    console.log('Opening WhatsApp:', url);
     
-    // If blocked or failed, show instructions
-    setTimeout(() => {
-        if (!newWindow || newWindow.closed) {
-            alert('Popup blocked! Please click the WhatsApp button below.');
+    // Try different methods based on device
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // For mobile - use window.location.href (most reliable)
+        window.location.href = url;
+    } else {
+        // For desktop - try new window
+        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+        
+        // If popup blocked, show instructions
+        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+            alert('📱 If WhatsApp didn\'t open automatically:\n\n1. Click the backup link below\n2. Or copy this number: 0742 017 575\n3. Open WhatsApp manually and send your message');
         }
-    }, 1000);
+    }
 }
 
-// Quick test function
-function testWhatsApp() {
-    const testUrl = 'https://wa.me/256742017575?text=Test%20message%20from%20website';
-    window.open(testUrl, '_blank');
+// Test function (optional - remove in production)
+function testWhatsAppBooking() {
+    const testUrl = 'https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare%2C%0A%0AI%20want%20to%20test%20the%20WhatsApp%20booking%20system.%0A%0APlease%20confirm%20this%20is%20working.';
+    openWhatsApp(testUrl);
+}
+
+// Add test button (remove in production)
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    const testBtn = document.createElement('button');
+    testBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Test WhatsApp';
+    testBtn.style.position = 'fixed';
+    testBtn.style.bottom = '70px';
+    testBtn.style.right = '10px';
+    testBtn.style.zIndex = '9999';
+    testBtn.style.padding = '10px 15px';
+    testBtn.style.background = '#25D366';
+    testBtn.style.color = 'white';
+    testBtn.style.border = 'none';
+    testBtn.style.borderRadius = '5px';
+    testBtn.style.cursor = 'pointer';
+    testBtn.style.boxShadow = '0 4px 12px rgba(37, 211, 102, 0.3)';
+    testBtn.onclick = testWhatsAppBooking;
+    document.body.appendChild(testBtn);
 }
 </script>
-
-<!-- Test Button (remove in production) -->
-<button onclick="testWhatsApp()" 
-        style="position: fixed; bottom: 10px; right: 10px; z-index: 9999; padding: 10px; background: #25D366; color: white; border: none; border-radius: 5px;">
-    🔧 Test WhatsApp
-</button>
 </script>
 </body>
 </html>
