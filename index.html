@@ -3396,6 +3396,85 @@ input:valid, textarea:valid, select:valid {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+        
+/* WhatsApp Form Styling */
+#whatsapp-booking-form input,
+#whatsapp-booking-form select,
+#whatsapp-booking-form textarea {
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+#whatsapp-booking-form input:focus,
+#whatsapp-booking-form select:focus,
+#whatsapp-booking-form textarea:focus {
+    outline: none;
+    border-color: #25D366;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+    transform: translateY(-1px);
+}
+
+#whatsapp-booking-form button[type="submit"] {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+#whatsapp-booking-form button[type="submit"]:hover {
+    background: linear-gradient(135deg, #128C7E, #25D366);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+}
+
+#whatsapp-booking-form button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Form Labels */
+#whatsapp-booking-form div {
+    position: relative;
+}
+
+#whatsapp-booking-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+/* Status Message Animation */
+#booking-status {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Quick Links */
+.contact-info .btn {
+    min-width: 120px;
+    text-align: center;
+    padding: 10px 15px;
+    margin: 5px;
+}
+
+.contact-info .btn i {
+    margin-right: 8px;
+}
+
 
     </style>
 </head>
@@ -4477,72 +4556,86 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             
-            <div class="contact-info">
-    <h3>Book an Appointment</h3>
-    <p>Fill the form below or contact us directly</p>
+            <!-- WhatsApp Booking Form -->
+<div class="contact-info">
+    <h3>Book Appointment via WhatsApp</h3>
+    <p>Fill details below and send directly to WhatsApp for fastest response</p>
     
-    <!-- WhatsApp Quick Book -->
-    <div style="background: #25D366; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-        <i class="fab fa-whatsapp" style="font-size: 2rem; color: white; margin-bottom: 10px;"></i>
-        <h4 style="color: white; margin: 10px 0;">Fast WhatsApp Booking</h4>
-        <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20an%20appointment" 
-           target="_blank" 
-           style="background: white; color: #25D366; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block;">
-            <i class="fab fa-whatsapp"></i> Book via WhatsApp
-        </a>
-    </div>
+    <!-- Status Message -->
+    <div id="booking-status" style="display: none; padding: 15px; border-radius: 8px; margin: 15px 0;"></div>
     
-    <!-- Email Form -->
-    <div id="form-message" style="display: none; padding: 15px; margin: 15px 0; border-radius: 8px;"></div>
-    
-    <form id="appointment-form">
+    <form id="whatsapp-booking-form">
         <!-- Name Field -->
         <div style="margin-bottom: 15px;">
             <input type="text" id="client-name" placeholder="Your Full Name *" required 
-                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
         </div>
         
-        <!-- Email Field (NEW) -->
+        <!-- Phone Field -->
         <div style="margin-bottom: 15px;">
-            <input type="email" id="client-email" placeholder="Email Address *" required 
-                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-        </div>
-        
-        <!-- Optional Phone Field -->
-        <div style="margin-bottom: 15px;">
-            <input type="tel" id="client-phone" placeholder="Phone Number (Optional, e.g., 0742 017 575)" 
-                   style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+            <input type="tel" id="client-phone" placeholder="Phone Number (e.g., 0742 017 575) *" required 
+                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
         </div>
         
         <!-- Branch Selection -->
         <div style="margin-bottom: 15px;">
-            <select id="client-branch" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-                <option value="">Select Branch *</option>
-                <option value="kampala">Kampala Branch (Wilson Street)</option>
-                <option value="mbarara">Mbarara Branch (Town Location)</option>
+            <select id="client-branch" required 
+                    style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
+                <option value="">Select Preferred Branch *</option>
+                <option value="Kampala">Kampala Branch (Wilson Street)</option>
+                <option value="Mbarara">Mbarara Branch (Town Location)</option>
+            </select>
+        </div>
+        
+        <!-- Treatment Selection -->
+        <div style="margin-bottom: 15px;">
+            <select id="client-treatment"
+                    style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s;">
+                <option value="">Select Treatment (Optional)</option>
+                <option value="Weight Loss & Body Contouring">Weight Loss & Body Contouring</option>
+                <option value="Hair Growth Treatment">Hair Growth Treatment</option>
+                <option value="Skin Rejuvenation">Skin Rejuvenation</option>
+                <option value="Skin Correction">Skin Correction</option>
+                <option value="Consultation">General Consultation</option>
+                <option value="Other">Other Treatment</option>
             </select>
         </div>
         
         <!-- Message -->
         <div style="margin-bottom: 20px;">
-            <textarea id="client-message" placeholder="Tell us about your skin concern or treatment interest..." rows="4" 
-                      style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;"></textarea>
+            <textarea id="client-message" placeholder="Briefly describe your skin concern or desired treatment..." rows="4"
+                      style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s; resize: vertical;"></textarea>
         </div>
         
-        <button type="submit" id="submit-btn" class="btn" style="width: 100%;">
-            <i class="fas fa-paper-plane"></i> Send Appointment Request via Email
+        <!-- Submit Button -->
+        <button type="submit" class="btn" style="width: 100%; background: #25D366; font-size: 1.1rem; padding: 15px;">
+            <i class="fab fa-whatsapp"></i> Send Booking Request via WhatsApp
         </button>
+        
+        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem;">
+            <p><i class="fas fa-info-circle"></i> WhatsApp opens with pre-filled message. Just click send!</p>
+        </div>
     </form>
     
-    <!-- Alternative Contact -->
-    <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 1px solid #eee;">
-        <p style="color: var(--text-light); margin-bottom: 15px;">Prefer to call?</p>
-        <a href="tel:+256742017575" class="btn" style="background: #34A853;">
-            <i class="fas fa-phone"></i> Call Now: 0742 017 575
-        </a>
+    <!-- Direct Quick Links -->
+    <div style="margin-top: 30px;">
+        <p style="color: var(--text-light); margin-bottom: 15px; text-align: center;">Quick Book:</p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20a%20weight%20loss%20appointment" 
+               target="_blank" class="btn" style="background: var(--primary); padding: 10px 20px;">
+                <i class="fas fa-weight"></i> Weight Loss
+            </a>
+            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20a%20hair%20growth%20appointment" 
+               target="_blank" class="btn" style="background: var(--dark-accent); padding: 10px 20px;">
+                <i class="fas fa-spa"></i> Hair Growth
+            </a>
+            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20a%20skin%20consultation" 
+               target="_blank" class="btn" style="background: var(--accent); padding: 10px 20px;">
+                <i class="fas fa-user-md"></i> Consultation
+            </a>
+        </div>
     </div>
 </div>
-        </div>
     </div>
 </section>
 
@@ -4959,150 +5052,129 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-<<script>
+<script>
+// WhatsApp Booking Form Handler
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📧 Contact form initialized with email');
+    console.log('📱 WhatsApp booking form loaded');
     
-    const form = document.getElementById('appointment-form');
+    const form = document.getElementById('whatsapp-booking-form');
+    const statusDiv = document.getElementById('booking-status');
+    
     if (!form) {
         console.error('Form not found');
         return;
     }
     
-    form.addEventListener('submit', async function(e) {
+    // Helper function to show status
+    function showStatus(message, type = 'success') {
+        if (!statusDiv) return;
+        
+        statusDiv.textContent = message;
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = type === 'success' ? '#d4edda' : 
+                                    type === 'error' ? '#f8d7da' : '#fff3cd';
+        statusDiv.style.color = type === 'success' ? '#155724' : 
+                               type === 'error' ? '#721c24' : '#856404';
+        statusDiv.style.border = type === 'success' ? '1px solid #c3e6cb' : 
+                                type === 'error' ? '1px solid #f5c6cb' : '1px solid #ffeaa7';
+        
+        setTimeout(() => {
+            statusDiv.style.display = 'none';
+        }, 5000);
+    }
+    
+    // Form submit handler
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Get values
+        // Get form values
         const name = document.getElementById('client-name').value.trim();
-        const email = document.getElementById('client-email').value.trim();
         const phone = document.getElementById('client-phone').value.trim();
         const branch = document.getElementById('client-branch').value;
+        const treatment = document.getElementById('client-treatment').value;
         const message = document.getElementById('client-message').value.trim();
         
-        // Validate
-        if (!name) {
-            alert('Please enter your full name');
+        // Basic validation
+        if (!name || name.length < 2) {
+            showStatus('Please enter your full name (min 2 characters)', 'error');
+            document.getElementById('client-name').focus();
             return;
         }
         
-        if (!email || !email.includes('@') || !email.includes('.')) {
-            alert('Please enter a valid email address');
+        if (!phone || phone.replace(/\D/g, '').length < 9) {
+            showStatus('Please enter a valid phone number (at least 9 digits)', 'error');
+            document.getElementById('client-phone').focus();
             return;
         }
         
         if (!branch) {
-            alert('Please select your preferred branch');
+            showStatus('Please select your preferred branch', 'error');
+            document.getElementById('client-branch').focus();
             return;
         }
         
-        // Show loading
-        const submitBtn = document.getElementById('submit-btn');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Email...';
+        // Create WhatsApp message
+        let whatsappMessage = `Hello Dr Roy Skincare,\n\n`;
+        whatsappMessage += `I want to book an appointment:\n\n`;
+        whatsappMessage += `👤 *Name:* ${name}\n`;
+        whatsappMessage += `📱 *Phone:* ${phone}\n`;
+        whatsappMessage += `📍 *Preferred Branch:* ${branch}\n`;
         
-        try {
-            console.log('📧 Sending email via EmailJS...');
+        if (treatment) {
+            whatsappMessage += `💆 *Treatment Interest:* ${treatment}\n`;
+        }
+        
+        if (message) {
+            whatsappMessage += `💬 *Message:* ${message}\n`;
+        }
+        
+        whatsappMessage += `\n📅 *Request Date:* ${new Date().toLocaleDateString()}`;
+        whatsappMessage += `\n🕒 *Request Time:* ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        
+        // Encode for URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        const whatsappUrl = `https://wa.me/256742017575?text=${encodedMessage}`;
+        
+        // Show loading message
+        showStatus('Opening WhatsApp with your booking details...', 'success');
+        
+        // Open WhatsApp
+        const whatsappWindow = window.open(whatsappUrl, '_blank');
+        
+        // If window opens successfully
+        if (whatsappWindow) {
+            // Reset form after successful submission
+            setTimeout(() => {
+                form.reset();
+                showStatus('✅ WhatsApp opened! Please send the pre-filled message to complete your booking.', 'success');
+            }, 1000);
+        } else {
+            // If popup blocked, show instructions
+            showStatus('Popup blocked! Please allow popups or manually open WhatsApp and send this message:\n\n' + whatsappMessage, 'error');
             
-            const templateParams = {
-                to_name: 'Dr Roy Skincare Team',
-                from_name: name,
-                from_email: email,  // Using email now!
-                phone_number: phone || 'Not provided',
-                branch: branch === 'kampala' ? 'Kampala Branch (Wilson Street)' : 'Mbarara Branch',
-                message: message || 'No additional message provided',
-                date: new Date().toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                }),
-                time: new Date().toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: true 
-                })
-            };
-            
-            console.log('Email data:', templateParams);
-            
-            // Send email via EmailJS
-            const response = await emailjs.send(
-                'service_fef1c5d',  // Your EmailJS service ID
-                'template_qf4aw5j', // Your EmailJS template ID
-                templateParams
-            );
-            
-            console.log('✅ Email sent successfully:', response);
-            
-            // Success message
-            alert(`✅ Thank you ${name}!\n\nYour appointment request has been sent to drroyskincare@gmail.com.\nWe will respond to you at ${email} within 24 hours.`);
-            
-            // Reset form
-            form.reset();
-            
-        } catch (emailError) {
-            console.error('❌ Email failed:', emailError);
-            
-            // Fallback options
-            const whatsappText = `Hello Dr Roy Skincare,\n\nI tried to email but it failed.\n\n👤 Name: ${name}\n📧 Email: ${email}\n📱 Phone: ${phone || 'Not provided'}\n📍 Branch: ${branch === 'kampala' ? 'Kampala' : 'Mbarara'}\n💬 Message: ${message || 'No message'}`;
-            const encodedText = encodeURIComponent(whatsappText);
-            const whatsappUrl = `https://wa.me/256742017575?text=${encodedText}`;
-            
-            const userChoice = confirm(
-                'Email service is temporarily unavailable.\n\nChoose an option:\n\nOK → Book via WhatsApp\nCancel → Copy contact details'
-            );
-            
-            if (userChoice) {
-                // Open WhatsApp
-                window.open(whatsappUrl, '_blank');
-                alert('WhatsApp opened! Please send the pre-filled message.');
-            } else {
-                // Copy contact info to clipboard
-                const contactInfo = `Dr Roy Skincare Contact:\n📧 Email: drroyskincare@gmail.com\n📱 Phone/WhatsApp: 0742 017 575\n📍 Kampala: Wilson Street\n📍 Mbarara: Town Location`;
-                
-                navigator.clipboard.writeText(contactInfo)
-                    .then(() => {
-                        alert('Contact details copied to clipboard! Paste them somewhere safe.');
-                    })
-                    .catch(() => {
-                        alert('Contact us directly:\n📧 drroyskincare@gmail.com\n📱 0742 017 575');
-                    });
-            }
-            
-        } finally {
-            // Reset button
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
+            // Copy to clipboard as fallback
+            navigator.clipboard.writeText(whatsappMessage).then(() => {
+                alert('📋 Booking details copied to clipboard! You can paste them into WhatsApp.');
+            });
         }
     });
-});
-
-// Email Test Function
-window.testEmailJS = function() {
-    console.log('Testing EmailJS with email...');
     
-    const testParams = {
-        to_name: 'Dr Roy Test',
-        from_name: 'Test Client',
-        from_email: 'test@example.com',
-        phone_number: '0742000000',
-        branch: 'Test Branch',
-        message: 'This is a test from the website form to verify emails work.',
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString()
-    };
-    
-    emailjs.send('service_fef1c5d', 'template_qf4aw5j', testParams)
-        .then(function(response) {
-            alert('✅ Email test successful!\nCheck: 1. Your EmailJS dashboard\n2. drroyskincare@gmail.com inbox');
-            console.log('Test success:', response);
-        })
-        .catch(function(error) {
-            alert('❌ Email test failed!\nError: ' + (error.text || error.message));
-            console.error('Test error:', error);
+    // Add focus effects
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.style.borderColor = '#25D366';
+            this.style.boxShadow = '0 0 0 3px rgba(37, 211, 102, 0.1)';
         });
-};
+        
+        input.addEventListener('blur', function() {
+            this.style.borderColor = '#ddd';
+            this.style.boxShadow = 'none';
+        });
+    });
+    
+    console.log('✅ WhatsApp form ready');
+});
 </script>
 </script>
 </body>
