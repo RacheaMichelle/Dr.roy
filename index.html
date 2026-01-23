@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <!-- SEO Meta Tags -->
     <meta name="description" content="Dr Roy Skincare - Professional dermatology & aesthetic clinic in Uganda. Specialized treatments for melanin-rich skin, including weight loss, hair growth, and skin rejuvenation.">
     <meta name="keywords" content="skincare Uganda, dermatology Kampala, skin treatments Uganda, hair growth treatment, weight loss clinic, African skincare, melanin-rich skin care, Dr Roy Skincare, skin clinic Kampala, dermatologist Uganda">
@@ -147,8 +148,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    
     <!-- EmailJS -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    // Initialize EmailJS with YOUR PUBLIC KEY
+    (function() {
+        emailjs.init("k7NxkfEC3DngxJ291");
+        console.log("✅ EmailJS initialized with Public Key: k7NxkfEC3DngxJ291");
+    })();
+</script>
     
     <!-- Additional SEO Meta -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -4884,17 +4893,14 @@ if (document.readyState === 'loading') {
     });
 }
 <script>
-// ==================== SIMPLE WORKING CONTACT FORM ====================
-
-// Initialize EmailJS ONCE
-emailjs.init('k7NxkfEC3DngxJ291');
+// ==================== WORKING CONTACT FORM ====================
 
 // Show message function
 function showMessage(text, type) {
     const formMessage = document.getElementById('form-message');
     if (!formMessage) return;
     
-    formMessage.textContent = text;
+    formMessage.innerHTML = text;
     formMessage.style.display = 'block';
     formMessage.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
     formMessage.style.color = type === 'success' ? '#155724' : '#721c24';
@@ -4903,7 +4909,6 @@ function showMessage(text, type) {
     formMessage.style.borderRadius = '8px';
     formMessage.style.margin = '15px 0';
     
-    // Auto-hide after 8 seconds
     setTimeout(() => {
         formMessage.style.display = 'none';
     }, 8000);
@@ -4947,12 +4952,12 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         
         try {
-            // Prepare email data
+            // Prepare email data - NOTE: using 'from_email' for phone since template expects it
             const templateParams = {
                 to_name: 'Dr Roy Skincare Team',
                 from_name: name,
-                from_phone: phone,
-                branch: branch === 'kampala' ? 'Kampala Branch' : 'Mbarara Branch',
+                from_email: phone,  // This is actually phone number, but template expects 'from_email'
+                branch: branch === 'kampala' ? 'Kampala Branch (Wilson Street)' : 'Mbarara Branch',
                 message: message || 'No additional message provided',
                 date: new Date().toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -4967,30 +4972,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             };
             
-            console.log('Sending email:', templateParams);
+            console.log('Sending with params:', templateParams);
             
-            // Send email
+            // Send email using YOUR credentials
             const response = await emailjs.send(
-                'service_oxjeiv8',
-                'template_qf4aw5j',
+                'service_fef1c5d',      // Your Service ID
+                'template_qf4aw5j',     // Your Template ID
                 templateParams
             );
             
-            console.log('Email sent successfully:', response);
+            console.log('✅ Email sent successfully:', response);
             
             // Success message
-            showMessage('✅ Appointment request sent successfully! We will contact you within 24 hours at ' + phone, 'success');
+            showMessage(`✅ Thank you, ${name}! Your appointment request has been sent to our team. We will contact you at ${phone} within 24 hours.`, 'success');
             
             // Reset form
             appointmentForm.reset();
             
         } catch (error) {
-            console.error('Email error:', error);
+            console.error('❌ Email sending error:', error);
             
-            // Error message with WhatsApp fallback
-            const whatsappLink = `https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20tried%20to%20book%20online%20but%20had%20an%20issue.%20My%20details:%20Name:%20${encodeURIComponent(name)},%20Phone:%20${encodeURIComponent(phone)},%20Branch:%20${encodeURIComponent(branch)},%20Message:%20${encodeURIComponent(message || 'No message')}`;
+            // Show detailed error
+            let errorMessage = `Error: ${error.text || error.message}`;
             
-            showMessage('❌ Email sending failed. Please <a href="' + whatsappLink + '" target="_blank" style="color: #25D366; font-weight: bold;">click here to book via WhatsApp</a> or call us at 0742 017 575', 'error');
+            // WhatsApp fallback
+            const whatsappMessage = `Hello Dr Roy Skincare,\n\nI want to book an appointment:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📍 Branch: ${branch}\n💬 Message: ${message || 'No message'}`;
+            const whatsappLink = `https://wa.me/256742017575?text=${encodeURIComponent(whatsappMessage)}`;
+            
+            showMessage(
+                `❌ ${errorMessage}<br><br>Please <a href="${whatsappLink}" target="_blank" style="color: #25D366; font-weight: bold; text-decoration: underline;">click here to book via WhatsApp</a> or call 0742 017 575.`,
+                'error'
+            );
             
         } finally {
             // Reset button
@@ -5000,72 +5012,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ==================== TEST EMAILJS FUNCTION ====================
+// ==================== TEST FUNCTION ====================
 function testEmailJS() {
     console.log('Testing EmailJS connection...');
     
     const testParams = {
         to_name: 'Test',
-        from_name: 'Test User',
-        from_phone: '0742 017 575',
+        from_name: 'Website Test',
+        from_email: '0742 017 575',  // Using phone as email field
         branch: 'Test Branch',
         message: 'This is a test email from Dr Roy Skincare website',
         date: new Date().toLocaleDateString(),
         time: new Date().toLocaleTimeString()
     };
     
-    emailjs.send('service_oxjeiv8', 'template_qf4aw5j', testParams)
+    emailjs.send('service_fef1c5d', 'template_qf4aw5j', testParams)
         .then(response => {
             console.log('✅ Test email sent:', response);
-            alert('EmailJS is working! Check drroyskincare@gmail.com');
+            alert('✅ Test email sent successfully! Check drroyskincare@gmail.com inbox.');
         })
         .catch(error => {
             console.error('❌ Test email failed:', error);
-            alert('EmailJS error: ' + (error.text || error.message));
+            alert('❌ Error: ' + (error.text || error.message));
         });
 }
-
-// Add test button (remove in production)
-const testBtn = document.createElement('button');
-testBtn.innerHTML = '<i class="fas fa-envelope"></i> Test Email';
-testBtn.style.position = 'fixed';
-testBtn.style.bottom = '20px';
-testBtn.style.right = '20px';
-testBtn.style.zIndex = '9999';
-testBtn.style.padding = '12px 20px';
-testBtn.style.background = '#e63946';
-testBtn.style.color = 'white';
-testBtn.style.border = 'none';
-testBtn.style.borderRadius = '30px';
-testBtn.style.cursor = 'pointer';
-testBtn.style.boxShadow = '0 4px 15px rgba(230, 57, 70, 0.3)';
-testBtn.onclick = testEmailJS;
-document.body.appendChild(testBtn);
-
-// ==================== FLOATING WHATSAPP BUTTON ====================
-const whatsappBtn = document.createElement('a');
-whatsappBtn.href = 'https://wa.me/256742017575';
-whatsappBtn.target = '_blank';
-whatsappBtn.innerHTML = '<i class="fab fa-whatsapp"></i>';
-whatsappBtn.style.position = 'fixed';
-whatsappBtn.style.bottom = '70px';
-whatsappBtn.style.right = '20px';
-whatsappBtn.style.zIndex = '9998';
-whatsappBtn.style.width = '60px';
-whatsappBtn.style.height = '60px';
-whatsappBtn.style.background = '#25D366';
-whatsappBtn.style.color = 'white';
-whatsappBtn.style.borderRadius = '50%';
-whatsappBtn.style.display = 'flex';
-whatsappBtn.style.alignItems = 'center';
-whatsappBtn.style.justifyContent = 'center';
-whatsappBtn.style.fontSize = '28px';
-whatsappBtn.style.boxShadow = '0 4px 15px rgba(37, 211, 102, 0.3)';
-whatsappBtn.style.textDecoration = 'none';
-whatsappBtn.title = 'Chat on WhatsApp';
-document.body.appendChild(whatsappBtn);
-
-console.log('✅ Contact form initialized successfully');
 </script>
 
  
