@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+
     <!-- SEO Meta Tags -->
 <meta name="description" content="Dr Roy Skincare - Professional dermatology & aesthetic clinic in Uganda. Specialized treatments for melanin-rich skin, including weight loss, hair growth, and skin rejuvenation.">
 <meta name="keywords" content="skincare Uganda, dermatology Kampala, skin treatments Uganda, hair growth treatment, weight loss clinic, African skincare, melanin-rich skin care">
@@ -52,6 +55,7 @@
     <title>Dr Roy Skincare - Professional Dermatology & Aesthetic Clinic</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/index.min.js"></script>
      <style>
         * {
@@ -3269,12 +3273,30 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Dr Roy Skincare Reviews System Loading...');
     
-    // ==================== CONFIGURATION ====================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZHSuNT7mun2gGItgCwfaMpx1t58l2Y_PJKxLhtstxCZNfIFbaZ6CSDSGYvbRuzmvTCA/exec';
+    // ==================== FIREBASE CONFIGURATION ====================
+    // REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIG
+   // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA92x1_V8CeR5S36RvVgxao4pPjndoGdkw",
+  authDomain: "drroyreviews.firebaseapp.com",
+  databaseURL: "https://drroyreviews-default-rtdb.firebaseio.com/"
+  projectId: "drroyreviews",
+  storageBucket: "drroyreviews.firebasestorage.app",
+  messagingSenderId: "304907768153",
+  appId: "1:304907768153:web:fb4b8ee26d2d557101fc48"
+};
+
+    
+    // ==================== VARIABLES ====================
     let reviews = [];
     let selectedRating = 5;
     let lastRefreshTime = 0;
     let refreshInterval;
+    
+    // ==================== FIREBASE INITIALIZATION ====================
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
     
     // ==================== INITIALIZE STAR RATING ====================
     function initStarRating() {
@@ -3326,84 +3348,90 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // ==================== LOAD REVIEWS FROM GOOGLE SHEETS ====================
-    async function loadReviewsFromGoogleSheets() {
-        console.log('📥 Loading reviews from Google Sheets...');
+    // ==================== LOAD REVIEWS FROM FIREBASE ====================
+    function loadReviewsFromFirebase() {
+        console.log('📥 Loading reviews from Firebase...');
         
-        try {
-            // Add timestamp to prevent caching
-            const timestamp = Date.now();
-            const url = `${GOOGLE_SCRIPT_URL}?action=getReviews&_=${timestamp}`;
-            
-            console.log('Fetching from:', url);
-            
-            const response = await fetch(url, {
-                method: 'GET',
-                cache: 'no-store',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            console.log('Response status:', response.status);
-            
-            if (response.ok) {
-                const text = await response.text();
-                console.log('Raw response:', text);
+        database.ref('reviews').orderByChild('timestamp').once('value')
+            .then((snapshot) => {
+                const data = snapshot.val();
+                reviews = [];
                 
-                try {
-                    const data = JSON.parse(text);
-                    console.log('Parsed data:', data);
-                    
-                    if (data && data.success && Array.isArray(data.reviews)) {
-                        // Process reviews
-                        const processedReviews = data.reviews.map(review => ({
+                if (data) {
+                    // Convert object to array
+                    Object.keys(data).forEach(key => {
+                        const review = data[key];
+                        reviews.push({
+                            id: key,
                             name: review.name || 'Anonymous',
                             email: review.email || '',
-                            rating: parseInt(review.rating) || 5,
+                            rating: review.rating || 5,
                             text: review.text || '',
                             date: review.date || new Date().toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'short',
                                 day: 'numeric'
                             }),
-                            timestamp: Date.now()
-                        }));
-                        
-                        // Sort by date (newest first) - assuming newer reviews at the bottom
-                        reviews = processedReviews.reverse();
-                        
-                        console.log(`✅ Loaded ${reviews.length} reviews from Google Sheets`);
-                        lastRefreshTime = Date.now();
-                        
-                        // Save to localStorage as backup
-                        localStorage.setItem('drroy-reviews', JSON.stringify({
-                            reviews: reviews,
-                            timestamp: lastRefreshTime
-                        }));
-                        
-                        renderReviews();
-                        return true;
-                    } else if (data.error) {
-                        console.error('Google Sheets error:', data.error);
-                    }
-                } catch (parseError) {
-                    console.error('Error parsing JSON:', parseError);
+                            timestamp: review.timestamp || 0
+                        });
+                    });
+                    
+                    // Sort by timestamp (newest first)
+                    reviews.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    console.log(`✅ Loaded ${reviews.length} reviews from Firebase`);
+                } else {
+                    console.log('📭 No reviews in Firebase yet');
                 }
-            } else {
-                console.error('HTTP error:', response.status);
+                
+                renderReviews();
+                
+                // Save to localStorage as backup
+                localStorage.setItem('drroy-reviews', JSON.stringify({
+                    reviews: reviews,
+                    timestamp: Date.now()
+                }));
+            })
+            .catch((error) => {
+                console.error('❌ Error loading from Firebase:', error);
+                loadFromLocalStorage();
+            });
+    }
+    
+    // ==================== SETUP REAL-TIME LISTENER ====================
+    function setupRealtimeListener() {
+        // Listen for new reviews in real-time
+        database.ref('reviews').orderByChild('timestamp').limitToLast(1).on('child_added', (snapshot) => {
+            const newReview = snapshot.val();
+            console.log('🔄 New review added in real-time:', newReview);
+            
+            // Check if this review is already in our array
+            const existingIndex = reviews.findIndex(r => r.id === snapshot.key);
+            
+            if (existingIndex === -1) {
+                // Add new review
+                reviews.unshift({
+                    id: snapshot.key,
+                    name: newReview.name || 'Anonymous',
+                    email: newReview.email || '',
+                    rating: newReview.rating || 5,
+                    text: newReview.text || '',
+                    date: newReview.date || new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    }),
+                    timestamp: newReview.timestamp || Date.now()
+                });
+                
+                // Keep only latest 50 reviews
+                if (reviews.length > 50) {
+                    reviews = reviews.slice(0, 50);
+                }
+                
+                renderReviews();
             }
-            
-            console.log('⚠️ Could not load from Google Sheets, using localStorage');
-            loadFromLocalStorage();
-            return false;
-            
-        } catch (error) {
-            console.error('❌ Network error loading from Google Sheets:', error);
-            loadFromLocalStorage();
-            return false;
-        }
+        });
     }
     
     // ==================== LOAD FROM LOCAL STORAGE ====================
@@ -3429,9 +3457,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
     
-    // ==================== SAVE REVIEW ====================
+    // ==================== SAVE REVIEW TO FIREBASE ====================
     async function saveReview(review) {
-        console.log('💾 Saving review:', review);
+        console.log('💾 Saving review to Firebase...');
         
         // Add timestamp to review
         review.timestamp = Date.now();
@@ -3452,55 +3480,28 @@ document.addEventListener('DOMContentLoaded', function() {
             timestamp: Date.now()
         }));
         
-        // 4. Save to Google Sheets (fire and forget - don't wait for response)
-        saveToGoogleSheets(review);
-        
-        return true;
-    }
-    
-    // ==================== SAVE TO GOOGLE SHEETS ====================
-    function saveToGoogleSheets(review) {
-        console.log('📤 Sending to Google Sheets...');
-        
-        // Use image request technique to avoid CORS issues
-        const params = new URLSearchParams({
-            action: 'addReview',
-            name: encodeURIComponent(review.name || 'Anonymous'),
-            email: encodeURIComponent(review.email || ''),
-            rating: review.rating || 5,
-            text: encodeURIComponent(review.text || ''),
-            date: encodeURIComponent(review.date || new Date().toLocaleDateString()),
-            timestamp: review.timestamp,
-            source: 'web_form',
-            cacheBuster: Date.now()
-        });
-        
-        const url = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
-        console.log('Submitting to:', url);
-        
-        // Method 1: Using an image tag (works around CORS)
-        const img = new Image();
-        img.src = url;
-        img.style.display = 'none';
-        document.body.appendChild(img);
-        
-        // Method 2: Using fetch with error handling
-        fetch(url, {
-            method: 'GET',
-            mode: 'no-cors',
-            cache: 'no-cache'
-        }).then(() => {
-            console.log('✅ Review sent to Google Sheets (no-cors)');
+        // 4. Save to Firebase
+        try {
+            // Save to Firebase
+            const newReviewRef = database.ref('reviews').push();
+            await newReviewRef.set({
+                name: review.name,
+                email: review.email || '',
+                rating: review.rating,
+                text: review.text,
+                date: review.date,
+                timestamp: review.timestamp,
+                ip: 'web' // For tracking source
+            });
             
-            // Refresh reviews after a delay to get the new one
-            setTimeout(() => {
-                loadReviewsFromGoogleSheets();
-            }, 2000);
-        }).catch(err => {
-            console.log('⚠️ Review saved locally, will sync later:', err);
-        });
-        
-        return true;
+            console.log('✅ Review saved to Firebase with ID:', newReviewRef.key);
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Error saving to Firebase:', error);
+            // Still return true because it's saved locally
+            return true;
+        }
     }
     
     // ==================== RENDER REVIEWS ====================
@@ -3547,7 +3548,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show last refresh time
         const refreshInfo = document.getElementById('refresh-info');
         if (refreshInfo) {
-            refreshInfo.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+            refreshInfo.textContent = `Live updates active`;
         }
         
         // Render reviews list
@@ -3589,8 +3590,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="review-date">${review.date || 'Recently'}</div>
                     </div>
-                    <p class="review-text">"${review.text.replace(/"/g, '&quot;')}"</p>
-                    ${review.id && review.id.includes('review_') ? '<div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Saved locally</div>' : ''}
+                    <p class="review-text">"${review.text}"</p>
                 </div>
                 `;
             }).join('');
@@ -3687,7 +3687,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem; color: #28a745;"></i>
                         <div>
                             <strong style="color: #28a745;">Thank you!</strong>
-                            <p>Your review has been submitted successfully! It will appear for other users shortly.</p>
+                            <p>Your review has been submitted successfully! Other users will see it immediately.</p>
                         </div>`;
                     successMsg.style.display = 'flex';
                     successMsg.style.alignItems = 'center';
@@ -3743,30 +3743,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ==================== START EVERYTHING ====================
     function init() {
-        console.log('🎯 Initializing reviews system...');
+        console.log('🎯 Initializing reviews system with Firebase...');
         
         // Initialize components
         initStarRating();
         initReviewForm();
         
         // Load reviews immediately
-        loadReviewsFromGoogleSheets();
+        loadReviewsFromFirebase();
         
-        // Set up automatic refresh every 30 seconds
-        refreshInterval = setInterval(() => {
-            console.log('🔄 Auto-refreshing reviews...');
-            loadReviewsFromGoogleSheets();
-        }, 30000); // 30 seconds
+        // Setup real-time listener for new reviews
+        setupRealtimeListener();
         
-        console.log('✅ Reviews system ready! Auto-refresh every 30 seconds.');
+        console.log('✅ Reviews system ready! Real-time updates enabled.');
     }
-    
-    // Clean up on page unload
-    window.addEventListener('beforeunload', () => {
-        if (refreshInterval) {
-            clearInterval(refreshInterval);
-        }
-    });
     
     // Start the system
     init();
