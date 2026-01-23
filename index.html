@@ -4333,125 +4333,142 @@ document.addEventListener('DOMContentLoaded', function() {
     </section>
 
     <!-- Contact Section -->
-    <section class="contact" id="contact">
-        <div class="container">
-            <div class="section-title">
-                <h2>Contact Us</h2>
-                <p>Get in touch with our skincare experts</p>
-            </div>
-            <div class="contact-container">
-                <div class="contact-info">
-                    <h3>Contact Information</h3>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div>
-                            <h4>Phone Number</h4>
-                            <p>0742 017 575</p>
-                        </div>
+<section class="contact" id="contact">
+    <div class="container">
+        <div class="section-title">
+            <h2>Contact Us</h2>
+            <p>Get in touch with our skincare experts</p>
+        </div>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
                     </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div>
-                            <h4>Email Address</h4>
-                            <p>drroyskincare@gmail.com</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div>
-                            <h4>Clinic Locations</h4>
-                            <p>Kampala: Wilson Street, Wilson One Building</p>
-                            <p>Mbarara: In Town</p>
-                        </div>
-                    </div><
-                    <div class="social-links">
-                        <a href="https://www.tiktok.com/@drroyskincare" target="_blank" title="TikTok">
-                            <i class="fab fa-tiktok"></i>
+                    <div>
+                        <h4>Phone & WhatsApp</h4>
+                        <p>0742 017 575</p>
+                        <a href="https://wa.me/256742017575" target="_blank" style="color: #25D366; text-decoration: none;">
+                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
                         </a>
-                        <a href="mailto:drroyskincare@gmail.com" title="Email">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                        <a href="tel:0742017575" title="Call">
-                            <i class="fas fa-phone"></i>
-                        </a>
-                    </div>
-                    
-                    <!-- Small inspirational note -->
-                    <div style="margin-top: 30px; padding: 15px; background: rgba(42, 110, 143, 0.1); border-radius: 8px; text-align: center;">
-                        <i class="fas fa-quote-left" style="color: var(--accent);"></i>
-                        <p style="font-style: italic; font-size: 0.9rem;">Your journey to confidence begins with a single step</p>
                     </div>
                 </div>
-                <div class="contact-info">
-                    <h3>Book an Appointment</h3>
-                    <p>Fill out the form below to schedule your consultation or treatment</p>
-                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 20px; padding: 10px; background: #f0f9ff; border-left: 3px solid var(--primary); border-radius: 5px;">
-                        <i class="fas fa-envelope" style="color: var(--primary); margin-right: 8px;"></i>
-                        Your appointment request will be sent to Dr Roy Skincare via email
-                    </p>
-                    <form id="appointment-form" style="margin-top: 20px;">
-    <div style="margin-bottom: 15px;">
-        <input type="text" placeholder="Your Full Name *" required 
-               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-        <div class="form-error" id="name-error"></div>
-    </div>
-    
-    <div style="margin-bottom: 15px;">
-        <input type="tel" placeholder="Phone Number (e.g., 0742 017 575) *" required 
-               pattern="[0-9\s\+\(\)\-]{9,}"
-               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-        <div class="form-error" id="phone-error"></div>
-    </div>
-    
-    <div style="margin-bottom: 15px;">
-        <select required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-            <option value="">Select Preferred Branch *</option>
-            <option value="kampala">Kampala Branch (Wilson Street)</option>
-            <option value="mbarara">Mbarara Branch (Town Location)</option>
-        </select>
-        <div class="form-error" id="branch-error"></div>
-    </div>
-    <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
-    <!-- Kampala Branch Directions -->
-    <a href="https://www.google.com/maps/dir//Wilson+Street,+Wilson+One+Building,+Kampala,+Uganda/@0.3136,32.581,15z" 
-       target="_blank" 
-       class="btn" 
-       style="background: linear-gradient(135deg, #4285F4, #34A853);">
-        <i class="fas fa-map-marker-alt"></i> Directions to Kampala
-    </a>
-    
-    
-</div>
-    <div style="margin-bottom: 20px;">
-        <textarea placeholder="Message (Optional) - Tell us about your skin concern..." rows="4" 
-                  style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;"></textarea>
-    </div>
-    
-    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">
-        <i class="fas fa-envelope" style="margin-right: 8px;"></i>
-        Send Appointment Request
-    </button>
-    
-    <!-- Success/Error message container -->
-    <div id="form-message" style="margin-top: 15px; display: none; padding: 10px; border-radius: 5px;"></div>
-</form>
-                    
-                    <!-- Small flower decoration -->
-                    <div style="text-align: center; margin-top: 20px;">
-                        <i class="fas fa-spa" style="color: var(--accent); margin: 0 5px;"></i>
-                        <i class="fas fa-leaf" style="color: var(--secondary); margin: 0 5px;"></i>
-                        <i class="fas fa-spa" style="color: var(--accent); margin: 0 5px;"></i>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
                     </div>
+                    <div>
+                        <h4>Email Address</h4>
+                        <p>drroyskincare@gmail.com</p>
+                        <a href="mailto:drroyskincare@gmail.com" style="color: #EA4335; text-decoration: none;">
+                            <i class="fas fa-paper-plane"></i> Send Email
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <h4>Clinic Locations</h4>
+                        <p><strong>Kampala:</strong> Wilson Street, Wilson One Building</p>
+                        <a href="https://maps.google.com/?q=Wilson+Street,+Wilson+One+Building,+Kampala" 
+                           target="_blank" 
+                           style="color: #4285F4; text-decoration: none;">
+                            <i class="fas fa-directions"></i> Get Directions
+                        </a>
+                        <p style="margin-top: 10px;"><strong>Mbarara:</strong> In Town</p>
+                        <a href="https://maps.google.com/?q=Mbarara,+Uganda" 
+                           target="_blank" 
+                           style="color: #4285F4; text-decoration: none;">
+                            <i class="fas fa-directions"></i> Get Directions
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Social Links -->
+                <div class="social-links">
+                    <a href="https://www.tiktok.com/@drroyskincare" target="_blank" title="TikTok" style="background: #000000;">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://wa.me/256742017575" target="_blank" title="WhatsApp" style="background: #25D366;">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="tel:+256742017575" title="Call" style="background: #34A853;">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                    <a href="mailto:drroyskincare@gmail.com" title="Email" style="background: #EA4335;">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+                
+                <!-- Quick Contact Note -->
+                <div style="margin-top: 30px; padding: 15px; background: rgba(42, 110, 143, 0.1); border-radius: 8px; text-align: center;">
+                    <i class="fas fa-quote-left" style="color: var(--accent);"></i>
+                    <p style="font-style: italic; font-size: 0.9rem; margin: 0;">Your journey to confidence begins with a single step</p>
+                </div>
+            </div>
+            
+            <!-- Appointment Booking -->
+            <div class="contact-info">
+                <h3>Book an Appointment</h3>
+                <p>Fill the form below or contact us directly</p>
+                
+                <!-- WhatsApp Quick Book -->
+                <div style="background: #25D366; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                    <i class="fab fa-whatsapp" style="font-size: 2rem; color: white; margin-bottom: 10px;"></i>
+                    <h4 style="color: white; margin: 10px 0;">Fast WhatsApp Booking</h4>
+                    <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20an%20appointment%20for%3A%0A%0ATreatment%3A%20%0ABranch%3A%20Kampala%2FMbarara%0AName%3A%20%0APhone%3A%20" 
+                       target="_blank" 
+                       style="background: white; color: #25D366; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block;">
+                        <i class="fab fa-whatsapp"></i> Book via WhatsApp
+                    </a>
+                </div>
+                
+                <!-- Email Form -->
+                <div id="form-message" style="display: none; padding: 15px; margin: 15px 0; border-radius: 8px;"></div>
+                
+                <form id="appointment-form">
+                    <div style="margin-bottom: 15px;">
+                        <input type="text" id="client-name" placeholder="Your Full Name *" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <input type="tel" id="client-phone" placeholder="Phone Number (e.g., 0742 017 575) *" required 
+                               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <select id="client-branch" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+                            <option value="">Select Branch *</option>
+                            <option value="kampala">Kampala Branch (Wilson Street)</option>
+                            <option value="mbarara">Mbarara Branch (Town Location)</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <textarea id="client-message" placeholder="Tell us about your skin concern or treatment interest..." rows="4" 
+                                  style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;"></textarea>
+                    </div>
+                    
+                    <button type="submit" id="submit-btn" class="btn" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Send Appointment Request
+                    </button>
+                </form>
+                
+                <!-- Alternative Contact -->
+                <div style="text-align: center; margin-top: 25px; padding-top: 25px; border-top: 1px solid #eee;">
+                    <p style="color: var(--text-light); margin-bottom: 15px;">Prefer to call?</p>
+                    <a href="tel:+256742017575" class="btn" style="background: #34A853;">
+                        <i class="fas fa-phone"></i> Call Now: 0742 017 575
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer>
@@ -4507,8 +4524,6 @@ document.addEventListener('DOMContentLoaded', function() {
     </footer>
 
     <script>
-// ==================== EmailJS Initialization ====================
-emailjs.init('k7NxkfEC3DngxJ291'); // Your EmailJS public key
 
 
     
@@ -4868,160 +4883,47 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-// ==================== EMAILJS APPOINTMENT FORM ====================
-// Initialize EmailJS (you already have this but let's verify)
+<script>
+// ==================== SIMPLE WORKING CONTACT FORM ====================
+
+// Initialize EmailJS ONCE
 emailjs.init('k7NxkfEC3DngxJ291');
 
-// Email sending function
-async function sendEmail(templateId, templateParams) {
-    try {
-        const response = await emailjs.send(
-            'service_oxjeiv8',  // Your EmailJS Service ID
-            templateId,
-            templateParams
-        );
-        return { success: true, data: response };
-    } catch (error) {
-        console.error('EmailJS Error:', error);
-        return { success: false, error: error.text || error.message };
-    }
-}
-
-// Appointment form handler
-document.addEventListener('DOMContentLoaded', function() {
-    const appointmentForm = document.getElementById('appointment-form');
+// Show message function
+function showMessage(text, type) {
+    const formMessage = document.getElementById('form-message');
+    if (!formMessage) return;
     
-    if (appointmentForm) {
-        appointmentForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const name = this.querySelector('input[type="text"]').value.trim();
-            const phone = this.querySelector('input[type="tel"]').value.trim();
-            const branch = this.querySelector('select').value;
-            const message = this.querySelector('textarea').value.trim();
-            
-            // Validation
-            if (!name || name.length < 2) {
-                alert('Please enter your full name (at least 2 characters)');
-                return;
-            }
-            
-            if (!phone || phone.length < 9) {
-                alert('Please enter a valid phone number');
-                return;
-            }
-            
-            if (!branch) {
-                alert('Please select your preferred branch');
-                return;
-            }
-            
-            // Show loading
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            
-            // Prepare email data
-            const templateParams = {
-                to_name: 'Dr Roy Skincare',
-                from_name: name,
-                from_phone: phone,
-                branch: branch === 'kampala' ? 'Kampala Branch' : 'Mbarara Branch',
-                message: message || 'No additional message',
-                date: new Date().toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                }),
-                time: new Date().toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
-            };
-            
-            // Send email
-            const result = await sendEmail('template_qf4aw5j', templateParams);
-            
-            if (result.success) {
-                alert('✅ Appointment request sent successfully! We will call you within 24 hours.');
-                this.reset();
-            } else {
-                alert('❌ Failed to send appointment. Please call us directly at 0742 017 575.\nError: ' + result.error);
-            }
-            
-            // Reset button
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        });
-    }
-}); 
-        // ==================== WORKING EMAILJS SETUP ====================
-// Initialize EmailJS with your PUBLIC KEY
-emailjs.init('k7NxkfEC3DngxJ291');
-
-// Send email function
-async function sendAppointmentEmail(formData) {
-    try {
-        // Prepare template parameters
-        const templateParams = {
-            to_name: 'Dr Roy Skincare Team',
-            from_name: formData.name,
-            from_phone: formData.phone,
-            branch: formData.branch === 'kampala' ? 'Kampala Branch' : 'Mbarara Branch',
-            message: formData.message || 'No additional message provided',
-            date: new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            }),
-            time: new Date().toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            })
-        };
-        
-        console.log('Sending email with params:', templateParams);
-        
-        // Send email using EmailJS
-        const response = await emailjs.send(
-            'service_oxjeiv8',      // Service ID
-            'template_qf4aw5j',     // Template ID
-            templateParams
-        );
-        
-        console.log('Email sent successfully:', response);
-        return { success: true, data: response };
-        
-    } catch (error) {
-        console.error('EmailJS error:', error);
-        return { 
-            success: false, 
-            error: error.text || error.message || 'Unknown error'
-        };
-    }
+    formMessage.textContent = text;
+    formMessage.style.display = 'block';
+    formMessage.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
+    formMessage.style.color = type === 'success' ? '#155724' : '#721c24';
+    formMessage.style.border = type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+    formMessage.style.padding = '15px';
+    formMessage.style.borderRadius = '8px';
+    formMessage.style.margin = '15px 0';
+    
+    // Auto-hide after 8 seconds
+    setTimeout(() => {
+        formMessage.style.display = 'none';
+    }, 8000);
 }
 
 // Form submission handler
 document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('contact-form');
-    const formMessage = document.getElementById('form-message');
+    const appointmentForm = document.getElementById('appointment-form');
     const submitBtn = document.getElementById('submit-btn');
     
-    if (!contactForm) return;
+    if (!appointmentForm || !submitBtn) return;
     
-    contactForm.addEventListener('submit', async function(e) {
+    appointmentForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // Get form values
-        const name = document.getElementById('name').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const branch = document.getElementById('branch').value;
-        const message = document.getElementById('message').value.trim();
+        const name = document.getElementById('client-name').value.trim();
+        const phone = document.getElementById('client-phone').value.trim();
+        const branch = document.getElementById('client-branch').value;
+        const message = document.getElementById('client-message').value.trim();
         
         // Validation
         if (!name || name.length < 2) {
@@ -5030,7 +4932,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (!phone || phone.length < 9) {
-            showMessage('Please enter a valid phone number', 'error');
+            showMessage('Please enter a valid phone number (at least 9 digits)', 'error');
             return;
         }
         
@@ -5044,44 +4946,130 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         
-        // Prepare form data
-        const formData = {
-            name: name,
-            phone: phone,
-            branch: branch,
-            message: message
-        };
-        
-        // Send email
-        const result = await sendAppointmentEmail(formData);
-        
-        if (result.success) {
-            showMessage('✅ Appointment request sent successfully! We will call you within 24 hours.', 'success');
-            contactForm.reset();
-        } else {
-            showMessage('❌ Failed to send. Please call us directly at 0742 017 575. Error: ' + result.error, 'error');
+        try {
+            // Prepare email data
+            const templateParams = {
+                to_name: 'Dr Roy Skincare Team',
+                from_name: name,
+                from_phone: phone,
+                branch: branch === 'kampala' ? 'Kampala Branch' : 'Mbarara Branch',
+                message: message || 'No additional message provided',
+                date: new Date().toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }),
+                time: new Date().toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                })
+            };
+            
+            console.log('Sending email:', templateParams);
+            
+            // Send email
+            const response = await emailjs.send(
+                'service_oxjeiv8',
+                'template_qf4aw5j',
+                templateParams
+            );
+            
+            console.log('Email sent successfully:', response);
+            
+            // Success message
+            showMessage('✅ Appointment request sent successfully! We will contact you within 24 hours at ' + phone, 'success');
+            
+            // Reset form
+            appointmentForm.reset();
+            
+        } catch (error) {
+            console.error('Email error:', error);
+            
+            // Error message with WhatsApp fallback
+            const whatsappLink = `https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20tried%20to%20book%20online%20but%20had%20an%20issue.%20My%20details:%20Name:%20${encodeURIComponent(name)},%20Phone:%20${encodeURIComponent(phone)},%20Branch:%20${encodeURIComponent(branch)},%20Message:%20${encodeURIComponent(message || 'No message')}`;
+            
+            showMessage('❌ Email sending failed. Please <a href="' + whatsappLink + '" target="_blank" style="color: #25D366; font-weight: bold;">click here to book via WhatsApp</a> or call us at 0742 017 575', 'error');
+            
+        } finally {
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
         }
-        
-        // Reset button
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
     });
-    
-    // Helper function to show messages
-    function showMessage(text, type) {
-        formMessage.textContent = text;
-        formMessage.style.display = 'block';
-        formMessage.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
-        formMessage.style.color = type === 'success' ? '#155724' : '#721c24';
-        formMessage.style.border = type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
-        
-        // Auto-hide after 10 seconds
-        setTimeout(() => {
-            formMessage.style.display = 'none';
-        }, 10000);
-    }
 });
 
+// ==================== TEST EMAILJS FUNCTION ====================
+function testEmailJS() {
+    console.log('Testing EmailJS connection...');
+    
+    const testParams = {
+        to_name: 'Test',
+        from_name: 'Test User',
+        from_phone: '0742 017 575',
+        branch: 'Test Branch',
+        message: 'This is a test email from Dr Roy Skincare website',
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+    };
+    
+    emailjs.send('service_oxjeiv8', 'template_qf4aw5j', testParams)
+        .then(response => {
+            console.log('✅ Test email sent:', response);
+            alert('EmailJS is working! Check drroyskincare@gmail.com');
+        })
+        .catch(error => {
+            console.error('❌ Test email failed:', error);
+            alert('EmailJS error: ' + (error.text || error.message));
+        });
+}
+
+// Add test button (remove in production)
+const testBtn = document.createElement('button');
+testBtn.innerHTML = '<i class="fas fa-envelope"></i> Test Email';
+testBtn.style.position = 'fixed';
+testBtn.style.bottom = '20px';
+testBtn.style.right = '20px';
+testBtn.style.zIndex = '9999';
+testBtn.style.padding = '12px 20px';
+testBtn.style.background = '#e63946';
+testBtn.style.color = 'white';
+testBtn.style.border = 'none';
+testBtn.style.borderRadius = '30px';
+testBtn.style.cursor = 'pointer';
+testBtn.style.boxShadow = '0 4px 15px rgba(230, 57, 70, 0.3)';
+testBtn.onclick = testEmailJS;
+document.body.appendChild(testBtn);
+
+// ==================== FLOATING WHATSAPP BUTTON ====================
+const whatsappBtn = document.createElement('a');
+whatsappBtn.href = 'https://wa.me/256742017575';
+whatsappBtn.target = '_blank';
+whatsappBtn.innerHTML = '<i class="fab fa-whatsapp"></i>';
+whatsappBtn.style.position = 'fixed';
+whatsappBtn.style.bottom = '70px';
+whatsappBtn.style.right = '20px';
+whatsappBtn.style.zIndex = '9998';
+whatsappBtn.style.width = '60px';
+whatsappBtn.style.height = '60px';
+whatsappBtn.style.background = '#25D366';
+whatsappBtn.style.color = 'white';
+whatsappBtn.style.borderRadius = '50%';
+whatsappBtn.style.display = 'flex';
+whatsappBtn.style.alignItems = 'center';
+whatsappBtn.style.justifyContent = 'center';
+whatsappBtn.style.fontSize = '28px';
+whatsappBtn.style.boxShadow = '0 4px 15px rgba(37, 211, 102, 0.3)';
+whatsappBtn.style.textDecoration = 'none';
+whatsappBtn.title = 'Chat on WhatsApp';
+document.body.appendChild(whatsappBtn);
+
+console.log('✅ Contact form initialized successfully');
+</script>
+
+ 
+ 
 </script>
 </body>
 </html>
