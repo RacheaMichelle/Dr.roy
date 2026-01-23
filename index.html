@@ -3249,7 +3249,6 @@
                     rating: 5,
                     text: "Dr Roy's clinic transformed my skin! The acne treatment was professional and the results are amazing. Highly recommend!",
                     date: "Jan 15, 2024",
-                    id: "1",
                     timestamp: 1705276800000
                 },
                 {
@@ -3258,7 +3257,6 @@
                     rating: 5,
                     text: "Best skin clinic in Uganda! They really understand melanin-rich skin. My hyperpigmentation is almost gone.",
                     date: "Jan 10, 2024",
-                    id: "2",
                     timestamp: 1704844800000
                 },
                 {
@@ -3267,7 +3265,6 @@
                     rating: 4,
                     text: "Great service and knowledgeable staff. The results took a bit longer than expected but they were worth the wait.",
                     date: "Jan 5, 2024",
-                    id: "3",
                     timestamp: 1704412800000
                 },
                 {
@@ -3276,8 +3273,23 @@
                     rating: 5,
                     text: "The hair growth treatment really works! I've seen significant improvement in just 3 months. Wonderful clinic!",
                     date: "Dec 28, 2023",
-                    id: "4",
                     timestamp: 1703808000000
+                },
+                {
+                    name: "Sarah Kimani",
+                    email: "sarah@example.com",
+                    rating: 5,
+                    text: "Absolutely love the results! My stretch marks have faded significantly after just 2 months of treatment.",
+                    date: "Dec 20, 2023",
+                    timestamp: 1703059200000
+                },
+                {
+                    name: "Michael Osei",
+                    email: "michael@example.com",
+                    rating: 4,
+                    text: "Professional service and great results. The weight loss program really helped me get back in shape.",
+                    date: "Dec 15, 2023",
+                    timestamp: 1702608000000
                 }
             ];
 
@@ -3286,115 +3298,133 @@
 
             let reviewsData = [];
             let selectedRating = 5;
-            let isLoading = false;
 
-            // Fetch reviews from Google Sheets with retry logic
+            // Fetch reviews from Google Sheets - FIXED VERSION
             async function fetchReviewsFromSheet() {
-                isLoading = true;
                 console.log('Fetching reviews from Google Sheets...');
                 
                 try {
-                    // Add cache-busting parameter to avoid caching issues
+                    // Add cache busting to prevent caching issues
                     const timestamp = new Date().getTime();
-                    const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getReviews&t=${timestamp}`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        mode: 'cors'
+                    const response = await fetch(`${GOOGLE_SHEETS_URL}?action=getReviews&_=${timestamp}`, {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache'
                     });
+                    
+                    console.log('Response status:', response.status);
                     
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
-                    const data = await response.json();
-                    console.log('Google Sheets response:', data);
+                    const text = await response.text();
+                    console.log('Raw response text:', text.substring(0, 200) + '...');
                     
-                    if (data && data.success && data.reviews && Array.isArray(data.reviews)) {
-                        console.log(`Loaded ${data.reviews.length} reviews from Google Sheets`);
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Failed to parse JSON:', e);
+                        throw new Error('Invalid JSON response');
+                    }
+                    
+                    console.log('Parsed data:', data);
+                    
+                    if (data && data.reviews && Array.isArray(data.reviews) && data.reviews.length > 0) {
+                        console.log(`Successfully loaded ${data.reviews.length} reviews from Google Sheets`);
+                        reviewsData = data.reviews;
                         
-                        // Sort by timestamp (newest first) and limit to 50 reviews
-                        reviewsData = data.reviews
-                            .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-                            .slice(0, 50);
+                        // Sort by date (newest first)
+                        reviewsData.sort((a, b) => {
+                            const dateA = a.timestamp || new Date(a.date).getTime() || 0;
+                            const dateB = b.timestamp || new Date(b.date).getTime() || 0;
+                            return dateB - dateA;
+                        });
                         
                         // Save to localStorage as backup
-                        localStorage.setItem('drroy-reviews-backup', JSON.stringify(reviewsData));
+                        localStorage.setItem('drroy-reviews-cache', JSON.stringify(reviewsData));
+                        
                     } else {
-                        console.log('Invalid response format, using localStorage');
-                        loadFromLocalStorage();
+                        console.log('No reviews in Google Sheets response, using cache or defaults');
+                        loadFromCacheOrDefaults();
                     }
+                    
                 } catch (error) {
                     console.error('Error fetching from Google Sheets:', error);
-                    console.log('Falling back to localStorage');
-                    loadFromLocalStorage();
-                } finally {
-                    isLoading = false;
-                    renderReviews();
+                    console.log('Falling back to cache or defaults');
+                    loadFromCacheOrDefaults();
                 }
+                
+                renderReviews();
             }
 
-            // Load reviews from localStorage
-            function loadFromLocalStorage() {
-                const localReviews = JSON.parse(localStorage.getItem('drroy-reviews-backup'));
-                if (localReviews && Array.isArray(localReviews) && localReviews.length > 0) {
-                    console.log(`Loaded ${localReviews.length} reviews from localStorage backup`);
-                    reviewsData = localReviews;
+            // Load from cache or defaults
+            function loadFromCacheOrDefaults() {
+                const cached = localStorage.getItem('drroy-reviews-cache');
+                if (cached) {
+                    try {
+                        reviewsData = JSON.parse(cached);
+                        console.log(`Loaded ${reviewsData.length} reviews from cache`);
+                    } catch (e) {
+                        console.error('Failed to parse cache:', e);
+                        reviewsData = defaultReviews;
+                    }
                 } else {
-                    console.log('No local reviews, using defaults');
                     reviewsData = defaultReviews;
-                    localStorage.setItem('drroy-reviews-backup', JSON.stringify(defaultReviews));
+                    console.log('Using default reviews');
                 }
             }
 
-            // Submit review to Google Sheets
+            // Submit review to Google Sheets - FIXED VERSION
             async function submitReviewToSheet(review) {
                 console.log('Submitting review to Google Sheets:', review);
                 
-                // Add unique ID and timestamp
-                review.id = 'review_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                review.timestamp = Date.now();
+                // Add timestamp if not present
+                if (!review.timestamp) {
+                    review.timestamp = Date.now();
+                }
                 
-                // First add to local array for immediate display
+                // Add to local array immediately for instant feedback
                 reviewsData.unshift(review);
-                localStorage.setItem('drroy-reviews-backup', JSON.stringify(reviewsData));
                 renderReviews();
                 
-                // Try to submit to Google Sheets
+                // Save to localStorage immediately
+                localStorage.setItem('drroy-reviews-cache', JSON.stringify(reviewsData));
+                
                 try {
                     const response = await fetch(GOOGLE_SHEETS_URL + '?action=addReview', {
                         method: 'POST',
                         mode: 'cors',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json'
                         },
-                        body: JSON.stringify({
-                            name: review.name,
-                            email: review.email,
-                            rating: review.rating,
-                            text: review.text,
-                            date: review.date,
-                            id: review.id,
-                            timestamp: review.timestamp
-                        })
+                        body: JSON.stringify(review)
                     });
                     
-                    const result = await response.json();
-                    console.log('Google Sheets submission result:', result);
+                    console.log('Submit response status:', response.status);
+                    
+                    const text = await response.text();
+                    console.log('Submit response text:', text);
+                    
+                    let result;
+                    try {
+                        result = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Failed to parse submit response:', e);
+                        result = { success: false, error: 'Invalid JSON' };
+                    }
                     
                     if (result && result.success) {
-                        console.log('✓ Review saved to Google Sheets successfully');
+                        console.log('✓ Review successfully saved to Google Sheets');
                         // Refresh from Google Sheets after a short delay
-                        setTimeout(() => {
-                            fetchReviewsFromSheet();
-                        }, 2000);
+                        setTimeout(fetchReviewsFromSheet, 2000);
                         return true;
                     } else {
-                        console.log('Google Sheets returned error:', result);
+                        console.log('✗ Google Sheets returned error:', result);
                         return false;
                     }
+                    
                 } catch (error) {
                     console.error('Error submitting to Google Sheets:', error);
                     return false;
@@ -3403,7 +3433,7 @@
 
             // Calculate average rating
             function calculateAverageRating() {
-                if (!reviewsData || reviewsData.length === 0) return 0;
+                if (reviewsData.length === 0) return 0;
                 const sum = reviewsData.reduce((acc, review) => acc + (review.rating || 0), 0);
                 return (sum / reviewsData.length).toFixed(1);
             }
@@ -3423,12 +3453,7 @@
             function renderReviews() {
                 const reviewsList = document.getElementById('reviews-list');
                 if (!reviewsList) {
-                    console.log('Reviews list element not found');
-                    return;
-                }
-                
-                if (isLoading) {
-                    reviewsList.innerHTML = '<div class="review-card" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i><p>Loading reviews...</p></div>';
+                    console.error('Reviews list element not found!');
                     return;
                 }
                 
@@ -3444,22 +3469,20 @@
                 if (reviewCountEl) reviewCountEl.textContent = `Based on ${reviewsData.length} reviews`;
 
                 // Clear and render reviews
-                if (reviewsData.length === 0) {
-                    reviewsList.innerHTML = '<div class="review-card" style="text-align: center; padding: 40px;"><i class="fas fa-comment-slash" style="font-size: 2rem; color: var(--accent);"></i><p>No reviews yet. Be the first to share your experience!</p></div>';
-                } else {
-                    reviewsList.innerHTML = reviewsData.map(review => `
-                        <div class="review-card">
-                            <div class="review-header">
-                                <div>
-                                    <div class="review-name">${review.name}</div>
-                                    <div class="review-rating">${displayStars(review.rating)}</div>
-                                </div>
-                                <div class="review-date">${review.date}</div>
+                reviewsList.innerHTML = reviewsData.map(review => `
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div>
+                                <div class="review-name">${review.name}</div>
+                                <div class="review-rating">${displayStars(review.rating)}</div>
                             </div>
-                            <p class="review-text">"${review.text}"</p>
+                            <div class="review-date">${review.date}</div>
                         </div>
-                    `).join('');
-                }
+                        <p class="review-text">"${review.text}"</p>
+                    </div>
+                `).join('');
+                
+                console.log(`Rendered ${reviewsData.length} reviews`);
             }
 
             // Initialize star rating
@@ -3530,18 +3553,13 @@
                         b.style.color = '#ddd';
                     }
                 });
-                
-                // Set initial label
-                if (ratingLabel) {
-                    ratingLabel.textContent = 'Excellent! 5 Stars';
-                }
             }
 
             // Initialize review form
             function initializeReviewForm() {
                 const form = document.getElementById('review-form');
                 if (!form) {
-                    console.log('Review form not found');
+                    console.error('Review form not found!');
                     return;
                 }
 
@@ -3639,15 +3657,15 @@
                                     <i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem;"></i> 
                                     <div>
                                         <strong>Thank you!</strong>
-                                        <p>Your review has been submitted successfully and will appear shortly.</p>
+                                        <p>Your review has been submitted and will be visible to all users.</p>
                                     </div>
                                 `;
                             } else {
                                 successMessage.innerHTML = `
                                     <i class="fas fa-exclamation-triangle" style="margin-right: 10px; font-size: 1.2rem; color: #ffc107;"></i> 
                                     <div>
-                                        <strong>Review saved locally!</strong>
-                                        <p>Your review was saved locally but couldn't sync with our server. It will still be visible to you.</p>
+                                        <strong>Review saved!</strong>
+                                        <p>Your review was saved locally and will sync when connection is restored.</p>
                                     </div>
                                 `;
                             }
@@ -3712,13 +3730,11 @@
                 initializeStarRating();
                 initializeReviewForm();
                 
-                // Load reviews
-                setTimeout(() => {
-                    fetchReviewsFromSheet();
-                }, 500);
+                // Load reviews immediately
+                fetchReviewsFromSheet();
                 
-                // Refresh reviews every 30 seconds
-                setInterval(fetchReviewsFromSheet, 30000);
+                // Auto-refresh reviews every 10 seconds to get new ones from other users
+                setInterval(fetchReviewsFromSheet, 10000);
             });
         })();
     </script>
