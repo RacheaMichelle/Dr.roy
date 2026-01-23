@@ -4957,7 +4957,131 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = originalText;
         });
     }
-});        
+}); 
+        // ==================== WORKING EMAILJS SETUP ====================
+// Initialize EmailJS with your PUBLIC KEY
+emailjs.init('k7NxkfEC3DngxJ291');
+
+// Send email function
+async function sendAppointmentEmail(formData) {
+    try {
+        // Prepare template parameters
+        const templateParams = {
+            to_name: 'Dr Roy Skincare Team',
+            from_name: formData.name,
+            from_phone: formData.phone,
+            branch: formData.branch === 'kampala' ? 'Kampala Branch' : 'Mbarara Branch',
+            message: formData.message || 'No additional message provided',
+            date: new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }),
+            time: new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            })
+        };
+        
+        console.log('Sending email with params:', templateParams);
+        
+        // Send email using EmailJS
+        const response = await emailjs.send(
+            'service_oxjeiv8',      // Service ID
+            'template_qf4aw5j',     // Template ID
+            templateParams
+        );
+        
+        console.log('Email sent successfully:', response);
+        return { success: true, data: response };
+        
+    } catch (error) {
+        console.error('EmailJS error:', error);
+        return { 
+            success: false, 
+            error: error.text || error.message || 'Unknown error'
+        };
+    }
+}
+
+// Form submission handler
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.getElementById('contact-form');
+    const formMessage = document.getElementById('form-message');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    if (!contactForm) return;
+    
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const name = document.getElementById('name').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const branch = document.getElementById('branch').value;
+        const message = document.getElementById('message').value.trim();
+        
+        // Validation
+        if (!name || name.length < 2) {
+            showMessage('Please enter your full name (minimum 2 characters)', 'error');
+            return;
+        }
+        
+        if (!phone || phone.length < 9) {
+            showMessage('Please enter a valid phone number', 'error');
+            return;
+        }
+        
+        if (!branch) {
+            showMessage('Please select your preferred branch', 'error');
+            return;
+        }
+        
+        // Show loading state
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        
+        // Prepare form data
+        const formData = {
+            name: name,
+            phone: phone,
+            branch: branch,
+            message: message
+        };
+        
+        // Send email
+        const result = await sendAppointmentEmail(formData);
+        
+        if (result.success) {
+            showMessage('✅ Appointment request sent successfully! We will call you within 24 hours.', 'success');
+            contactForm.reset();
+        } else {
+            showMessage('❌ Failed to send. Please call us directly at 0742 017 575. Error: ' + result.error, 'error');
+        }
+        
+        // Reset button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+    });
+    
+    // Helper function to show messages
+    function showMessage(text, type) {
+        formMessage.textContent = text;
+        formMessage.style.display = 'block';
+        formMessage.style.backgroundColor = type === 'success' ? '#d4edda' : '#f8d7da';
+        formMessage.style.color = type === 'success' ? '#155724' : '#721c24';
+        formMessage.style.border = type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+        
+        // Auto-hide after 10 seconds
+        setTimeout(() => {
+            formMessage.style.display = 'none';
+        }, 10000);
+    }
+});
+
 </script>
 </body>
 </html>
