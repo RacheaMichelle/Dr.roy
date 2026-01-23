@@ -3270,9 +3270,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Dr Roy Skincare Reviews System Loading...');
     
     // ==================== CONFIGURATION ====================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtKAAnHlQyLT-zKpavztgQh1aLEQ8vY8huFKhW4ZpzT-Rbk3UZbOiBeHKRQ9ofW1Phew/exec?action=getReviews';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZHSuNT7mun2gGItgCwfaMpx1t58l2Y_PJKxLhtstxCZNfIFbaZ6CSDSGYvbRuzmvTCA/exec';
     let reviews = [];
     let selectedRating = 5;
+    let lastRefreshTime = 0;
+    let refreshInterval;
     
     // ==================== INITIALIZE STAR RATING ====================
     function initStarRating() {
@@ -3324,148 +3326,214 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // ==================== LOAD REVIEWS ====================
-    async function loadReviews() {
-        console.log('📥 Loading reviews...');
+    // ==================== LOAD REVIEWS FROM GOOGLE SHEETS ====================
+    async function loadReviewsFromGoogleSheets() {
+        console.log('📥 Loading reviews from Google Sheets...');
         
         try {
-            // First, check localStorage for quick display
-            loadLocalReviews();
-            
-            // Then try to load from Google Sheets
+            // Add timestamp to prevent caching
             const timestamp = Date.now();
-            const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getReviews&t=${timestamp}`, {
+            const url = `${GOOGLE_SCRIPT_URL}?action=getReviews&_=${timestamp}`;
+            
+            console.log('Fetching from:', url);
+            
+            const response = await fetch(url, {
                 method: 'GET',
-                cache: 'no-store'
+                cache: 'no-store',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
             
+            console.log('Response status:', response.status);
+            
             if (response.ok) {
-                const data = await response.json();
-                console.log('Google Sheets response:', data);
+                const text = await response.text();
+                console.log('Raw response:', text);
                 
-                if (data && data.success && Array.isArray(data.reviews)) {
-                    // Update with Google Sheets data
-                    reviews = data.reviews;
-                    console.log(`✅ Updated ${reviews.length} reviews from Google Sheets`);
+                try {
+                    const data = JSON.parse(text);
+                    console.log('Parsed data:', data);
                     
-                    // Save to localStorage
-                    localStorage.setItem('drroy-reviews-data', JSON.stringify({
-                        reviews: reviews,
-                        lastUpdated: Date.now()
-                    }));
+                    if (data && data.success && Array.isArray(data.reviews)) {
+                        // Process reviews
+                        const processedReviews = data.reviews.map(review => ({
+                            name: review.name || 'Anonymous',
+                            email: review.email || '',
+                            rating: parseInt(review.rating) || 5,
+                            text: review.text || '',
+                            date: review.date || new Date().toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                            }),
+                            timestamp: Date.now()
+                        }));
+                        
+                        // Sort by date (newest first) - assuming newer reviews at the bottom
+                        reviews = processedReviews.reverse();
+                        
+                        console.log(`✅ Loaded ${reviews.length} reviews from Google Sheets`);
+                        lastRefreshTime = Date.now();
+                        
+                        // Save to localStorage as backup
+                        localStorage.setItem('drroy-reviews', JSON.stringify({
+                            reviews: reviews,
+                            timestamp: lastRefreshTime
+                        }));
+                        
+                        renderReviews();
+                        return true;
+                    } else if (data.error) {
+                        console.error('Google Sheets error:', data.error);
+                    }
+                } catch (parseError) {
+                    console.error('Error parsing JSON:', parseError);
                 }
+            } else {
+                console.error('HTTP error:', response.status);
             }
+            
+            console.log('⚠️ Could not load from Google Sheets, using localStorage');
+            loadFromLocalStorage();
+            return false;
+            
         } catch (error) {
-            console.error('Error loading reviews:', error);
+            console.error('❌ Network error loading from Google Sheets:', error);
+            loadFromLocalStorage();
+            return false;
         }
-        
-        renderReviews();
     }
     
-    function loadLocalReviews() {
+    // ==================== LOAD FROM LOCAL STORAGE ====================
+    function loadFromLocalStorage() {
         try {
-            const saved = localStorage.getItem('drroy-reviews-data');
+            const saved = localStorage.getItem('drroy-reviews');
             if (saved) {
                 const data = JSON.parse(saved);
                 if (data && Array.isArray(data.reviews)) {
                     reviews = data.reviews;
                     console.log(`📂 Loaded ${reviews.length} reviews from localStorage`);
+                    renderReviews();
                     return true;
                 }
             }
         } catch (e) {
             console.error('Error loading from localStorage:', e);
         }
+        
+        console.log('📭 No reviews in localStorage');
+        reviews = [];
+        renderReviews();
         return false;
     }
     
-    // ==================== SAVE REVIEW - FIXED VERSION ====================
+    // ==================== SAVE REVIEW ====================
     async function saveReview(review) {
         console.log('💾 Saving review:', review);
         
-        // Add unique ID and timestamp
-        review.id = 'review_' + Date.now();
+        // Add timestamp to review
         review.timestamp = Date.now();
         
-        // CRITICAL: Add to local array FIRST for immediate display
-        reviews.unshift(review); // Add to beginning of array
+        // Generate unique ID for this review
+        const reviewId = `review_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        review.id = reviewId;
         
-        // Save to localStorage immediately
-        localStorage.setItem('drroy-reviews-data', JSON.stringify({
-            reviews: reviews,
-            lastUpdated: Date.now()
-        }));
+        // 1. Add to local array immediately
+        reviews.unshift(review);
         
-        // Update UI immediately
+        // 2. Update UI immediately
         renderReviews();
         
-        // Now send to Google Sheets
-        try {
-            console.log('📤 Sending to Google Sheets...');
+        // 3. Save to localStorage
+        localStorage.setItem('drroy-reviews', JSON.stringify({
+            reviews: reviews,
+            timestamp: Date.now()
+        }));
+        
+        // 4. Save to Google Sheets (fire and forget - don't wait for response)
+        saveToGoogleSheets(review);
+        
+        return true;
+    }
+    
+    // ==================== SAVE TO GOOGLE SHEETS ====================
+    function saveToGoogleSheets(review) {
+        console.log('📤 Sending to Google Sheets...');
+        
+        // Use image request technique to avoid CORS issues
+        const params = new URLSearchParams({
+            action: 'addReview',
+            name: encodeURIComponent(review.name || 'Anonymous'),
+            email: encodeURIComponent(review.email || ''),
+            rating: review.rating || 5,
+            text: encodeURIComponent(review.text || ''),
+            date: encodeURIComponent(review.date || new Date().toLocaleDateString()),
+            timestamp: review.timestamp,
+            source: 'web_form',
+            cacheBuster: Date.now()
+        });
+        
+        const url = `${GOOGLE_SCRIPT_URL}?${params.toString()}`;
+        console.log('Submitting to:', url);
+        
+        // Method 1: Using an image tag (works around CORS)
+        const img = new Image();
+        img.src = url;
+        img.style.display = 'none';
+        document.body.appendChild(img);
+        
+        // Method 2: Using fetch with error handling
+        fetch(url, {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'no-cache'
+        }).then(() => {
+            console.log('✅ Review sent to Google Sheets (no-cors)');
             
-            // Use FormData instead of JSON for better compatibility
-            const formData = new FormData();
-            formData.append('name', review.name);
-            formData.append('email', review.email);
-            formData.append('rating', review.rating);
-            formData.append('text', review.text);
-            formData.append('date', review.date);
-            
-            const response = await fetch(GOOGLE_SCRIPT_URL + '?action=addReview', {
-                method: 'POST',
-                body: formData
-            });
-            
-            console.log('Google Sheets response status:', response.status);
-            
-            if (response.ok) {
-                const result = await response.text();
-                console.log('✅ Review saved to Google Sheets:', result);
-                
-                // Refresh from Google Sheets after 2 seconds to get latest
-                setTimeout(() => {
-                    console.log('🔄 Refreshing from Google Sheets...');
-                    loadReviews();
-                }, 2000);
-                
-                return true;
-            } else {
-                console.log('❌ Google Sheets save failed');
-                return false;
-            }
-        } catch (error) {
-            console.error('❌ Error saving to Google Sheets:', error);
-            return false;
-        }
+            // Refresh reviews after a delay to get the new one
+            setTimeout(() => {
+                loadReviewsFromGoogleSheets();
+            }, 2000);
+        }).catch(err => {
+            console.log('⚠️ Review saved locally, will sync later:', err);
+        });
+        
+        return true;
     }
     
     // ==================== RENDER REVIEWS ====================
     function renderReviews() {
-        console.log('🎨 Rendering reviews...');
-        
         const reviewsList = document.getElementById('reviews-list');
         if (!reviewsList) {
             console.error('❌ Reviews list element not found!');
             return;
         }
         
+        console.log('🎨 Rendering', reviews.length, 'reviews');
+        
         // Calculate average rating
         let avgRating = 0;
         if (reviews.length > 0) {
-            const validReviews = reviews.filter(r => r.rating && !isNaN(r.rating));
-            if (validReviews.length > 0) {
-                const sum = validReviews.reduce((total, review) => total + review.rating, 0);
-                avgRating = (sum / validReviews.length).toFixed(1);
-            }
+            const sum = reviews.reduce((total, review) => total + (review.rating || 5), 0);
+            avgRating = (sum / reviews.length).toFixed(1);
         }
         
         // Create stars display
         const fullStars = Math.floor(avgRating);
         const halfStar = avgRating % 1 >= 0.5;
-        let starsDisplay = '★'.repeat(fullStars);
-        if (halfStar) starsDisplay += '☆';
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-        if (emptyStars > 0) starsDisplay += '☆'.repeat(emptyStars);
+        let starsDisplay = '';
+        
+        for (let i = 0; i < 5; i++) {
+            if (i < fullStars) {
+                starsDisplay += '<span style="color: #ffc107;">★</span>';
+            } else if (i === fullStars && halfStar) {
+                starsDisplay += '<span style="color: #ffc107;">★</span>';
+            } else {
+                starsDisplay += '<span style="color: #ddd;">☆</span>';
+            }
+        }
         
         // Update rating display
         const avgRatingEl = document.getElementById('avg-rating');
@@ -3473,8 +3541,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const reviewCountEl = document.getElementById('review-count');
         
         if (avgRatingEl) avgRatingEl.textContent = avgRating;
-        if (displayStarsEl) displayStarsEl.textContent = starsDisplay;
-        if (reviewCountEl) reviewCountEl.textContent = `Based on ${reviews.length} reviews`;
+        if (displayStarsEl) displayStarsEl.innerHTML = starsDisplay;
+        if (reviewCountEl) reviewCountEl.textContent = `Based on ${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+        
+        // Show last refresh time
+        const refreshInfo = document.getElementById('refresh-info');
+        if (refreshInfo) {
+            refreshInfo.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
         
         // Render reviews list
         if (reviews.length === 0) {
@@ -3485,27 +3559,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         } else {
-            // Sort by timestamp (newest first)
-            const sortedReviews = [...reviews].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            // Filter out duplicates and ensure we have valid data
+            const uniqueReviews = [];
+            const seen = new Set();
             
-            reviewsList.innerHTML = sortedReviews.map(review => `
-                <div class="review-card">
+            reviews.forEach(review => {
+                const key = `${review.name}-${review.text}-${review.date}`;
+                if (!seen.has(key) && review.name && review.text) {
+                    seen.add(key);
+                    uniqueReviews.push(review);
+                }
+            });
+            
+            // Limit to 50 reviews
+            const limitedReviews = uniqueReviews.slice(0, 50);
+            
+            reviewsList.innerHTML = limitedReviews.map(review => {
+                const rating = review.rating || 5;
+                const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                
+                return `
+                <div class="review-card" data-id="${review.id || ''}">
                     <div class="review-header">
                         <div>
-                            <div class="review-name">${review.name}</div>
-                            <div class="review-rating">
-                                ${'★'.repeat(review.rating || 5)}${'☆'.repeat(5 - (review.rating || 5))}
+                            <div class="review-name">${review.name || 'Anonymous'}</div>
+                            <div class="review-rating" style="color: #ffc107; font-size: 1.1rem;">
+                                ${stars}
                             </div>
                         </div>
-                        <div class="review-date">${review.date}</div>
+                        <div class="review-date">${review.date || 'Recently'}</div>
                     </div>
-                    <p class="review-text">"${review.text}"</p>
-                    ${review.id && review.id.includes('review_') ? '<small style="color: var(--accent); font-size: 0.8rem;"><i class="fas fa-check"></i> Just submitted</small>' : ''}
+                    <p class="review-text">"${review.text.replace(/"/g, '&quot;')}"</p>
+                    ${review.id && review.id.includes('review_') ? '<div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Saved locally</div>' : ''}
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
-        
-        console.log(`✅ Rendered ${reviews.length} reviews`);
     }
     
     // ==================== INITIALIZE FORM ====================
@@ -3525,6 +3614,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const length = this.value.length;
                 charCount.textContent = length;
                 
+                // Change color when approaching limit
+                if (length > 450) {
+                    charCount.style.color = '#e63946';
+                } else if (length > 400) {
+                    charCount.style.color = '#ffc107';
+                } else {
+                    charCount.style.color = '#666666';
+                }
+                
+                // Limit to 500 characters
                 if (length > 500) {
                     this.value = this.value.substring(0, 500);
                     charCount.textContent = 500;
@@ -3535,6 +3634,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Form submission
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
+            e.stopPropagation();
             
             const name = document.getElementById('review-name').value.trim();
             const email = document.getElementById('review-email').value.trim();
@@ -3577,24 +3677,25 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             try {
-                // Save the review - THIS WILL SHOW IT IMMEDIATELY
+                // Save the review
                 const saved = await saveReview(review);
                 
                 // Show success message
                 const successMsg = document.getElementById('success-message');
                 if (successMsg) {
-                    successMsg.innerHTML = saved ? 
-                        `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem;"></i>
+                    successMsg.innerHTML = 
+                        `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem; color: #28a745;"></i>
                         <div>
-                            <strong>Thank you!</strong>
-                            <p>Your review has been submitted and is now visible!</p>
-                        </div>` :
-                        `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem; color: #ffc107;"></i>
-                        <div>
-                            <strong>Review saved!</strong>
-                            <p>Your review is visible and will sync with the server.</p>
+                            <strong style="color: #28a745;">Thank you!</strong>
+                            <p>Your review has been submitted successfully! It will appear for other users shortly.</p>
                         </div>`;
-                    successMsg.style.display = 'block';
+                    successMsg.style.display = 'flex';
+                    successMsg.style.alignItems = 'center';
+                    successMsg.style.padding = '15px';
+                    successMsg.style.background = '#d4edda';
+                    successMsg.style.borderRadius = '5px';
+                    successMsg.style.margin = '15px 0';
+                    
                     setTimeout(() => {
                         successMsg.style.display = 'none';
                     }, 5000);
@@ -3604,6 +3705,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.reset();
                 if (charCount) {
                     charCount.textContent = '0';
+                    charCount.style.color = '#666666';
                 }
                 
                 // Reset star rating
@@ -3611,21 +3713,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('review-rating').value = 5;
                 
                 const stars = document.querySelectorAll('#star-rating .star-btn');
-                const ratingLabel = document.getElementById('rating-text');
                 stars.forEach((s, index) => {
                     s.classList.toggle('active', index < 5);
                     s.style.color = index < 5 ? '#ffc107' : '#ddd';
                 });
                 
-                if (ratingLabel) {
-                    ratingLabel.textContent = 'Excellent! 5 Stars';
+                const ratingText = document.getElementById('rating-text');
+                if (ratingText) {
+                    ratingText.textContent = 'Excellent! 5 Stars';
                 }
                 
-                // Scroll to reviews to show the new one
+                // Scroll to reviews section
                 setTimeout(() => {
-                    const reviewsList = document.getElementById('reviews-list');
-                    if (reviewsList) {
-                        reviewsList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const reviewsSection = document.getElementById('reviews-list');
+                    if (reviewsSection) {
+                        reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }, 300);
                 
@@ -3647,14 +3749,24 @@ document.addEventListener('DOMContentLoaded', function() {
         initStarRating();
         initReviewForm();
         
-        // Load reviews
-        loadReviews();
+        // Load reviews immediately
+        loadReviewsFromGoogleSheets();
         
-        // Auto-refresh every 20 seconds to get new reviews from other users
-        setInterval(loadReviews, 20000);
+        // Set up automatic refresh every 30 seconds
+        refreshInterval = setInterval(() => {
+            console.log('🔄 Auto-refreshing reviews...');
+            loadReviewsFromGoogleSheets();
+        }, 30000); // 30 seconds
         
-        console.log('✅ Reviews system ready!');
+        console.log('✅ Reviews system ready! Auto-refresh every 30 seconds.');
     }
+    
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
+        }
+    });
     
     // Start the system
     init();
