@@ -3514,44 +3514,106 @@ input:valid, textarea:valid, select:valid {
 
 .menu-overlay {
     transition: opacity 0.3s ease, visibility 0.3s ease;
+}/* ==================== MOBILE MENU FIXES ==================== */
+
+/* Mobile menu button - Visible on mobile only */
+.mobile-menu {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1.8rem;
+    transition: var(--transition);
+    align-items: center;
+    justify-content: center;
 }
-         /* Add this to your CSS to ensure mobile menu button is visible */
+
+.mobile-menu:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+/* Mobile styles - Show mobile menu button */
 @media (max-width: 768px) {
     .mobile-menu {
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
-        pointer-events: auto !important;
     }
     
-    /* Ensure nav links are hidden by default */
+    /* Hide desktop nav links on mobile */
     .nav-links {
-        display: none;
+        position: fixed !important;
+        top: 80px !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: linear-gradient(135deg, var(--dark) 0%, var(--dark-accent) 100%) !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 30px 20px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+        transform: translateY(-100%) !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transition: transform 0.4s ease, opacity 0.3s ease, visibility 0.3s ease !important;
+        z-index: 999 !important;
+        height: calc(100vh - 80px) !important;
+        overflow-y: auto !important;
+        display: flex !important;
     }
     
     .nav-links.active {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        top: 80px;
-        left: 0;
-        width: 100%;
-        background: linear-gradient(135deg, var(--dark) 0%, var(--dark-accent) 100%);
-        padding: 30px 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-        height: calc(100vh - 80px);
-        overflow-y: auto;
-        z-index: 999;
+        transform: translateY(0) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    .nav-links li {
+        margin: 20px 0 !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    .nav-links a {
+        font-size: 1.1rem !important;
+        padding: 15px 20px !important;
+        width: 100% !important;
+        justify-content: center !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    .nav-links .btn {
+        padding: 15px 30px !important;
+        font-size: 1rem !important;
+        margin-top: 10px !important;
     }
 }
 
-/* Make sure overlay is visible when active */
+/* Overlay for mobile menu */
+.menu-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(5px) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease !important;
+    z-index: 998 !important;
+}
+
 .menu-overlay.active {
-    opacity: 1;
-    visibility: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
     </style>
 </head>
@@ -10119,227 +10181,6 @@ function initScrollAnimations() {
     });
 }
 
-// ==================== Debug Helper ====================
-window.debugMenu = function() {
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const navLinks = document.getElementById('nav-links');
-    const menuOverlay = document.getElementById('menu-overlay');
-    
-    console.log('=== MOBILE MENU DEBUG INFO ===');
-    console.log('Window width:', window.innerWidth);
-    console.log('Mobile menu button:', mobileMenuBtn);
-    console.log('Nav links element:', navLinks);
-    console.log('Menu overlay:', menuOverlay);
-    console.log('Nav links active:', navLinks?.classList.contains('active'));
-    console.log('Overlay active:', menuOverlay?.classList.contains('active'));
-    console.log('Mobile menu button HTML:', mobileMenuBtn?.outerHTML);
-    console.log('==============================');
-};
-
-// Add debug button in development (remove in production)
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    const debugBtn = document.createElement('button');
-    debugBtn.textContent = 'Debug Menu';
-    debugBtn.style.position = 'fixed';
-    debugBtn.style.bottom = '10px';
-    debugBtn.style.right = '10px';
-    debugBtn.style.zIndex = '9999';
-    debugBtn.style.padding = '5px 10px';
-    debugBtn.style.background = '#e63946';
-    debugBtn.style.color = 'white';
-    debugBtn.style.border = 'none';
-    debugBtn.style.borderRadius = '4px';
-    debugBtn.style.cursor = 'pointer';
-    debugBtn.onclick = window.debugMenu;
-    document.body.appendChild(debugBtn);
-}
-
-// ==================== DYNAMIC VISUAL EFFECTS ====================
-
-// Create floating particles
-function createFloatingParticles() {
-    const particlesContainer = document.getElementById('floating-particles');
-    if (!particlesContainer) return;
-    
-    // Clear existing particles
-    particlesContainer.innerHTML = '';
-    
-    // Create 20 particles
-    for (let i = 0; i < 20; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        
-        // Random size between 2px and 8px
-        const size = Math.random() * 6 + 2;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        
-        // Random position
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.top = `${Math.random() * 100}%`;
-        
-        // Random color from theme
-        const colors = ['#e63946', '#a8dadc', '#457b9d', '#1d3557'];
-        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-        
-        // Random animation duration and delay
-        const duration = Math.random() * 20 + 10;
-        const delay = Math.random() * 5;
-        particle.style.animationDuration = `${duration}s`;
-        particle.style.animationDelay = `${delay}s`;
-        
-        particlesContainer.appendChild(particle);
-    }
-}
-
-// Animate elements on scroll
-function initScrollAnimations() {
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
-                
-                // Add specific animations based on element type
-                if (entry.target.classList.contains('service-card')) {
-                    entry.target.style.animation = 'cardAppear 0.6s ease-out forwards';
-                }
-                
-                if (entry.target.classList.contains('category-item')) {
-                    entry.target.style.animation = 'fadeUp 0.8s ease-out forwards';
-                }
-            }
-        });
-    }, observerOptions);
-    
-    // Observe all cards and items
-    document.querySelectorAll('.service-card, .category-item, .review-card, .branch-card').forEach(el => {
-        observer.observe(el);
-    });
-}
-
-// Add CSS animations
-function addAnimationStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes cardAppear {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .animate-in {
-            animation-fill-mode: forwards;
-        }
-        
-        /* Glow effect for active elements */
-        .glow-on-hover:hover {
-            box-shadow: 0 0 20px rgba(230, 57, 70, 0.3);
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Parallax effect for hero section
-function initParallaxEffect() {
-    const heroSection = document.querySelector('.hero');
-    if (!heroSection) return;
-    
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const rate = scrolled * -0.5;
-        
-        // Move decorative elements
-        const floatingElements = document.querySelectorAll('.floating-element');
-        floatingElements.forEach((el, index) => {
-            const speed = 0.1 + (index * 0.05);
-            el.style.transform = `translateY(${rate * speed}px)`;
-        });
-    });
-}
-
-// Initialize all visual effects
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Initializing visual effects...');
-    
-    // Create particles
-    createFloatingParticles();
-    
-    // Add animation styles
-    addAnimationStyles();
-    
-    // Initialize scroll animations
-    initScrollAnimations();
-    
-    // Initialize parallax
-    initParallaxEffect();
-    
-    // Recreate particles on resize
-    window.addEventListener('resize', createFloatingParticles);
-    
-    // Add hover effects to buttons
-    document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            this.classList.add('glow-on-hover');
-        });
-        
-        btn.addEventListener('mouseleave', function() {
-            this.classList.remove('glow-on-hover');
-        });
-    });
-}); // <-- This closes the visual effects DOMContentLoaded
-
-// Rainbow border animation for special elements
-function createRainbowBorder(element) {
-    if (!element) return;
-
-    const colors = ['#e63946', '#ff9a00', '#ffd700', '#00ff88', '#0099ff', '#a855f7'];
-    let currentColor = 0;
-
-    setInterval(() => {
-        element.style.borderColor = colors[currentColor];
-        element.style.boxShadow = `0 0 15px ${colors[currentColor]}`;
-        currentColor = (currentColor + 1) % colors.length;
-    }, 1000);
-}
-
-// Check if DOM is already loaded
-if (document.readyState === 'loading') {
-    // Still loading, wait for it
-    document.addEventListener('DOMContentLoaded', function() {
-        const specialCards = document.querySelectorAll('.service-card:nth-child(odd)');
-        specialCards.forEach(card => {
-            createRainbowBorder(card);
-        });
-    });
-} else {
-    // DOM already loaded, run immediately
-    const specialCards = document.querySelectorAll('.service-card:nth-child(odd)');
-    specialCards.forEach(card => {
-        createRainbowBorder(card);
-    });
-}
 <script>
 // ==================== MOBILE MENU FUNCTIONALITY ====================
 document.addEventListener('DOMContentLoaded', function() {
@@ -10370,12 +10211,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (navLinks.classList.contains('active')) {
             icon.classList.remove('fa-bars');
             icon.classList.add('fa-times');
-            document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+            document.body.style.overflow = 'hidden';
             console.log('Menu opened');
         } else {
             icon.classList.remove('fa-times');
             icon.classList.add('fa-bars');
-            document.body.style.overflow = ''; // Restore scrolling
+            document.body.style.overflow = '';
             console.log('Menu closed');
         }
     }
@@ -10390,26 +10231,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const icon = mobileMenuBtn.querySelector('i');
         icon.classList.remove('fa-times');
         icon.classList.add('fa-bars');
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = '';
     }
     
     // Event listeners
     mobileMenuBtn.addEventListener('click', toggleMobileMenu);
     menuOverlay.addEventListener('click', closeMobileMenu);
     
-    // Close menu when clicking on ANY nav link (fixed)
+    // Close menu when clicking on ANY nav link
     navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {
             console.log('Nav link clicked:', this.getAttribute('href'));
             
-            // For same-page anchor links
             const href = this.getAttribute('href');
+            
+            // Always close menu when a link is clicked
+            closeMobileMenu();
+            
+            // For anchor links (#section), handle smooth scrolling
             if (href && href.startsWith('#')) {
-                // Let the smooth scrolling handle it
                 e.preventDefault();
-                closeMobileMenu();
                 
-                // Smooth scroll after a small delay
                 setTimeout(() => {
                     const targetElement = document.querySelector(href);
                     if (targetElement) {
@@ -10419,21 +10261,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }
                 }, 300);
-            } else {
-                // For external links or other pages, close menu immediately
-                // The page will navigate after this
-                closeMobileMenu();
-                
-                // If it's a relative link (starts with /) or same domain link,
-                // we can optionally add a small delay to ensure menu closes before navigation
-                if (href && (href.startsWith('/') || href.includes(window.location.hostname))) {
-                    e.preventDefault();
-                    setTimeout(() => {
-                        window.location.href = href;
-                    }, 300);
-                }
-                // For external links, let the default behavior happen
             }
+            // For external links, let them open naturally
         });
     });
     
@@ -10456,9 +10285,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Smooth scrolling for anchor links (for anchor links outside the mobile menu)
+    // Smooth scrolling for anchor links outside the mobile menu
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        // Skip links that are already in the mobile menu (they have their own handler)
+        // Skip links that are already in the mobile menu
         if (anchor.closest('#nav-links')) return;
         
         anchor.addEventListener('click', function(e) {
@@ -10485,11 +10314,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close menu on page load (in case it was left open)
     closeMobileMenu();
     
+    // Close menu when clicking ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
     console.log('Mobile menu initialized successfully!');
 });
 
-// ==================== DEBUG HELPER ====================
-// This will help identify any issues
+// Debug function
 function checkMenuElements() {
     console.log('=== MENU ELEMENTS CHECK ===');
     console.log('Mobile menu button:', document.getElementById('mobile-menu-btn'));
@@ -10501,43 +10336,33 @@ function checkMenuElements() {
     console.log('======================');
 }
 
-// Call this function if you need to debug
 window.checkMenu = checkMenuElements;
 
-// Log when page is fully loaded
+// Force close menu on page load
 window.addEventListener('load', function() {
     console.log('Page fully loaded');
-    // Force close menu on load (safety measure)
+    
     const navLinks = document.getElementById('nav-links');
     const menuOverlay = document.getElementById('menu-overlay');
+    
     if (navLinks && menuOverlay) {
         navLinks.classList.remove('active');
         menuOverlay.classList.remove('active');
-    }
-    document.body.style.overflow = '';
-    checkMenuElements();
-});
-
-// Also close menu when clicking ESC key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const navLinks = document.getElementById('nav-links');
-        const menuOverlay = document.getElementById('menu-overlay');
-        if (navLinks && navLinks.classList.contains('active')) {
-            navLinks.classList.remove('active');
-            menuOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            // Reset icon
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            if (mobileMenuBtn) {
-                const icon = mobileMenuBtn.querySelector('i');
+        
+        // Reset icon
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        if (mobileMenuBtn) {
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) {
                 icon.classList.remove('fa-times');
                 icon.classList.add('fa-bars');
             }
         }
     }
+    
+    document.body.style.overflow = '';
 });
+</script>
 </script>
 </body>
 </html>
