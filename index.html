@@ -1,4 +1,4 @@
-A<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- SEO Meta Tags -->
@@ -5132,58 +5132,196 @@ if (document.readyState === 'loading') {
     });
 }
 <script>
-// ULTRA SIMPLE VERSION THAT WILL WORK
+// ==================== FIXED MOBILE MENU FUNCTIONALITY ====================
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded - initializing mobile menu...');
+    
+    // Get elements
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('nav-links');
+    const menuOverlay = document.getElementById('menu-overlay');
+    
+    if (!mobileMenuBtn || !navLinks || !menuOverlay) {
+        console.error('Mobile menu elements not found!');
+        return;
+    }
+    
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+        console.log('Toggling mobile menu...');
+        navLinks.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+        
+        // Change menu icon
+        const icon = mobileMenuBtn.querySelector('i');
+        if (navLinks.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+    }
+    
+    // Close mobile menu
+    function closeMobileMenu() {
+        console.log('Closing mobile menu...');
+        navLinks.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        
+        // Reset icon
+        const icon = mobileMenuBtn.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+    
+    // Event listeners
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    menuOverlay.addEventListener('click', closeMobileMenu);
+    
+    // FIX: Close menu when clicking on ANY nav link
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // First close the menu
+            closeMobileMenu();
+            
+            // Then handle the navigation
+            const targetId = this.getAttribute('href');
+            
+            // If it's an anchor link (#), handle smooth scrolling
+            if (targetId.startsWith('#')) {
+                e.preventDefault(); // Prevent default anchor behavior
+                
+                setTimeout(() => {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Smooth scroll to target
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, // Adjust for fixed header
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 300); // Small delay to allow menu to close
+            }
+            // If it's not an anchor link (like external link), let it follow naturally
+        });
+    });
+    
+    // Close menu on window resize (if resizing to desktop)
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && navLinks.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Header scroll effect
+    const header = document.getElementById('main-header');
+    if (header) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Initialize on page load
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        }
+    }
+    
+    // FIX: Also handle other anchor links on the page
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        // Skip nav links since we already handled them
+        if (anchor.closest('.nav-links')) return;
+        
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                e.preventDefault();
+                
+                // Close mobile menu if open
+                if (navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                    
+                    // Wait for menu to close before scrolling
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }, 300);
+                } else {
+                    // If menu is not open, scroll immediately
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+    
+    console.log('Mobile menu initialized successfully!');
+});
+
+// ==================== SIMPLIFIED ALTERNATIVE ====================
+// If the above doesn't work, try this simpler version:
+document.addEventListener('DOMContentLoaded', function() {
+    // Simple mobile menu that definitely closes on click
     const menuBtn = document.getElementById('mobile-menu-btn');
     const nav = document.getElementById('nav-links');
     const overlay = document.getElementById('menu-overlay');
     
-    // Function to close menu
+    if (!menuBtn || !nav) return;
+    
+    function toggleMenu() {
+        nav.classList.toggle('active');
+        if (overlay) overlay.classList.toggle('active');
+        
+        const icon = menuBtn.querySelector('i');
+        if (nav.classList.contains('active')) {
+            icon.className = 'fas fa-times';
+            document.body.style.overflow = 'hidden';
+        } else {
+            icon.className = 'fas fa-bars';
+            document.body.style.overflow = '';
+        }
+    }
+    
     function closeMenu() {
         nav.classList.remove('active');
         if (overlay) overlay.classList.remove('active');
-        if (menuBtn) {
-            menuBtn.querySelector('i').className = 'fas fa-bars';
-        }
+        menuBtn.querySelector('i').className = 'fas fa-bars';
         document.body.style.overflow = '';
     }
     
-    // Toggle menu on button click
-    if (menuBtn) {
-        menuBtn.addEventListener('click', function() {
-            nav.classList.toggle('active');
-            if (overlay) overlay.classList.toggle('active');
-            
-            const icon = this.querySelector('i');
-            if (nav.classList.contains('active')) {
-                icon.className = 'fas fa-times';
-                document.body.style.overflow = 'hidden';
-            } else {
-                icon.className = 'fas fa-bars';
-                document.body.style.overflow = '';
-            }
-        });
-    }
+    menuBtn.addEventListener('click', toggleMenu);
     
-    // Close menu on overlay click
     if (overlay) {
         overlay.addEventListener('click', closeMenu);
     }
     
-    // CLOSE MENU WHEN ANY LINK IS CLICKED
-    const allLinks = nav.querySelectorAll('a');
-    allLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            // Close menu immediately
+    // THE FIX: Make sure ALL links in the menu close it
+    const navLinks = nav.querySelectorAll('a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Always close the menu first
             closeMenu();
             
-            // If it's an anchor link, handle scrolling after menu closes
+            // If it's an anchor link, handle scrolling
             const href = this.getAttribute('href');
             if (href.startsWith('#')) {
-                // Prevent default to handle manually
-                event.preventDefault();
+                e.preventDefault();
                 
-                // Wait for menu to close, then scroll
+                // Wait a bit for menu to close
                 setTimeout(() => {
                     const target = document.querySelector(href);
                     if (target) {
@@ -5192,9 +5330,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             behavior: 'smooth'
                         });
                     }
-                }, 400); // Slightly longer delay to ensure menu is closed
+                }, 300);
             }
-            // For external links, they'll navigate normally
+            // For non-anchor links, they'll navigate naturally
         });
     });
 });
