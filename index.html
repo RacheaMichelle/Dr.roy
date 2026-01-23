@@ -4351,51 +4351,5 @@ if (document.readyState === 'loading') {
     });
 }
 </script>
-<script>
-// Debug Firebase connection
-console.log('=== FIREBASE DEBUG START ===');
-
-// Check if Firebase is loaded
-console.log('Firebase available:', typeof firebase !== 'undefined');
-if (typeof firebase !== 'undefined') {
-    console.log('Firebase version:', firebase.SDK_VERSION);
-    console.log('Existing apps:', firebase.apps.length);
-}
-
-// Test your config
-const testConfig = {
-    apiKey: "AIzaSyA92x1_V8CeR5S36RvVgxao4pPjndoGdkw",
-    authDomain: "drroyreviews.firebaseapp.com",
-    databaseURL: "https://drroyreviews-default-rtdb.firebaseio.com",
-    projectId: "drroyreviews",
-    storageBucket: "drroyreviews.firebasestorage.app",
-    messagingSenderId: "304907768153",
-    appId: "1:304907768153:web:fb4b8ee26d2d557101fc48"
-};
-
-console.log('Testing config:', testConfig);
-
-try {
-    // Try to initialize
-    if (typeof firebase !== 'undefined') {
-        const testApp = firebase.initializeApp(testConfig, 'DebugApp');
-        console.log('✅ Firebase initialized successfully');
-        
-        // Test database
-        const db = firebase.database(testApp);
-        console.log('✅ Database reference obtained');
-        
-        // Test write
-        db.ref('test').set({ test: 'connection', time: Date.now() })
-            .then(() => console.log('✅ Database write successful'))
-            .catch(err => console.error('❌ Database write failed:', err));
-    }
-} catch (error) {
-    console.error('❌ Firebase initialization error:', error.message);
-    console.error('Full error:', error);
-}
-
-console.log('=== FIREBASE DEBUG END ===');
-</script>
 </body>
 </html>
