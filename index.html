@@ -3187,6 +3187,35 @@
         padding: 30px 20px;
     }
 }
+         /* Loading spinner */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Form validation styles */
+.form-error {
+    color: #e63946;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    display: none;
+}
+
+.form-error.show {
+    display: block;
+}
+
+input:invalid, textarea:invalid, select:invalid {
+    border-color: #e63946 !important;
+}
+
+input:valid, textarea:valid, select:valid {
+    border-color: #a8dadc !important;
+}
 
     </style>
 </head>
@@ -4254,27 +4283,41 @@ document.addEventListener('DOMContentLoaded', function() {
                         Your appointment request will be sent to Dr Roy Skincare via email
                     </p>
                     <form id="appointment-form" style="margin-top: 20px;">
-                        <div style="margin-bottom: 15px;">
-                            <input type="text" placeholder="Your Name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <input type="tel" placeholder="Phone Number" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <select style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
-                                <option value="">Select Preferred Branch</option>
-                                <option value="kampala">Kampala Branch</option>
-                                <option value="mbarara">Mbarara Branch</option>
-                            </select>
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <textarea placeholder="Message (Optional)" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;"></textarea>
-                        </div>
-                        <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">
-                            <i class="fas fa-envelope" style="margin-right: 8px;"></i>
-                            Send Appointment Request
-                        </button>
-                    </form>
+    <div style="margin-bottom: 15px;">
+        <input type="text" placeholder="Your Full Name *" required 
+               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+        <div class="form-error" id="name-error"></div>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <input type="tel" placeholder="Phone Number (e.g., 0742 017 575) *" required 
+               pattern="[0-9\s\+\(\)\-]{9,}"
+               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+        <div class="form-error" id="phone-error"></div>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <select required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+            <option value="">Select Preferred Branch *</option>
+            <option value="kampala">Kampala Branch (Wilson Street)</option>
+            <option value="mbarara">Mbarara Branch (Town Location)</option>
+        </select>
+        <div class="form-error" id="branch-error"></div>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <textarea placeholder="Message (Optional) - Tell us about your skin concern..." rows="4" 
+                  style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Poppins', sans-serif;"></textarea>
+    </div>
+    
+    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">
+        <i class="fas fa-envelope" style="margin-right: 8px;"></i>
+        Send Appointment Request
+    </button>
+    
+    <!-- Success/Error message container -->
+    <div id="form-message" style="margin-top: 15px; display: none; padding: 10px; border-radius: 5px;"></div>
+</form>
                     
                     <!-- Small flower decoration -->
                     <div style="text-align: center; margin-top: 20px;">
@@ -4344,79 +4387,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==================== EmailJS Initialization ====================
 emailjs.init('k7NxkfEC3DngxJ291'); // Your EmailJS public key
 
-// ==================== Appointment Form - EmailJS ====================
-const appointmentForm = document.getElementById('appointment-form');
-    
-if (appointmentForm) {
-    // Get form elements
-    const nameInput = appointmentForm.querySelector('input[type="text"]');
-    const phoneInput = appointmentForm.querySelector('input[type="tel"]');
-    const branchSelect = appointmentForm.querySelector('select');
-    const messageInput = appointmentForm.querySelector('textarea');
-    
-    appointmentForm.addEventListener('submit', function(e) {
-        e.preventDefault();
 
-        const name = nameInput.value.trim();
-        const phone = phoneInput.value.trim();
-        const branch = branchSelect.value;
-        const message = messageInput.value.trim();
-
-        // Validation
-        if (!name || name.length < 2) {
-            alert('Please enter your full name (at least 2 characters)');
-            nameInput.focus();
-            return;
-        }
-        
-        if (!phone || phone.length < 9) {
-            alert('Please enter a valid phone number');
-            phoneInput.focus();
-            return;
-        }
-
-        // Prepare email parameters
-        const templateParams = {
-            to_email: 'drroyskincare@gmail.com',
-            from_name: name,
-            from_email: phone, // Using phone as "from_email"
-            branch: branch || 'Not specified',
-            message: message || 'No additional message',
-            message_type: 'New Appointment Request',
-            date: new Date().toLocaleDateString(),
-            time: new Date().toLocaleTimeString()
-        };
-
-        // Disable submit button
-        const submitBtn = appointmentForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
-
-        // Send email notification
-        sendEmail('template_qf4aw5j', templateParams)
-            .then(result => {
-                if (result.success) {
-                    alert('✓ Thank you! Your appointment request has been sent. We will contact you shortly to confirm.');
-                    appointmentForm.reset();
-                } else {
-                    alert('There was an issue sending your request. Please call us directly at 0742 017 575.');
-                }
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-            });
-    });
-}
-        
-        // Phone validation function
-        function validatePhone(phone) {
-            // Basic phone validation - accepts numbers, spaces, dashes, plus sign
-            const re = /^[\+]?[1-9][\d\s\-\(\)]{8,}$/;
-            return re.test(phone);
-        }
-    }
     
     // Slideshow functionality
     let slideIndex = 1;
@@ -4774,6 +4745,96 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
+// ==================== EMAILJS APPOINTMENT FORM ====================
+// Initialize EmailJS (you already have this but let's verify)
+emailjs.init('k7NxkfEC3DngxJ291');
+
+// Email sending function
+async function sendEmail(templateId, templateParams) {
+    try {
+        const response = await emailjs.send(
+            'service_oxjeiv8',  // Your EmailJS Service ID
+            templateId,
+            templateParams
+        );
+        return { success: true, data: response };
+    } catch (error) {
+        console.error('EmailJS Error:', error);
+        return { success: false, error: error.text || error.message };
+    }
+}
+
+// Appointment form handler
+document.addEventListener('DOMContentLoaded', function() {
+    const appointmentForm = document.getElementById('appointment-form');
+    
+    if (appointmentForm) {
+        appointmentForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = this.querySelector('input[type="text"]').value.trim();
+            const phone = this.querySelector('input[type="tel"]').value.trim();
+            const branch = this.querySelector('select').value;
+            const message = this.querySelector('textarea').value.trim();
+            
+            // Validation
+            if (!name || name.length < 2) {
+                alert('Please enter your full name (at least 2 characters)');
+                return;
+            }
+            
+            if (!phone || phone.length < 9) {
+                alert('Please enter a valid phone number');
+                return;
+            }
+            
+            if (!branch) {
+                alert('Please select your preferred branch');
+                return;
+            }
+            
+            // Show loading
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            // Prepare email data
+            const templateParams = {
+                to_name: 'Dr Roy Skincare',
+                from_name: name,
+                from_phone: phone,
+                branch: branch === 'kampala' ? 'Kampala Branch' : 'Mbarara Branch',
+                message: message || 'No additional message',
+                date: new Date().toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }),
+                time: new Date().toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            
+            // Send email
+            const result = await sendEmail('template_qf4aw5j', templateParams);
+            
+            if (result.success) {
+                alert('✅ Appointment request sent successfully! We will call you within 24 hours.');
+                this.reset();
+            } else {
+                alert('❌ Failed to send appointment. Please call us directly at 0742 017 575.\nError: ' + result.error);
+            }
+            
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
+    }
+});        
 </script>
 </body>
 </html>
