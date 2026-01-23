@@ -149,43 +149,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     
-   <!-- EmailJS - CORRECT VERSION -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-    // Initialize EmailJS with YOUR PUBLIC KEY
-    (function() {
-        emailjs.init("k7NxkfEC3DngxJ291");
-        console.log("✅ EmailJS initialized successfully");
-    })();
-</script>
-    <!-- Add this in your head section, after the EmailJS script -->
-<script>
-// Test EmailJS function
-function testEmailJS() {
-    console.log('Testing EmailJS...');
-    
-    // Make sure this matches your actual EmailJS template ID
-    const templateParams = {
-        to_name: 'Dr Roy Skincare',
-        from_name: 'Test User',
-        from_email: 'test@example.com',  // Using email field instead of phone
-        branch: 'Kampala Branch',
-        message: 'Test appointment request',
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString()
-    };
-    
-    emailjs.send('service_fef1c5d', 'template_qf4aw5j', templateParams)
-        .then(response => {
-            console.log('SUCCESS!', response.status, response.text);
-            alert('✅ Email sent successfully!');
-        })
-        .catch(error => {
-            console.error('FAILED...', error);
-            alert('❌ Failed: ' + JSON.stringify(error));
-        });
-}
-</script>
+  
     
     <!-- Additional SEO Meta -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -5052,128 +5016,228 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-<script>
-// WhatsApp Booking Form Handler
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📱 WhatsApp booking form loaded');
+<!-- WhatsApp Booking Form -->
+<div class="contact-info">
+    <h3>Book Appointment via WhatsApp</h3>
+    <p>Fill details below and send directly to WhatsApp for fastest response</p>
     
+    <!-- Status Message -->
+    <div id="booking-status" style="display: none; padding: 15px; border-radius: 8px; margin: 15px 0;"></div>
+    
+    <form id="whatsapp-booking-form">
+        <!-- Name Field -->
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="client-name" placeholder="Your Full Name *" required 
+                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+        </div>
+        
+        <!-- Phone Field -->
+        <div style="margin-bottom: 15px;">
+            <input type="tel" id="client-phone" placeholder="Phone Number (e.g., 0742 017 575) *" required 
+                   style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+        </div>
+        
+        <!-- Branch Selection -->
+        <div style="margin-bottom: 15px;">
+            <select id="client-branch" required 
+                    style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                <option value="">Select Preferred Branch *</option>
+                <option value="Kampala">Kampala Branch (Wilson Street)</option>
+                <option value="Mbarara">Mbarara Branch (Town Location)</option>
+            </select>
+        </div>
+        
+        <!-- Treatment Selection -->
+        <div style="margin-bottom: 15px;">
+            <select id="client-treatment"
+                    style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                <option value="">Select Treatment (Optional)</option>
+                <option value="Weight Loss & Body Contouring">Weight Loss & Body Contouring</option>
+                <option value="Hair Growth Treatment">Hair Growth Treatment</option>
+                <option value="Skin Rejuvenation">Skin Rejuvenation</option>
+                <option value="Skin Correction">Skin Correction</option>
+                <option value="Consultation">General Consultation</option>
+                <option value="Other Treatment">Other Treatment</option>
+            </select>
+        </div>
+        
+        <!-- Message -->
+        <div style="margin-bottom: 20px;">
+            <textarea id="client-message" placeholder="Briefly describe your skin concern or desired treatment..." rows="4"
+                      style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; resize: vertical;"></textarea>
+        </div>
+        
+        <!-- Submit Button -->
+        <button type="submit" id="submit-booking" class="btn" style="width: 100%; background: #25D366; font-size: 1.1rem; padding: 15px;">
+            <i class="fab fa-whatsapp"></i> Send Booking Request via WhatsApp
+        </button>
+        
+        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem;">
+            <p><i class="fas fa-info-circle"></i> WhatsApp opens with pre-filled message. Just click send!</p>
+        </div>
+    </form>
+</div>
+
+<!-- Add this JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('whatsapp-booking-form');
     const statusDiv = document.getElementById('booking-status');
+    const submitBtn = document.getElementById('submit-booking');
     
-    if (!form) {
-        console.error('Form not found');
-        return;
-    }
+    if (!form) return;
     
-    // Helper function to show status
-    function showStatus(message, type = 'success') {
+    // Show status message
+    function showStatus(message, type = 'info') {
         if (!statusDiv) return;
         
-        statusDiv.textContent = message;
+        statusDiv.innerHTML = message;
         statusDiv.style.display = 'block';
-        statusDiv.style.background = type === 'success' ? '#d4edda' : 
-                                    type === 'error' ? '#f8d7da' : '#fff3cd';
-        statusDiv.style.color = type === 'success' ? '#155724' : 
-                               type === 'error' ? '#721c24' : '#856404';
-        statusDiv.style.border = type === 'success' ? '1px solid #c3e6cb' : 
-                                type === 'error' ? '1px solid #f5c6cb' : '1px solid #ffeaa7';
         
-        setTimeout(() => {
-            statusDiv.style.display = 'none';
-        }, 5000);
+        if (type === 'success') {
+            statusDiv.style.background = '#d4edda';
+            statusDiv.style.color = '#155724';
+            statusDiv.style.border = '1px solid #c3e6cb';
+        } else if (type === 'error') {
+            statusDiv.style.background = '#f8d7da';
+            statusDiv.style.color = '#721c24';
+            statusDiv.style.border = '1px solid #f5c6cb';
+        } else {
+            statusDiv.style.background = '#fff3cd';
+            statusDiv.style.color = '#856404';
+            statusDiv.style.border = '1px solid #ffeaa7';
+        }
     }
     
-    // Form submit handler
+    // Format phone number
+    function formatPhoneNumber(phone) {
+        // Remove all non-digits
+        let cleaned = phone.replace(/\D/g, '');
+        
+        // If starts with 0, convert to international format for Uganda
+        if (cleaned.startsWith('0')) {
+            cleaned = '256' + cleaned.substring(1);
+        }
+        
+        // Ensure it's 12 digits (256 + 9 digits)
+        if (cleaned.length === 12 && cleaned.startsWith('256')) {
+            return cleaned;
+        }
+        
+        // Return as is if already in international format
+        return phone;
+    }
+    
+    // Handle form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Get form values
+        // Get values
         const name = document.getElementById('client-name').value.trim();
         const phone = document.getElementById('client-phone').value.trim();
         const branch = document.getElementById('client-branch').value;
         const treatment = document.getElementById('client-treatment').value;
         const message = document.getElementById('client-message').value.trim();
         
-        // Basic validation
+        // Validate
         if (!name || name.length < 2) {
-            showStatus('Please enter your full name (min 2 characters)', 'error');
-            document.getElementById('client-name').focus();
+            showStatus('❌ Please enter your full name (minimum 2 characters)', 'error');
             return;
         }
         
         if (!phone || phone.replace(/\D/g, '').length < 9) {
-            showStatus('Please enter a valid phone number (at least 9 digits)', 'error');
-            document.getElementById('client-phone').focus();
+            showStatus('❌ Please enter a valid phone number (at least 9 digits)', 'error');
             return;
         }
         
         if (!branch) {
-            showStatus('Please select your preferred branch', 'error');
-            document.getElementById('client-branch').focus();
+            showStatus('❌ Please select your preferred branch', 'error');
             return;
         }
         
-        // Create WhatsApp message
-        let whatsappMessage = `Hello Dr Roy Skincare,\n\n`;
-        whatsappMessage += `I want to book an appointment:\n\n`;
-        whatsappMessage += `👤 *Name:* ${name}\n`;
-        whatsappMessage += `📱 *Phone:* ${phone}\n`;
-        whatsappMessage += `📍 *Preferred Branch:* ${branch}\n`;
+        // Disable button and show loading
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening WhatsApp...';
+        
+        // Build the WhatsApp message
+        let whatsappText = `*NEW APPOINTMENT REQUEST - DR ROY SKINCARE*\n\n`;
+        whatsappText += `👤 *Client Name:* ${name}\n`;
+        whatsappText += `📱 *Phone:* ${phone}\n`;
+        whatsappText += `📍 *Preferred Branch:* ${branch} Branch\n`;
         
         if (treatment) {
-            whatsappMessage += `💆 *Treatment Interest:* ${treatment}\n`;
+            whatsappText += `💆 *Treatment:* ${treatment}\n`;
         }
         
         if (message) {
-            whatsappMessage += `💬 *Message:* ${message}\n`;
+            whatsappText += `💬 *Message:* ${message}\n`;
         }
         
-        whatsappMessage += `\n📅 *Request Date:* ${new Date().toLocaleDateString()}`;
-        whatsappMessage += `\n🕒 *Request Time:* ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        whatsappText += `\n📅 *Request Date:* ${new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        })}\n`;
         
-        // Encode for URL
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        const whatsappUrl = `https://wa.me/256742017575?text=${encodedMessage}`;
+        whatsappText += `🕒 *Time:* ${new Date().toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        })}\n\n`;
         
-        // Show loading message
-        showStatus('Opening WhatsApp with your booking details...', 'success');
+        whatsappText += `_Sent via Dr Roy Skincare Website_`;
         
-        // Open WhatsApp
-        const whatsappWindow = window.open(whatsappUrl, '_blank');
+        // Encode the message for URL
+        const encodedText = encodeURIComponent(whatsappText);
         
-        // If window opens successfully
-        if (whatsappWindow) {
-            // Reset form after successful submission
-            setTimeout(() => {
-                form.reset();
-                showStatus('✅ WhatsApp opened! Please send the pre-filled message to complete your booking.', 'success');
-            }, 1000);
-        } else {
-            // If popup blocked, show instructions
-            showStatus('Popup blocked! Please allow popups or manually open WhatsApp and send this message:\n\n' + whatsappMessage, 'error');
+        // Format phone for WhatsApp link
+        let whatsappPhone = formatPhoneNumber(phone);
+        
+        // Create WhatsApp URL
+        // Option 1: Send to clinic's WhatsApp (0742 017 575)
+        const clinicWhatsAppUrl = `https://wa.me/256742017575?text=${encodedText}`;
+        
+        // Option 2: Send to client's WhatsApp (so they can forward)
+        const clientWhatsAppUrl = `https://wa.me/${whatsappPhone}?text=${encodedText}`;
+        
+        // Show success message
+        showStatus('✅ Opening WhatsApp with your booking details...', 'success');
+        
+        // Open WhatsApp in new tab (to clinic's number)
+        const newWindow = window.open(clinicWhatsAppUrl, '_blank');
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
             
-            // Copy to clipboard as fallback
-            navigator.clipboard.writeText(whatsappMessage).then(() => {
-                alert('📋 Booking details copied to clipboard! You can paste them into WhatsApp.');
-            });
-        }
+            // Check if window opened
+            if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                // Popup blocked or failed
+                showStatus('📱 <strong>Popup blocked!</strong><br>1. Allow popups for this site<br>2. Or manually open WhatsApp<br>3. Send this number: <strong>0742 017 575</strong><br>4. Copy this message:<br><textarea style="width:100%; margin-top:10px; padding:10px; border:1px solid #ccc; border-radius:5px;" rows="4">' + whatsappText + '</textarea>', 'error');
+            } else {
+                // Success - reset form
+                form.reset();
+                showStatus('✅ WhatsApp opened! Please send the message to complete your booking.', 'success');
+            }
+        }, 2000);
     });
     
-    // Add focus effects
-    const inputs = form.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.style.borderColor = '#25D366';
-            this.style.boxShadow = '0 0 0 3px rgba(37, 211, 102, 0.1)';
-        });
-        
-        input.addEventListener('blur', function() {
-            this.style.borderColor = '#ddd';
-            this.style.boxShadow = 'none';
-        });
-    });
+    // Alternative: Direct WhatsApp button that bypasses popup blockers
+    const directWhatsAppBtn = document.createElement('div');
+    directWhatsAppBtn.innerHTML = `
+        <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+            <p style="margin-bottom: 10px; color: #666;">Alternative: Direct WhatsApp Link</p>
+            <a href="https://wa.me/256742017575?text=Hello%20Dr%20Roy%20Skincare,%20I%20want%20to%20book%20an%20appointment" 
+               target="_blank" 
+               style="background: #25D366; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; display: inline-block;">
+               <i class="fab fa-whatsapp"></i> Open WhatsApp Directly
+            </a>
+        </div>
+    `;
     
-    console.log('✅ WhatsApp form ready');
+    form.parentNode.insertBefore(directWhatsAppBtn, form.nextSibling);
 });
 </script>
 </script>
