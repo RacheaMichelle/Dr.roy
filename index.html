@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+A<!DOCTYPE html>
 <html lang="en">
 <head>
     <!-- SEO Meta Tags -->
@@ -5124,6 +5124,167 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
+        <script>
+// ==================== MOBILE MENU FUNCTIONALITY ====================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded - initializing mobile menu...');
+    
+    // Get elements
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('nav-links');
+    const menuOverlay = document.getElementById('menu-overlay');
+    
+    if (!mobileMenuBtn || !navLinks || !menuOverlay) {
+        console.error('Mobile menu elements not found!');
+        return;
+    }
+    
+    console.log('Mobile menu elements found:', {mobileMenuBtn, navLinks, menuOverlay});
+    
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+        console.log('Toggling mobile menu...');
+        navLinks.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+        
+        // Change menu icon
+        const icon = mobileMenuBtn.querySelector('i');
+        if (navLinks.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+            console.log('Menu opened');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+            document.body.style.overflow = ''; // Restore scrolling
+            console.log('Menu closed');
+        }
+    }
+    
+    // Close mobile menu
+    function closeMobileMenu() {
+        console.log('Closing mobile menu...');
+        navLinks.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        
+        // Reset icon
+        const icon = mobileMenuBtn.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+    
+    // Event listeners
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    menuOverlay.addEventListener('click', closeMobileMenu);
+    
+    // Close menu when clicking on a nav link (for smooth navigation)
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // For same-page anchor links, close the menu
+            if (this.getAttribute('href').startsWith('#')) {
+                closeMobileMenu();
+            }
+            // For external links or other pages, the menu will close naturally
+        });
+    });
+    
+    // Close menu on window resize (if resizing to desktop)
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && navLinks.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Header scroll effect
+    const header = document.getElementById('main-header');
+    if (header) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    }
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                // Close mobile menu if open
+                if (navLinks.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+                
+                // Smooth scroll to target
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80, // Adjust for fixed header
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    // Initialize header scroll effect on page load
+    if (window.scrollY > 50 && header) {
+        header.classList.add('scrolled');
+    }
+    
+    console.log('Mobile menu initialized successfully!');
+});
+
+// ==================== DEBUG HELPER ====================
+// This will help identify any issues
+function checkMenuElements() {
+    console.log('=== MENU ELEMENTS CHECK ===');
+    console.log('Mobile menu button:', document.getElementById('mobile-menu-btn'));
+    console.log('Nav links:', document.getElementById('nav-links'));
+    console.log('Menu overlay:', document.getElementById('menu-overlay'));
+    console.log('Window width:', window.innerWidth);
+    console.log('======================');
+}
+
+// Call this function if you need to debug
+window.checkMenu = checkMenuElements;
+
+// Log when page is fully loaded
+window.addEventListener('load', function() {
+    console.log('Page fully loaded');
+    checkMenuElements();
+});
+</script>
+    <script>
+// Simple test to ensure mobile menu works
+document.addEventListener('DOMContentLoaded', function() {
+    // Force show mobile menu button for testing
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    if (mobileMenuBtn) {
+        mobileMenuBtn.style.display = 'flex';
+        console.log('Mobile menu button forced to display: flex');
+    }
+    
+    // Test: Add click event directly for debugging
+    const testMenu = document.getElementById('mobile-menu-btn');
+    if (testMenu) {
+        testMenu.addEventListener('click', function() {
+            alert('Mobile menu button clicked!');
+            const nav = document.getElementById('nav-links');
+            if (nav) {
+                nav.classList.toggle('active');
+                console.log('Nav active class toggled:', nav.classList.contains('active'));
+            }
+        });
+    }
+});
+</script>
 
 </script>
 </body>
