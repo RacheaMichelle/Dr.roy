@@ -3264,107 +3264,16 @@
     
    
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js"></script>
     
     <script>
-// ==================== CHECK FIREBASE LOADING ====================
-if (typeof firebase === 'undefined') {
-    console.error('❌ Firebase SDK not loaded! Loading fallback...');
-    // Load from alternate CDN
-    const script1 = document.createElement('script');
-    script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app.min.js';
-    document.head.appendChild(script1);
-    
-    const script2 = document.createElement('script');
-    script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database.min.js';
-    document.head.appendChild(script2);
-    
-    // Wait for Firebase to load
-    script2.onload = function() {
-        setTimeout(initializeApp, 1000);
-    };
-} else {
-    initializeApp();
-}
-
-function initializeApp() {
-    console.log('✅ Firebase SDK loaded');
-    // Give Firebase a moment to initialize
-    setTimeout(() => {
-        // Check if DOM is already loaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', startReviewsSystem);
-        } else {
-            startReviewsSystem();
-        }
-    }, 500);
-}
-
-function startReviewsSystem() {
+// ==================== SIMPLE REVIEWS SYSTEM ====================
+document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Dr Roy Skincare Reviews System Loading...');
-    
-    // ==================== FIREBASE CONFIGURATION ====================
-    const firebaseConfig = {
-        apiKey: "AIzaSyA92x1_V8CeR5S36RvVgxao4pPjndoGdkw",
-        authDomain: "drroyreviews.firebaseapp.com",
-        databaseURL: "https://drroyreviews-default-rtdb.firebaseio.com",
-        projectId: "drroyreviews",
-        storageBucket: "drroyreviews.firebasestorage.app",
-        messagingSenderId: "304907768153",
-        appId: "1:304907768153:web:fb4b8ee26d2d557101fc48"
-    };
     
     // ==================== VARIABLES ====================
     let reviews = [];
     let selectedRating = 5;
-    
-    // ==================== FIREBASE INITIALIZATION ====================
-    let database;
-    try {
-        // Check if Firebase is available
-        if (typeof firebase === 'undefined') {
-            throw new Error('Firebase SDK not loaded');
-        }
-        
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        } else {
-            firebase.app(); // Use existing app
-        }
-        
-        database = firebase.database();
-        console.log('✅ Firebase initialized successfully');
-        
-    } catch (error) {
-        console.error('❌ Firebase initialization error:', error);
-        
-        // Create a mock database for offline use
-        database = {
-            ref: function(path) {
-                console.log('⚠️ Using mock database (offline mode)');
-                return {
-                    push: function() {
-                        return { key: 'local_' + Date.now() };
-                    },
-                    set: function(data) {
-                        console.log('Mock save:', data);
-                        return Promise.resolve();
-                    },
-                    once: function() {
-                        return Promise.resolve({ val: () => null });
-                    },
-                    on: function() {
-                        console.log('Mock real-time listener');
-                    },
-                    orderByChild: function() { return this; },
-                    limitToLast: function() { return this; }
-                };
-            }
-        };
-        
-        alert('⚠️ Running in offline mode. Reviews will be saved locally.');
-    }
     
     // ==================== INITIALIZE STAR RATING ====================
     function initStarRating() {
@@ -3384,13 +3293,26 @@ function startReviewsSystem() {
                 if (ratingInput) {
                     ratingInput.value = selectedRating;
                 } else {
-                    console.error('❌ Rating input not found!');
+                    // Create rating input if it doesn't exist
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.id = 'review-rating';
+                    input.name = 'rating';
+                    input.value = selectedRating;
+                    document.getElementById('review-form').appendChild(input);
                 }
                 
+                // Update star colors
                 stars.forEach((s, index) => {
                     s.style.color = index < selectedRating ? '#ffc107' : '#ddd';
+                    if (index < selectedRating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
                 });
                 
+                // Update rating text
                 if (ratingText) {
                     const labels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
                     ratingText.textContent = labels[selectedRating - 1] + '! ' + selectedRating + ' Stars';
@@ -3401,6 +3323,9 @@ function startReviewsSystem() {
         // Set initial state
         stars.forEach((s, index) => {
             s.style.color = index < 5 ? '#ffc107' : '#ddd';
+            if (index < 5) {
+                s.classList.add('active');
+            }
         });
         
         console.log('✅ Star rating initialized');
@@ -3410,87 +3335,108 @@ function startReviewsSystem() {
     function loadReviews() {
         console.log('📥 Loading reviews...');
         
-        try {
-            database.ref('reviews').once('value')
-                .then(snapshot => {
-                    const data = snapshot.val();
-                    reviews = [];
-                    
-                    if (data) {
-                        Object.keys(data).forEach(key => {
-                            const review = data[key];
-                            if (review && review.name && review.text) {
-                                reviews.push({
-                                    id: key,
-                                    name: review.name,
-                                    rating: review.rating || 5,
-                                    text: review.text,
-                                    date: review.date || 'Recently'
-                                });
-                            }
-                        });
-                        
-                        // Sort newest first
-                        reviews.sort((a, b) => {
-                            const timeA = a.id.includes('local_') ? parseInt(a.id.split('_')[1]) : 0;
-                            const timeB = b.id.includes('local_') ? parseInt(b.id.split('_')[1]) : 0;
-                            return timeB - timeA;
-                        });
-                        
-                        console.log(`✅ Loaded ${reviews.length} reviews from Firebase`);
-                    }
-                    
-                    // Also load from localStorage as backup
-                    loadFromLocalStorage();
-                    renderReviews();
-                })
-                .catch(error => {
-                    console.log('Using local storage only:', error);
-                    loadFromLocalStorage();
-                });
-                
-        } catch (error) {
-            console.log('Fallback to localStorage');
-            loadFromLocalStorage();
-        }
+        // Try to load from localStorage first
+        loadFromLocalStorage();
+        
+        // Then try Firebase
+        tryLoadFromFirebase();
     }
     
-    // ==================== LOAD FROM LOCAL STORAGE ====================
     function loadFromLocalStorage() {
         try {
             const saved = localStorage.getItem('drroy-reviews');
             if (saved) {
                 const data = JSON.parse(saved);
                 if (data && Array.isArray(data.reviews)) {
-                    // Merge with existing reviews
-                    data.reviews.forEach(localReview => {
-                        if (!reviews.some(r => r.id === localReview.id)) {
-                            reviews.push(localReview);
-                        }
-                    });
-                    console.log(`📂 Loaded ${data.reviews.length} reviews from localStorage`);
+                    reviews = data.reviews;
+                    console.log(`📂 Loaded ${reviews.length} reviews from localStorage`);
+                    renderReviews();
+                    return true;
                 }
             }
         } catch (e) {
             console.error('Error loading from localStorage:', e);
         }
+        
+        reviews = [];
+        renderReviews();
+        return false;
     }
     
-    // ==================== SAVE TO LOCAL STORAGE ====================
-    function saveToLocalStorage() {
-        localStorage.setItem('drroy-reviews', JSON.stringify({
-            reviews: reviews,
-            timestamp: Date.now()
-        }));
+    async function tryLoadFromFirebase() {
+        // Try to connect to Firebase
+        try {
+            if (typeof firebase === 'undefined') {
+                console.log('⚠️ Firebase not available');
+                return;
+            }
+            
+            console.log('🌐 Trying to connect to Firebase...');
+            
+            // Firebase config
+            const firebaseConfig = {
+                apiKey: "AIzaSyA92x1_V8CeR5S36RvVgxao4pPjndoGdkw",
+                authDomain: "drroyreviews.firebaseapp.com",
+                databaseURL: "https://drroyreviews-default-rtdb.firebaseio.com",
+                projectId: "drroyreviews",
+                storageBucket: "drroyreviews.firebasestorage.app",
+                messagingSenderId: "304907768153",
+                appId: "1:304907768153:web:fb4b8ee26d2d557101fc48"
+            };
+            
+            // Initialize Firebase
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            
+            const database = firebase.database();
+            
+            // Try to read from Firebase
+            const snapshot = await database.ref('reviews').once('value');
+            const data = snapshot.val();
+            
+            if (data) {
+                const firebaseReviews = [];
+                Object.keys(data).forEach(key => {
+                    const review = data[key];
+                    if (review && review.name && review.text) {
+                        firebaseReviews.push({
+                            id: key,
+                            name: review.name,
+                            rating: review.rating || 5,
+                            text: review.text,
+                            date: review.date || 'Recently',
+                            source: 'firebase'
+                        });
+                    }
+                });
+                
+                // Merge with local reviews
+                firebaseReviews.forEach(fbReview => {
+                    if (!reviews.some(r => r.id === fbReview.id)) {
+                        reviews.push(fbReview);
+                    }
+                });
+                
+                console.log(`✅ Loaded ${firebaseReviews.length} reviews from Firebase`);
+                renderReviews();
+                saveToLocalStorage();
+            }
+            
+        } catch (error) {
+            console.log('⚠️ Firebase connection failed, using local storage only');
+        }
     }
     
     // ==================== SAVE REVIEW ====================
     async function saveReview(review) {
         console.log('💾 Saving review:', review);
         
-        // Add timestamp and ID
-        review.id = 'local_' + Date.now();
+        // Generate unique ID
+        const reviewId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        review.id = reviewId;
         review.timestamp = Date.now();
+        review.source = 'local';
         
         // Add to local array
         reviews.unshift(review);
@@ -3503,22 +3449,34 @@ function startReviewsSystem() {
         
         // Try to save to Firebase
         try {
-            const newReviewRef = database.ref('reviews').push();
-            await newReviewRef.set({
-                name: review.name,
-                email: review.email || '',
-                rating: review.rating,
-                text: review.text,
-                date: review.date,
-                timestamp: review.timestamp
-            });
-            
-            console.log('✅ Saved to Firebase');
-            return true;
+            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                const database = firebase.database();
+                const newReviewRef = database.ref('reviews').push();
+                await newReviewRef.set({
+                    name: review.name,
+                    email: review.email || '',
+                    rating: review.rating,
+                    text: review.text,
+                    date: review.date,
+                    timestamp: review.timestamp,
+                    source: 'web'
+                });
+                
+                console.log('✅ Saved to Firebase with ID:', newReviewRef.key);
+                return { success: true, firebaseId: newReviewRef.key };
+            }
         } catch (error) {
-            console.log('⚠️ Saved locally only');
-            return false;
+            console.log('⚠️ Could not save to Firebase, saved locally only');
         }
+        
+        return { success: true, firebaseId: null };
+    }
+    
+    function saveToLocalStorage() {
+        localStorage.setItem('drroy-reviews', JSON.stringify({
+            reviews: reviews,
+            timestamp: Date.now()
+        }));
     }
     
     // ==================== RENDER REVIEWS ====================
@@ -3531,14 +3489,14 @@ function startReviewsSystem() {
         
         console.log('🎨 Rendering', reviews.length, 'reviews');
         
-        // Calculate average
+        // Calculate average rating
         let avgRating = 0;
         if (reviews.length > 0) {
-            const sum = reviews.reduce((total, r) => total + (r.rating || 5), 0);
+            const sum = reviews.reduce((total, review) => total + (review.rating || 5), 0);
             avgRating = (sum / reviews.length).toFixed(1);
         }
         
-        // Update displays
+        // Update rating display
         const avgRatingEl = document.getElementById('avg-rating');
         const reviewCountEl = document.getElementById('review-count');
         
@@ -3552,68 +3510,77 @@ function startReviewsSystem() {
         
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
-                starsDisplay += '<span style="color: #ffc107;">★</span>';
+                starsDisplay += '★';
             } else if (i === fullStars && halfStar) {
-                starsDisplay += '<span style="color: #ffc107;">★</span>';
+                starsDisplay += '★';
             } else {
-                starsDisplay += '<span style="color: #ddd;">☆</span>';
+                starsDisplay += '☆';
             }
         }
         
         const displayStarsEl = document.getElementById('display-stars');
         if (displayStarsEl) displayStarsEl.innerHTML = starsDisplay;
         
-        // Render list
+        // Render reviews list
         if (reviews.length === 0) {
             reviewsList.innerHTML = `
                 <div class="review-card" style="text-align: center; padding: 40px;">
                     <i class="fas fa-comment-alt" style="font-size: 2rem; color: var(--accent);"></i>
-                    <p style="margin-top: 15px; color: var(--text-light);">No reviews yet. Be the first!</p>
+                    <p style="margin-top: 15px; color: var(--text-light);">No reviews yet. Be the first to share your experience!</p>
                 </div>
             `;
         } else {
-            reviewsList.innerHTML = reviews.slice(0, 50).map(review => `
+            reviewsList.innerHTML = reviews.map(review => {
+                const rating = review.rating || 5;
+                const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                const sourceBadge = review.source === 'firebase' 
+                    ? '<span style="font-size: 0.8rem; color: #28a745; margin-left: 10px;"><i class="fas fa-cloud"></i> Online</span>'
+                    : '<span style="font-size: 0.8rem; color: #666; margin-left: 10px;"><i class="fas fa-save"></i> Local</span>';
+                
+                return `
                 <div class="review-card">
                     <div class="review-header">
                         <div>
-                            <div class="review-name">${review.name || 'Anonymous'}</div>
-                            <div class="review-rating" style="color: #ffc107;">
-                                ${'★'.repeat(review.rating || 5)}${'☆'.repeat(5 - (review.rating || 5))}
+                            <div class="review-name">${review.name || 'Anonymous'}${sourceBadge}</div>
+                            <div class="review-rating" style="color: #ffc107; font-size: 1.1rem;">
+                                ${stars}
                             </div>
                         </div>
                         <div class="review-date">${review.date || 'Recently'}</div>
                     </div>
                     <p class="review-text">"${review.text}"</p>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
     }
     
     // ==================== INITIALIZE FORM ====================
     function initReviewForm() {
         console.log('📝 Initializing review form...');
-        const form = document.getElementById('review-form');
         
+        // Find the form
+        let form = document.getElementById('review-form');
         if (!form) {
-            console.error('❌ Review form not found! Looking for form by class...');
             // Try alternative selectors
-            const formByClass = document.querySelector('.add-review-form form');
-            if (formByClass) {
-                console.log('✅ Found form by class selector');
-                setupForm(formByClass);
-            } else {
-                console.error('❌ No review form found anywhere!');
+            form = document.querySelector('form[action*="review"]') || 
+                   document.querySelector('.add-review-form form') ||
+                   document.querySelector('form');
+            
+            if (!form) {
+                console.error('❌ No form found on page!');
+                // Create a form if none exists
+                createEmergencyForm();
                 return;
             }
-        } else {
-            setupForm(form);
+            
+            // Set the ID for future reference
+            form.id = 'review-form';
         }
-    }
-    
-    function setupForm(form) {
-        console.log('✅ Setting up form submission handler');
         
-        // Make sure the rating input exists
+        console.log('✅ Found form:', form);
+        
+        // Make sure rating input exists
         let ratingInput = document.getElementById('review-rating');
         if (!ratingInput) {
             ratingInput = document.createElement('input');
@@ -3622,6 +3589,7 @@ function startReviewsSystem() {
             ratingInput.name = 'rating';
             ratingInput.value = '5';
             form.appendChild(ratingInput);
+            console.log('✅ Created rating input');
         }
         
         // Character counter
@@ -3640,7 +3608,7 @@ function startReviewsSystem() {
             });
         }
         
-        // Form submission handler
+        // Form submission
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -3671,13 +3639,13 @@ function startReviewsSystem() {
                 return;
             }
             
-            // Disable button
+            // Disable button during submission
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             
-            // Create review object
+            // Create review
             const review = {
                 name: name,
                 email: email,
@@ -3691,44 +3659,10 @@ function startReviewsSystem() {
             };
             
             try {
-                const saved = await saveReview(review);
+                const result = await saveReview(review);
                 
                 // Show success message
-                const successMsg = document.getElementById('success-message');
-                if (successMsg) {
-                    successMsg.innerHTML = 
-                        `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem; color: #28a745;"></i>
-                        <div>
-                            <strong style="color: #28a745;">Thank you!</strong>
-                            <p>Your review has been submitted successfully!</p>
-                        </div>`;
-                    successMsg.style.display = 'flex';
-                    successMsg.style.alignItems = 'center';
-                    successMsg.style.padding = '15px';
-                    successMsg.style.background = '#d4edda';
-                    successMsg.style.borderRadius = '5px';
-                    successMsg.style.margin = '15px 0';
-                    
-                    setTimeout(() => {
-                        successMsg.style.display = 'none';
-                    }, 5000);
-                } else {
-                    // Create success message if it doesn't exist
-                    const successDiv = document.createElement('div');
-                    successDiv.id = 'success-message';
-                    successDiv.innerHTML = 
-                        `<i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem; color: #28a745;"></i>
-                        <div>
-                            <strong style="color: #28a745;">Thank you!</strong>
-                            <p>Your review has been submitted successfully!</p>
-                        </div>`;
-                    successDiv.style.cssText = 'display: flex; align-items: center; padding: 15px; background: #d4edda; border-radius: 5px; margin: 15px 0;';
-                    form.parentNode.insertBefore(successDiv, form);
-                    
-                    setTimeout(() => {
-                        successDiv.style.display = 'none';
-                    }, 5000);
-                }
+                showSuccessMessage('Thank you! Your review has been submitted!');
                 
                 // Reset form
                 form.reset();
@@ -3739,6 +3673,11 @@ function startReviewsSystem() {
                 document.getElementById('review-rating').value = '5';
                 document.querySelectorAll('#star-rating .star-btn').forEach((s, index) => {
                     s.style.color = index < 5 ? '#ffc107' : '#ddd';
+                    if (index < 5) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
                 });
                 
                 const ratingText = document.getElementById('rating-text');
@@ -3753,45 +3692,121 @@ function startReviewsSystem() {
                 }, 300);
                 
             } catch (error) {
-                console.error('Error submitting review:', error);
-                alert('There was an error submitting your review. Please try again.');
+                console.error('Error:', error);
+                alert('Error submitting review. Please try again.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             }
         });
         
-        // Also attach click handler to submit button for debugging
-        const submitBtn = form.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', function(e) {
-                console.log('🖱️ Submit button clicked');
-            });
-        }
-        
         console.log('✅ Form setup complete');
     }
     
-    // ==================== DEBUG HELPER ====================
-    function debugForm() {
-        console.log('=== FORM DEBUG INFO ===');
-        console.log('Form element:', document.getElementById('review-form'));
-        console.log('Name input:', document.getElementById('review-name'));
-        console.log('Email input:', document.getElementById('review-email'));
-        console.log('Rating input:', document.getElementById('review-rating'));
-        console.log('Text input:', document.getElementById('review-text'));
-        console.log('Star buttons:', document.querySelectorAll('#star-rating .star-btn').length);
-        console.log('Submit button:', document.querySelector('#review-form button[type="submit"]'));
-        console.log('Reviews list:', document.getElementById('reviews-list'));
-        console.log('========================');
+    function showSuccessMessage(message) {
+        // Remove any existing success message
+        const existingMsg = document.getElementById('success-message');
+        if (existingMsg) {
+            existingMsg.remove();
+        }
+        
+        // Create new success message
+        const successDiv = document.createElement('div');
+        successDiv.id = 'success-message';
+        successDiv.innerHTML = `
+            <i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2rem; color: #28a745;"></i>
+            <div>
+                <strong style="color: #28a745;">${message}</strong>
+                <p>Your review will appear below.</p>
+            </div>
+        `;
+        successDiv.style.cssText = `
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #d4edda;
+            border-radius: 5px;
+            margin: 15px 0;
+            animation: fadeIn 0.3s ease;
+        `;
+        
+        // Add to page
+        const form = document.getElementById('review-form');
+        if (form) {
+            form.parentNode.insertBefore(successDiv, form);
+        } else {
+            document.querySelector('.add-review-form').prepend(successDiv);
+        }
+        
+        // Remove after 5 seconds
+        setTimeout(() => {
+            successDiv.style.opacity = '0';
+            successDiv.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => successDiv.remove(), 300);
+        }, 5000);
+    }
+    
+    // Emergency form creator (in case form doesn't exist)
+    function createEmergencyForm() {
+        console.log('🚨 Creating emergency form...');
+        
+        const formContainer = document.querySelector('.add-review-form') || 
+                             document.querySelector('.reviews-container > div:last-child') ||
+                             document.body;
+        
+        const formHTML = `
+            <div id="emergency-review-form" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h3 style="color: #e63946; margin-bottom: 20px;">Submit Your Review</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Your Name *</label>
+                    <input type="text" id="review-name" placeholder="Enter your name" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email *</label>
+                    <input type="email" id="review-email" placeholder="your@email.com" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Rating *</label>
+                    <div id="star-rating" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <button type="button" class="star-btn" data-value="1" style="background: none; border: none; font-size: 2rem; color: #ffc107;">★</button>
+                        <button type="button" class="star-btn" data-value="2" style="background: none; border: none; font-size: 2rem; color: #ffc107;">★</button>
+                        <button type="button" class="star-btn" data-value="3" style="background: none; border: none; font-size: 2rem; color: #ffc107;">★</button>
+                        <button type="button" class="star-btn" data-value="4" style="background: none; border: none; font-size: 2rem; color: #ffc107;">★</button>
+                        <button type="button" class="star-btn" data-value="5" style="background: none; border: none; font-size: 2rem; color: #ffc107;">★</button>
+                    </div>
+                    <p id="rating-text" style="color: #666;">Excellent! 5 Stars</p>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Your Review *</label>
+                    <textarea id="review-text" placeholder="Share your experience..." rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                    <div style="text-align: right; margin-top: 5px;">
+                        <span id="char-count">0</span>/500 characters
+                    </div>
+                </div>
+                
+                <button type="submit" style="background: #e63946; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 1.1rem; cursor: pointer; width: 100%;">
+                    Submit Review
+                </button>
+            </div>
+        `;
+        
+        formContainer.innerHTML += formHTML;
+        console.log('✅ Emergency form created');
+        
+        // Re-initialize with the new form
+        setTimeout(() => {
+            initStarRating();
+            initReviewForm();
+        }, 100);
     }
     
     // ==================== START EVERYTHING ====================
     function init() {
         console.log('🎯 Initializing reviews system...');
-        
-        // Debug first
-        debugForm();
         
         // Initialize components
         initStarRating();
@@ -3800,66 +3815,45 @@ function startReviewsSystem() {
         // Load reviews
         loadReviews();
         
-        // Setup real-time listener
-        try {
-            database.ref('reviews').on('child_added', (snapshot) => {
-                const newReview = snapshot.val();
-                if (newReview && !reviews.some(r => r.id === snapshot.key)) {
-                    reviews.unshift({
-                        id: snapshot.key,
-                        name: newReview.name,
-                        rating: newReview.rating || 5,
-                        text: newReview.text,
-                        date: newReview.date || 'Recently'
-                    });
-                    renderReviews();
-                    saveToLocalStorage();
-                }
-            });
-            console.log('✅ Real-time updates enabled');
-        } catch (error) {
-            console.log('⚠️ Real-time updates disabled');
-        }
-        
         console.log('✅ Reviews system ready!');
         
-        // Add test button
-        const testBtn = document.createElement('button');
-        testBtn.textContent = 'Test Review';
-        testBtn.style.cssText = `
-            position: fixed;
-            bottom: 100px;
-            right: 10px;
-            background: #e63946;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 9999;
-            font-family: 'Poppins', sans-serif;
-        `;
-        testBtn.onclick = function() {
-            console.log('🧪 Testing review system...');
-            
-            // Fill form with test data
-            document.getElementById('review-name').value = 'Test User';
-            document.getElementById('review-email').value = 'test@example.com';
-            document.getElementById('review-text').value = 'This is a test review! Great service!';
-            
-            // Submit form
-            const form = document.getElementById('review-form');
-            if (form) {
-                const event = new Event('submit', { bubbles: true, cancelable: true });
-                form.dispatchEvent(event);
-            }
-        };
-        document.body.appendChild(testBtn);
+        // Add test button for debugging
+        if (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1')) {
+            const testBtn = document.createElement('button');
+            testBtn.innerHTML = '🧪 Test';
+            testBtn.style.cssText = `
+                position: fixed;
+                bottom: 60px;
+                right: 10px;
+                background: #e63946;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                z-index: 9999;
+                font-family: 'Poppins', sans-serif;
+            `;
+            testBtn.onclick = function() {
+                // Fill form with test data
+                document.getElementById('review-name').value = 'Test User';
+                document.getElementById('review-email').value = 'test@example.com';
+                document.getElementById('review-text').value = 'This is a test review! The service was excellent!';
+                
+                // Submit form
+                const form = document.getElementById('review-form') || document.getElementById('emergency-review-form');
+                if (form) {
+                    const event = new Event('submit', { bubbles: true, cancelable: true });
+                    form.dispatchEvent(event);
+                }
+            };
+            document.body.appendChild(testBtn);
+        }
     }
     
     // Start the system
     init();
-}
+});
 </script>
     <section class="branches" id="branches">
         <div class="container">
