@@ -3543,10 +3543,12 @@ input:valid, textarea:valid, select:valid {
     height: 100%;
     opacity: 0;
     transition: opacity 1s ease-in-out;
+    pointer-events: none; /* Prevents interaction with hidden slides */
 }
 
 .slide.active {
     opacity: 1;
+    pointer-events: auto; /* Allow interaction with active slide */
 }
 
 .slide-image {
@@ -5270,7 +5272,7 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-// Hero Slideshow - Automatic Only
+// Hero Slideshow - Automatic Only (FIXED VERSION)
 document.addEventListener('DOMContentLoaded', function() {
     const slides = document.querySelectorAll('.hero-slideshow .slide');
     if (slides.length === 0) return;
@@ -5278,26 +5280,29 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentSlide = 0;
     let slideInterval;
     
-    console.log('Found', slides.length, 'slides');
+    console.log('Found', slides.length, 'slides for automatic slideshow');
 
     // Function to show specific slide
     function showSlide(n) {
-        // Remove active class from all slides
-        slides.forEach(slide => {
-            slide.classList.remove('active');
-        });
+        console.log('Showing slide index:', n);
         
         // Calculate new slide index with wrap-around
         currentSlide = (n + slides.length) % slides.length;
         
-        // Show the new slide
-        slides[currentSlide].classList.add('active');
+        // Remove active class from all slides
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active');
+            console.log(`Slide ${index}: removed active`);
+        });
         
-        console.log('Now showing slide:', currentSlide);
+        // Add active class to current slide
+        slides[currentSlide].classList.add('active');
+        console.log(`Slide ${currentSlide}: added active`);
     }
 
     // Next slide function
     function nextSlide() {
+        console.log('Moving to next slide');
         showSlide(currentSlide + 1);
     }
 
@@ -5310,7 +5315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Start new interval (change every 5 seconds)
         slideInterval = setInterval(nextSlide, 5000);
-        console.log('Automatic slideshow started');
+        console.log('Automatic slideshow started (5 second intervals)');
     }
 
     // Stop automatic slideshow on hover (optional)
@@ -5327,19 +5332,25 @@ document.addEventListener('DOMContentLoaded', function() {
         slideshowContainer.addEventListener('mouseleave', function() {
             if (!slideInterval) {
                 startSlideshow();
+                console.log('Slideshow resumed');
             }
         });
     }
 
-    // Initialize
+    // Initialize - make sure first slide is active
+    console.log('Initializing slideshow...');
     showSlide(0); // Show first slide
     startSlideshow(); // Start automatic rotation
 
-    // Re-initialize on window load
-    window.addEventListener('load', function() {
-        showSlide(0);
-        startSlideshow();
-    });
+    // Debug function to check slide status
+    function debugSlides() {
+        slides.forEach((slide, index) => {
+            console.log(`Slide ${index}: has active class = ${slide.classList.contains('active')}`);
+        });
+    }
+
+    // Check every 2 seconds for debugging
+    setInterval(debugSlides, 2000);
 });
 </script>
 </body>
