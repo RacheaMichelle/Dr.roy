@@ -5349,77 +5349,85 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-        // Hero Slideshow Functionality (CORRECTED VERSION)
+// Hero Slideshow Functionality (SIMPLIFIED VERSION)
 document.addEventListener('DOMContentLoaded', function() {
-    // Make sure we only target the hero slideshow
-    const heroSlideshow = document.querySelector('.hero-slideshow');
-    if (!heroSlideshow) return;
+    // Get elements
+    const slideshowContainer = document.querySelector('.hero-slideshow');
+    if (!slideshowContainer) return;
     
-    const slides = heroSlideshow.querySelectorAll('.slide');
-    const dots = heroSlideshow.querySelectorAll('.dot');
-    const prevBtn = heroSlideshow.querySelector('.prev');
-    const nextBtn = heroSlideshow.querySelector('.next');
+    const slides = slideshowContainer.querySelectorAll('.slide');
+    const dots = slideshowContainer.querySelectorAll('.dot');
+    const prevBtn = slideshowContainer.querySelector('.prev');
+    const nextBtn = slideshowContainer.querySelector('.next');
+    
     let currentSlide = 0;
     let slideInterval;
-
-    // Debug: Check if elements are found
-    console.log('Slides found:', slides.length);
-    console.log('Prev button:', prevBtn);
-    console.log('Next button:', nextBtn);
-    console.log('Dots found:', dots.length);
+    
+    console.log('Slideshow initialized:', {
+        slides: slides.length,
+        dots: dots.length,
+        prevBtn: !!prevBtn,
+        nextBtn: !!nextBtn
+    });
 
     // Function to show specific slide
     function showSlide(n) {
-        console.log('Showing slide:', n);
-        
-        // Remove active class from all slides and dots
+        // Hide all slides
         slides.forEach(slide => {
             slide.classList.remove('active');
-            slide.style.display = 'none';
         });
-        dots.forEach(dot => dot.classList.remove('active'));
         
-        // Adjust index if out of bounds
+        // Remove active from all dots
+        dots.forEach(dot => {
+            dot.classList.remove('active');
+        });
+        
+        // Calculate new slide index with wrap-around
         currentSlide = (n + slides.length) % slides.length;
-        console.log('Current slide index:', currentSlide);
         
-        // Add active class to current slide and dot
+        // Show the new slide
         slides[currentSlide].classList.add('active');
-        slides[currentSlide].style.display = 'block';
+        
+        // Activate corresponding dot
         if (dots[currentSlide]) {
             dots[currentSlide].classList.add('active');
         }
+        
+        console.log('Current slide:', currentSlide);
     }
 
     // Next slide function
     function nextSlide() {
-        console.log('Next slide called');
         showSlide(currentSlide + 1);
     }
 
     // Previous slide function
     function prevSlide() {
-        console.log('Prev slide called');
         showSlide(currentSlide - 1);
     }
 
     // Start automatic slideshow
     function startSlideshow() {
-        if (slideInterval) clearInterval(slideInterval);
-        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
-        console.log('Slideshow started');
+        if (slideInterval) {
+            clearInterval(slideInterval);
+        }
+        slideInterval = setInterval(nextSlide, 5000);
+        console.log('Slideshow auto-advance started');
     }
 
     // Stop automatic slideshow
     function stopSlideshow() {
-        clearInterval(slideInterval);
-        console.log('Slideshow stopped');
+        if (slideInterval) {
+            clearInterval(slideInterval);
+            slideInterval = null;
+        }
     }
 
-    // Event Listeners with error handling
+    // Event Listeners
     if (prevBtn) {
         prevBtn.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             console.log('Prev button clicked');
             prevSlide();
             stopSlideshow();
@@ -5430,6 +5438,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nextBtn) {
         nextBtn.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             console.log('Next button clicked');
             nextSlide();
             stopSlideshow();
@@ -5437,51 +5446,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Dot click event
+    // Dot click events
     dots.forEach((dot, index) => {
         dot.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Dot clicked:', index);
+            e.stopPropagation();
+            console.log('Dot clicked for slide:', index);
             showSlide(index);
             stopSlideshow();
             startSlideshow();
         });
     });
 
-    // Pause slideshow on hover
-    const slideshowContainer = heroSlideshow.querySelector('.slideshow-container');
+    // Pause on hover
     if (slideshowContainer) {
         slideshowContainer.addEventListener('mouseenter', stopSlideshow);
         slideshowContainer.addEventListener('mouseleave', startSlideshow);
     }
 
-    // Touch swipe for mobile
-    if (slideshowContainer) {
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        slideshowContainer.addEventListener('touchstart', function(e) {
-            touchStartX = e.changedTouches[0].screenX;
-            stopSlideshow();
-        });
-
-        slideshowContainer.addEventListener('touchend', function(e) {
-            touchEndX = e.changedTouches[0].screenX;
-            if (touchStartX - touchEndX > 50) {
-                nextSlide(); // Swipe left
-            }
-            if (touchEndX - touchStartX > 50) {
-                prevSlide(); // Swipe right
-            }
-            startSlideshow();
-        });
-    }
-
-    // Initialize slideshow
+    // Initialize
     showSlide(0);
     startSlideshow();
-    
-    // Make sure slideshow works after page load
+
+    // Re-initialize on window load
     window.addEventListener('load', function() {
         showSlide(0);
         startSlideshow();
