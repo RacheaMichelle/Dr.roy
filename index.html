@@ -282,56 +282,316 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(230, 57, 70, 0.4);
         }
-/* Header */
-.premium-header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 1000;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    transition: all 0.3s ease;
-}
-.premium-header.scrolled {
-    padding: 0.8rem 0;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+/* ==========================================
+   Premium Header + Mobile Menu CSS
+   For Dr Roy Skincare - Melanin-Rich Focus
+   ========================================== */
+
+/* Root variables – customize colors here */
+:root {
+    --primary: #2a7a6f;           /* Teal-green – calming, trustworthy, skin-friendly */
+    --primary-dark: #1e5c54;
+    --primary-light: #3a9a8d;
+    --secondary: #e8b923;         /* Warm gold accent for CTAs */
+    --text-dark: #1a1a1a;
+    --text: #333;
+    --text-light: #555;
+    --bg: #ffffff;
+    --bg-light: #f9f9f9;
+    --border: rgba(0, 0, 0, 0.08);
+    --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+    --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Logo */
+/* Header Base */
+.premium-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1200;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.premium-header.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: var(--shadow-md);
+    padding: 0.6rem 0;
+}
+
+/* Header Wrapper */
+.header-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    transition: height 0.3s ease;
+}
+
+.premium-header.scrolled .header-wrapper {
+    height: 68px;
+}
+
+/* Logo / Brand */
 .brand-logo {
     display: flex;
     align-items: center;
     gap: 12px;
     text-decoration: none;
     color: var(--text-dark);
+    font-weight: 700;
+    transition: var(--transition);
 }
-.clinic-name { font-weight: 700; font-size: 1.5rem; }
-.clinic-tag { font-size: 0.85rem; opacity: 0.75; display: block; }
 
-/* Nav */
+.brand-logo:hover {
+    opacity: 0.92;
+}
+
+.logo-symbol {
+    font-size: 1.9rem;
+    color: var(--primary);
+}
+
+.logo-wordmark {
+    display: flex;
+    flex-direction: column;
+}
+
+.clinic-name {
+    font-size: 1.55rem;
+    letter-spacing: -0.5px;
+}
+
+.clinic-tag {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-light);
+    letter-spacing: 0.4px;
+}
+
+/* Desktop Navigation */
 .primary-nav {
     display: flex;
-    gap: 2.2rem;
+    align-items: center;
+    gap: 2.4rem;
 }
+
 .nav-item {
     color: var(--text);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.25s;
+    font-size: 1.05rem;
+    position: relative;
+    padding: 8px 4px;
+    transition: color 0.25s ease;
 }
-.nav-item:hover, .nav-item.active { color: var(--primary); }
 
-/* CTA */
-.book-cta {
+.nav-item:hover,
+.nav-item.active {
+    color: var(--primary);
+}
+
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
     background: var(--primary);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    font-weight: 600;
+    border-radius: 3px;
+}
+
+/* Prominent CTA Button */
+.book-cta {
     display: flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.25);
+    gap: 10px;
+    background: var(--primary);
+    color: white;
+    padding: 0.9rem 1.8rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.02rem;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(42, 122, 111, 0.22);
+    transition: var(--transition);
+}
+
+.book-cta:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(42, 122, 111, 0.3);
+}
+
+/* Mobile Toggle Button */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: var(--text-dark);
+    cursor: pointer;
+    padding: 8px;
+}
+
+/* ──────────────────────────────────────────
+   Mobile Menu (Overlay + Slide-in Panel)
+   ────────────────────────────────────────── */
+
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 1190;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.mobile-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-panel {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 380px;
+    max-width: 90vw;
+    height: 100%;
+    background: white;
+    box-shadow: -10px 0 40px rgba(0,0,0,0.18);
+    z-index: 1200;
+    transition: right 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+}
+
+.mobile-panel.open {
+    right: 0;
+}
+
+.mobile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.mobile-links {
+    list-style: none;
+    padding: 2rem 1.6rem 1rem;
+    margin: 0;
+}
+
+.mobile-link {
+    display: block;
+    padding: 1.1rem 0;
+    color: var(--text-dark);
+    font-size: 1.18rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.25s, padding-left 0.3s;
+}
+
+.mobile-link:hover,
+.mobile-link.active {
+    color: var(--primary);
+    padding-left: 12px;
+}
+
+.mobile-ctas {
+    padding: 0 1.6rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.05rem;
+    transition: var(--transition);
+}
+
+.mobile-cta.call {
+    background: #f0f7f5;
+    color: var(--primary-dark);
+    border: 1px solid var(--primary-light);
+}
+
+.mobile-cta.book {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 14px rgba(42, 122, 111, 0.2);
+}
+
+.mobile-cta:hover {
+    transform: translateY(-1px);
+}
+
+/* Responsive Rules */
+@media (max-width: 992px) {
+    .primary-nav,
+    .book-cta {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .header-wrapper {
+        padding: 0 4%;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-panel {
+        width: 100%;
+        right: -100%;
+    }
+
+    .mobile-panel.open {
+        right: 0;
+    }
 }
 
 /* Hero */
@@ -543,65 +803,7 @@
 
 
         
-      :root {
-            --primary: #e63946;
-            --primary-dark: #c1121f;
-            --primary-light: #f8a5a8;
-            --secondary: #2a9d8f;
-            --secondary-light: #76c7ba;
-            --dark: #264653;
-            --light: #f8f9fa;
-            --text: #333333;
-            --text-light: #666666;
-            --gradient: linear-gradient(135deg, #e63946 0%, #2a9d8f 100%);
-            --gradient-light: linear-gradient(135deg, rgba(230, 57, 70, 0.1) 0%, rgba(42, 157, 143, 0.1) 100%);
-            --shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.15);
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --border-radius: 20px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light);
-            overflow-x: hidden;
-            padding-top: 90px; /* For fixed header */
-        }
-            :root {
-            --primary: #E63946;
-            --primary-dark: #C1121F;
-            --primary-light: #F8A5A8;
-            --secondary: #2A9D8F;
-            --dark: #264653;
-            --light: #F8F9FA;
-            --text: #333333;
-            --text-light: #666666;
-            --gradient: linear-gradient(135deg, #E63946 0%, #2A9D8F 100%);
-            --gradient-light: linear-gradient(135deg, rgba(230, 57, 70, 0.1) 0%, rgba(42, 157, 143, 0.1) 100%);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--light);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-
+     
 
 
         
