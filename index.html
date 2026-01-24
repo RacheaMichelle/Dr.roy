@@ -295,120 +295,139 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* HEADER */
+:root {
+  --primary: #d8b4a0;
+  --dark: #1f1f1f;
+  --glass: rgba(255,255,255,0.15);
+  --border: rgba(255,255,255,0.25);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f8f1ec, #f3e6de);
+  min-height: 200vh;
+}
+
+/* ===== HEADER ===== */
 .lux-header {
   position: fixed;
   top: 0;
   width: 100%;
   z-index: 1000;
-  transition: 0.3s ease;
-}
-
-.lux-header.scrolled {
+  backdrop-filter: blur(18px);
   background: var(--glass);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  border-bottom: 1px solid var(--border);
 }
 
 .lux-header-inner {
   max-width: 1200px;
   margin: auto;
-  padding: 1.1rem 1.5rem;
+  padding: 18px 25px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* LOGO */
+/* ===== LOGO ===== */
 .lux-logo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 12px;
   text-decoration: none;
   color: var(--dark);
-  font-weight: 800;
 }
 
-.lux-logo-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+.lux-logo i {
+  font-size: 22px;
+  color: var(--primary);
 }
 
-/* NAV */
+.lux-logo span {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* ===== NAV ===== */
 .lux-nav {
   display: flex;
   align-items: center;
-  gap: 1.4rem;
+  gap: 35px;
 }
 
-.lux-link {
+.lux-nav a {
   text-decoration: none;
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
   position: relative;
 }
 
-.lux-link.active,
-.lux-link:hover {
-  color: var(--dark);
-}
-
-.lux-link::after {
+.lux-nav a::after {
   content: "";
   position: absolute;
-  left: 0;
-  bottom: -6px;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  transition: 0.3s ease;
+  background: var(--primary);
+  left: 0;
+  bottom: -6px;
+  transition: 0.3s;
 }
 
-.lux-link:hover::after,
-.lux-link.active::after {
+.lux-nav a:hover::after,
+.lux-nav a.active::after {
   width: 100%;
 }
 
-/* CTA */
+/* ===== CTA ===== */
 .lux-cta {
-  margin-left: 1rem;
-  padding: 0.7rem 1.4rem;
-  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
   border: none;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  color: white;
-  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 12px 30px rgba(236,72,153,0.4);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.3s ease;
 }
 
-/* MOBILE */
+.lux-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* ===== MOBILE TOGGLE ===== */
 .lux-toggle {
   display: none;
   background: none;
   border: none;
-  font-size: 1.4rem;
+  font-size: 22px;
+  cursor: pointer;
 }
 
+/* ===== MOBILE MENU ===== */
 .lux-mobile {
   position: fixed;
   top: 0;
   right: -100%;
   width: 80%;
-  max-width: 360px;
+  max-width: 350px;
   height: 100vh;
-  background: white;
-  padding: 1.5rem;
-  z-index: 1001;
+  background: #fff;
+  padding: 25px;
+  z-index: 1100;
   transition: 0.4s ease;
   display: flex;
   flex-direction: column;
+  gap: 25px;
 }
 
 .lux-mobile.active {
@@ -418,45 +437,47 @@
 .lux-mobile-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
   font-weight: 700;
 }
 
-.lux-m-link {
-  margin-top: 1.4rem;
+.lux-mobile a {
   text-decoration: none;
-  color: var(--dark);
-}
-
-.lux-m-link.active {
-  color: var(--primary);
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .lux-m-cta {
   margin-top: auto;
-  padding: 0.9rem;
-  border-radius: 999px;
-  border: none;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  padding: 14px;
+  background: var(--primary);
   color: white;
+  border: none;
+  border-radius: 30px;
   font-weight: 600;
+  cursor: pointer;
 }
 
-/* OVERLAY */
+/* ===== OVERLAY ===== */
 .lux-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
   opacity: 0;
-  pointer-events: none;
+  visibility: hidden;
   transition: 0.3s;
+  z-index: 1000;
 }
 
 .lux-overlay.active {
   opacity: 1;
-  pointer-events: all;
+  visibility: visible;
 }
 
-/* RESPONSIVE */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .lux-nav {
     display: none;
@@ -465,7 +486,6 @@
     display: block;
   }
 }
-
         /* === APPOINTMENT BUTTON === */
         .appointment-btn {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -493,150 +513,7 @@
             font-size: 1.1rem;
         }
 
-        /* === MOBILE MENU BUTTON === */
-        .mobile-toggle {
-            display: none;
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
-        }
-
-        .mobile-toggle:hover {
-            background: var(--primary-dark);
-            transform: scale(1.05);
-        }
-
-        /* === MOBILE MENU OVERLAY === */
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(5px);
-            z-index: 999;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .mobile-menu-overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .mobile-nav {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 85%;
-            max-width: 350px;
-            height: 100vh;
-            background: white;
-            padding: 30px;
-            z-index: 1001;
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
-            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .mobile-nav.active {
-            transform: translateX(0);
-        }
-
-        .mobile-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .mobile-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .mobile-logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-        }
-
-        .mobile-logo-text {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .close-menu {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            color: var(--text);
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .close-menu:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .mobile-nav-links {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .mobile-nav-link {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 18px 20px;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 600;
-            font-size: 1.1rem;
-            border-radius: 12px;
-            transition: var(--transition);
-        }
-
-        .mobile-nav-link i {
-            width: 24px;
-            font-size: 1.1rem;
-            color: var(--primary);
-        }
-
-        .mobile-nav-link:hover,
-        .mobile-nav-link.active {
-            background: rgba(230, 57, 70, 0.1);
-            color: var(--primary);
-            transform: translateX(5px);
-        }
+}
 
         .mobile-appointment-btn {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -8546,30 +8423,22 @@ input:valid, textarea:valid, select:valid {
    <header class="lux-header">
   <div class="lux-header-inner">
 
-    <!-- Logo -->
     <a href="#home" class="lux-logo">
-      <div class="lux-logo-icon">
-        <i class="fas fa-spa"></i>
-      </div>
-      <span class="lux-logo-text">Dr Roy Skincare</span>
+      <i class="fas fa-spa"></i>
+      <span>Dr Roy Skincare</span>
     </a>
 
-    <!-- Desktop Nav -->
     <nav class="lux-nav">
-      <a href="#home" class="lux-link active">Home</a>
-      <a href="#about" class="lux-link">About</a>
-      <a href="#services" class="lux-link">Services</a>
-      <a href="#treatments" class="lux-link">Treatments</a>
-      <a href="#reviews" class="lux-link">Reviews</a>
-      <a href="#contact" class="lux-link">Locations</a>
-
+      <a href="#home" class="active">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Locations</a>
       <button class="lux-cta">
-        <i class="fas fa-calendar-check"></i>
-        Book Now
+        <i class="fas fa-calendar-check"></i> Book Now
       </button>
     </nav>
 
-    <!-- Mobile Toggle -->
     <button class="lux-toggle" id="openMenu">
       <i class="fas fa-bars"></i>
     </button>
@@ -8577,19 +8446,18 @@ input:valid, textarea:valid, select:valid {
   </div>
 </header>
 
-<!-- Mobile Menu -->
+<!-- MOBILE MENU -->
 <div class="lux-mobile" id="mobileMenu">
   <div class="lux-mobile-header">
-    <span>Dr Roy Skincare</span>
+    Dr Roy Skincare
     <button id="closeMenu"><i class="fas fa-times"></i></button>
   </div>
 
-  <a href="#home" class="lux-m-link active">Home</a>
-  <a href="#about" class="lux-m-link">About</a>
-  <a href="#services" class="lux-m-link">Services</a>
-  <a href="#treatments" class="lux-m-link">Treatments</a>
-  <a href="#reviews" class="lux-m-link">Reviews</a>
-  <a href="#contact" class="lux-m-link">Locations</a>
+  <a href="#">Home</a>
+  <a href="#">About</a>
+  <a href="#">Services</a>
+  <a href="#">Reviews</a>
+  <a href="#">Locations</a>
 
   <button class="lux-m-cta">
     <i class="fas fa-phone"></i> Call 0742 017 575
@@ -8598,105 +8466,27 @@ input:valid, textarea:valid, select:valid {
 
 <div class="lux-overlay" id="overlay"></div>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script>
+const openMenu = document.getElementById('openMenu');
+const closeMenu = document.getElementById('closeMenu');
+const mobileMenu = document.getElementById('mobileMenu');
+const overlay = document.getElementById('overlay');
 
-    </header>
+openMenu.onclick = () => {
+  mobileMenu.classList.add('active');
+  overlay.classList.add('active');
+};
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileOverlay"></div>
-
-    <!-- Mobile Navigation -->
-    <div class="mobile-nav" id="mobileNav">
-        <div class="mobile-header">
-            <div class="mobile-logo">
-                <div class="mobile-logo-icon">
-                    <i class="fas fa-spa"></i>
-                </div>
-                <div class="mobile-logo-text">Dr Roy</div>
-            </div>
-            <button class="close-menu" id="closeMenu">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <ul class="mobile-nav-links">
-            <li>
-                <a href="#home" class="mobile-nav-link active">
-                    <i class="fas fa-home"></i>
-                    Home
-                </a>
-            </li>
-            <li>
-                <a href="#about" class="mobile-nav-link">
-                    <i class="fas fa-info-circle"></i>
-                    About Us
-                </a>
-            </li>
-            <li>
-                <a href="#services" class="mobile-nav-link">
-                    <i class="fas fa-spa"></i>
-                    Services
-                </a>
-            </li>
-            <li>
-                <a href="#treatments" class="mobile-nav-link">
-                    <i class="fas fa-star"></i>
-                    Specialized Treatments
-                </a>
-            </li>
-            <li>
-                <a href="#reviews" class="mobile-nav-link">
-                    <i class="fas fa-comment-medical"></i>
-                    Client Reviews
-                </a>
-            </li>
-            <li>
-                <a href="#contact" class="mobile-nav-link">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Our Locations
-                </a>
-            </li>
-        </ul>
-
-        <button class="mobile-appointment-btn">
-            <i class="fas fa-phone-alt"></i>
-            Call: 0742 017 575
-        </button>
-        
-        <button class="mobile-appointment-btn" style="margin-top: 15px; background: linear-gradient(135deg, var(--secondary), #21867a);">
-            <i class="fas fa-calendar-check"></i>
-            Book Appointment
-        </button>
-    </div>
-
-    <!-- JavaScript -->
-    <script>
-  const header = document.querySelector('.lux-header');
-  const openMenu = document.getElementById('openMenu');
-  const closeMenu = document.getElementById('closeMenu');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const overlay = document.getElementById('overlay');
-
-  window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 50);
-  });
-
-  openMenu.onclick = () => {
-    mobileMenu.classList.add('active');
-    overlay.classList.add('active');
-  };
-
-  function closeNav() {
-    mobileMenu.classList.remove('active');
-    overlay.classList.remove('active');
-  }
-
-  closeMenu.onclick = closeNav;
-  overlay.onclick = closeNav;
+closeMenu.onclick = overlay.onclick = () => {
+  mobileMenu.classList.remove('active');
+  overlay.classList.remove('active');
+};
 </script>
+    
 
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   
+
+
 
 
 
