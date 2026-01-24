@@ -303,6 +303,12 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(230, 57, 70, 0.4);
         }
+   Premium Header + Mobile Menu CSS
+   For Dr Roy Skincare - Melanin-Rich Focus
+   ========================================== */
+
+
+
 /* Header Base */
 .premium-header {
     position: fixed;
@@ -323,14 +329,14 @@
     padding: 0.6rem 0;
 }
 
-/* Header Wrapper – flex container */
+/* Header Wrapper */
 .header-wrapper {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 5%;
     display: flex;
     align-items: center;
-    justify-content: space-between;   /* ← key: pushes children apart */
+    justify-content: space-between;
     height: 80px;
     transition: height 0.3s ease;
 }
@@ -339,7 +345,7 @@
     height: 68px;
 }
 
-/* Logo / Brand – stays left */
+/* Logo / Brand */
 .brand-logo {
     display: flex;
     align-items: center;
@@ -376,7 +382,7 @@
     letter-spacing: 0.4px;
 }
 
-/* Desktop Navigation – center-ish on wide screens */
+/* Desktop Navigation */
 .primary-nav {
     display: flex;
     align-items: center;
@@ -410,7 +416,7 @@
     border-radius: 3px;
 }
 
-/* Prominent CTA Button – right side on desktop */
+/* Prominent CTA Button */
 .book-cta {
     display: flex;
     align-items: center;
@@ -424,7 +430,6 @@
     text-decoration: none;
     box-shadow: 0 6px 20px rgba(42, 122, 111, 0.22);
     transition: var(--transition);
-    white-space: nowrap;
 }
 
 .book-cta:hover {
@@ -433,26 +438,21 @@
     box-shadow: 0 10px 28px rgba(42, 122, 111, 0.3);
 }
 
-/* Mobile Toggle (Hamburger) – far right on mobile */
+/* Mobile Toggle Button */
 .menu-toggle {
     display: none;
     background: none;
     border: none;
-    font-size: 1.8rem;               /* slightly bigger for touch */
+    font-size: 1.6rem;
     color: var(--text-dark);
     cursor: pointer;
-    padding: 10px;
-    margin-left: auto;               /* ← pushes it right when flex is space-between */
-    transition: var(--transition);
-}
-
-.menu-toggle:hover {
-    color: var(--primary);
+    padding: 8px;
 }
 
 /* ──────────────────────────────────────────
    Mobile Menu (Overlay + Slide-in Panel)
    ────────────────────────────────────────── */
+
 .mobile-overlay {
     position: fixed;
     inset: 0;
@@ -487,9 +487,91 @@
     right: 0;
 }
 
-/* ... rest of your mobile menu styles remain the same ... */
+.mobile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+}
 
-/* Responsive Rules – make hamburger visible & far right */
+.mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.mobile-links {
+    list-style: none;
+    padding: 2rem 1.6rem 1rem;
+    margin: 0;
+}
+
+.mobile-link {
+    display: block;
+    padding: 1.1rem 0;
+    color: var(--text-dark);
+    font-size: 1.18rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.25s, padding-left 0.3s;
+}
+
+.mobile-link:hover,
+.mobile-link.active {
+    color: var(--primary);
+    padding-left: 12px;
+}
+
+.mobile-ctas {
+    padding: 0 1.6rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.05rem;
+    transition: var(--transition);
+}
+
+.mobile-cta.call {
+    background: #f0f7f5;
+    color: var(--primary-dark);
+    border: 1px solid var(--primary-light);
+}
+
+.mobile-cta.book {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 14px rgba(42, 122, 111, 0.2);
+}
+
+.mobile-cta:hover {
+    transform: translateY(-1px);
+}
+
+/* Responsive Rules */
 @media (max-width: 992px) {
     .primary-nav,
     .book-cta {
@@ -497,12 +579,11 @@
     }
 
     .menu-toggle {
-        display: block;              /* show hamburger */
-        margin-left: auto;           /* ensure far right */
+        display: block;
     }
 
     .header-wrapper {
-        padding: 0 4% 0 5%;          /* a bit more left padding for logo */
+        padding: 0 4%;
     }
 }
 
@@ -514,15 +595,6 @@
 
     .mobile-panel.open {
         right: 0;
-    }
-
-    .header-wrapper {
-        padding: 0 4%;
-    }
-
-    .menu-toggle {
-        font-size: 1.9rem;
-        padding: 12px;               /* bigger touch target */
     }
 }
 
@@ -3927,6 +3999,37 @@ input:valid, textarea:valid, select:valid {
         font-size: 0.9rem;
     }
 }
+         html, body {
+    overflow-x: hidden;
+}
+/* Prevent header overflow */
+.header-wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Push menu icon to far right */
+.menu-toggle {
+    margin-left: auto;
+}
+
+/* Keep logo from stretching too wide on mobile */
+@media (max-width: 992px) {
+    .logo-wordmark {
+        max-width: 180px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Extra safety for very small phones */
+@media (max-width: 360px) {
+    .clinic-tag {
+        display: none;
+    }
+}
+
 
     </style>
 </head>
@@ -3971,7 +4074,7 @@ input:valid, textarea:valid, select:valid {
             <a href="#locations" class="nav-item">Locations</a>
         </nav>
 
-        <!-- Prominent CTA -->
+        <!-- CTA -->
         <a href="#book" class="book-cta">
             <i class="fas fa-calendar-plus"></i>
             Book Appointment
@@ -3983,6 +4086,7 @@ input:valid, textarea:valid, select:valid {
         </button>
     </div>
 </header>
+
 
 <!-- Mobile Menu Overlay + Panel -->
 <div class="mobile-overlay" id="mobileOverlay"></div>
