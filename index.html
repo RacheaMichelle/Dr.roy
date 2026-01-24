@@ -188,6 +188,21 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+
+         
+         :root {
+            --primary: #e63946;
+            --secondary: #f1faee;
+            --accent: #a8dadc;
+            --dark-accent: #457b9d;
+            --light: #f8f9fa;
+            --dark: #1d3557;
+            --text: #2c3e50;
+            --text-light: #666666;
+            --shadow: 0 10px 30px rgba(230, 57, 70, 0.15);
+            --transition: all 0.3s ease;
+        }
         
         /* Root variables – customize colors here */
 :root {
@@ -206,18 +221,6 @@
     --radius: 12px;
     --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
-         :root {
-            --primary: #e63946;
-            --secondary: #f1faee;
-            --accent: #a8dadc;
-            --dark-accent: #457b9d;
-            --light: #f8f9fa;
-            --dark: #1d3557;
-            --text: #2c3e50;
-            --text-light: #666666;
-            --shadow: 0 10px 30px rgba(230, 57, 70, 0.15);
-            --transition: all 0.3s ease;
-        }
         
         body {
             font-family: 'Poppins', sans-serif;
@@ -595,40 +598,111 @@
     }
 }
 
-/* Hero */
 .hero-section {
-    min-height: 90vh;
-    display: flex;
-    align-items: center;
-    padding: 8rem 5% 4rem;
-    background: linear-gradient(135deg, #f8f1f1 0%, #fff5f0 100%);
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1a0f1a 0%, #2b1a2b 50%, #0f1a2b 100%); /* deep luxurious bg */
+  color: white;
+  overflow: hidden;
 }
-.hero-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    align-items: center;
-}
-.hero-headline {
-    font-size: 4.2rem;
-    line-height: 1.05;
-    font-weight: 800;
-    margin: 1rem 0 1.5rem;
-}
-.highlight { color: var(--primary); }
-.hero-actions { display: flex; gap: 1.2rem; margin-top: 2.5rem; }
 
-/* Mobile adjustments */
-@media (max-width: 992px) {
-    .hero-grid { grid-template-columns: 1fr; text-align: center; }
-    .hero-image-block { order: -1; margin-bottom: 3rem; }
-    .primary-nav, .book-cta { display: none; }
-    /* ... mobile panel styles ... */
-}}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(139, 69, 19, 0.15), rgba(218, 165, 32, 0.08)); /* subtle warm overlay */
+  z-index: 1;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.hero-title {
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+}
+
+.highlight-gold {
+  color: #f4c430;          /* bright gold – pops on dark skin */
+  background: linear-gradient(90deg, #f4c430, #ffdd57, #f4c430);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shine 6s linear infinite;
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
+.hero-subtitle {
+  font-size: 1.4rem;
+  max-width: 520px;
+  opacity: 0.95;
+  margin-bottom: 2.5rem;
+  font-weight: 400;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #d4a017, #f4c430);
+  color: #111;
+  font-weight: 700;
+  padding: 1.1rem 2.4rem;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(244, 196, 48, 0.3);
+  transition: all 0.4s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(244, 196, 48, 0.45);
+}
+
+.hero-image-wrapper {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+
+.hero-main-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.hero-visual:hover .hero-main-image {
+  transform: scale(1.06);
+}
+
+/* Floating glows – make more visible & animated */
+.floating-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,196,48,0.25) 0%, transparent 70%);
+  pointer-events: none;
+  animation: float 12s infinite ease-in-out;
+}
+
+.glow-1 { width: 300px; height: 300px; top: 15%; left: 10%; animation-delay: 0s; }
+.glow-2 { width: 400px; height: 400px; bottom: 10%; right: 5%; animation-delay: 4s; }
+.glow-3 { width: 250px; height: 250px; top: 60%; left: 40%; animation-delay: 8s; }
+
+@keyframes float {
+  0%,100% { transform: translate(0, 0); }
+  50%     { transform: translate(30px, -40px); }
+}
         
         /* Appointment Button */
         .appointment-btn {
@@ -3983,61 +4057,81 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
     
-<!-- === Modern Hero === -->
+<!-- === Redesigned Modern & Eye-Catching Hero === -->
 <section class="hero-section" id="home">
-    <div class="hero-bg-layer"></div> <!-- for subtle gradient / image -->
+  <!-- Background layer with subtle gradient + optional image overlay -->
+  <div class="hero-bg">
+    <!-- You can use a high-res background image here or keep gradient -->
+    <!-- <img src="your-hero-bg.jpg" alt="" class="hero-bg-image" loading="eager"> -->
+  </div>
 
+  <div class="hero-container">
     <div class="hero-grid">
-        <!-- Left: Content -->
-        <div class="hero-text-block">
-            <div class="hero-eyebrow">
-                <span class="badge">Melanin-Rich Skin Expertise</span>
-                <span class="since">Since 2018</span>
-            </div>
-
-            <h1 class="hero-headline">
-                Radiant Skin,<br>
-                <span class="highlight">Made For You</span>
-            </h1>
-
-            <p class="hero-subtitle">
-                Science-led dermatology & aesthetic care celebrating your natural tone. Safe, effective, confidence-boosting results.
-            </p>
-
-            <div class="hero-stats">
-                <div class="stat">
-                    <span class="value">500+</span>
-                    <span class="label">Happy Clients</span>
-                </div>
-                <div class="stat">
-                    <span class="value">5+</span>
-                    <span class="label">Specialist Team</span>
-                </div>
-            </div>
-
-            <div class="hero-actions">
-                <a href="#book" class="btn-primary">
-                    <i class="fas fa-calendar-check"></i> Book Consultation
-                </a>
-                <a href="tel:+256742017575" class="btn-outline">
-                    <i class="fas fa-phone"></i> Call 0742 017 575
-                </a>
-            </div>
+      <!-- Left: Text Content – made bolder & more prominent -->
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span class="badge premium-badge">Melanin-Rich Skin Expertise</span>
+          <span class="since">Proudly Serving Since 2018</span>
         </div>
 
-        <!-- Right: Visual -->
-        <div class="hero-image-block">
-            <!-- Replace placeholder with real image of diverse client / before-after / treatment room -->
-            <div class="hero-image-placeholder">
-                <i class="fas fa-user-nurse"></i> <!-- temporary -->
-                <!-- Ideal: <img src="..." alt="Client receiving gentle facial treatment" loading="eager"> -->
-            </div>
+        <h1 class="hero-title">
+          Unlock <span class="highlight-gold">Spotles,Smooth Beauty</span><br>
+          Melanin Glow
+        </h1>
 
-            <!-- Optional subtle floating elements -->
-            <div class="glow-circle circle-1"></div>
-            <div class="glow-circle circle-2"></div>
+        <p class="hero-subtitle">
+          Expert dermatology & aesthetic treatments designed exclusively for rich, beautiful Black and brown skin tones. Safe. Scientific. Stunning results that celebrate <em>you</em>.
+        </p>
+
+        <!-- Stats – slightly larger & more visual -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-value">500+</span>
+            <span class="stat-label">Transformed Body Curves</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">5+</span>
+            <span class="stat-label">Melanin Specialists</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">100%</span>
+            <span class="stat-label">Safe for All Tones</span>
+          </div>
         </div>
+
+        <!-- CTAs – bigger, more contrasting, premium feel -->
+        <div class="hero-cta-group">
+          <a href="#book" class="btn btn-primary btn-lg">
+            <i class="fas fa-calendar-check"></i> Book Your Glow-Up Now
+          </a>
+          <a href="tel:+256742017575" class="btn btn-outline btn-lg">
+            <i class="fas fa-phone-alt"></i> Call 0742 017 575
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: Visual – make this the star -->
+      <div class="hero-visual">
+        <!-- Replace with real high-quality photo – confident client, glowing skin, natural lighting -->
+        <div class="hero-image-wrapper">
+          <!-- Ideal image: radiant Black woman with healthy, glowing skin post-treatment, looking directly at camera -->
+          <img 
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe29N66ZanLQ2G2-w1GWYoniNUQaL9aRgflQ&s" 
+            alt="Confident Black woman with radiant melanin-rich skin after aesthetic treatment" 
+            class="hero-main-image"
+            loading="eager"
+          >
+          <!-- Optional: subtle before/after peek or treatment element -->
+          <!-- <div class="image-overlay-glow"></div> -->
+        </div>
+
+        <!-- Floating decorative elements – make them more dynamic -->
+        <div class="floating-glow glow-1"></div>
+        <div class="floating-glow glow-2"></div>
+        <div class="floating-glow glow-3"></div>
+      </div>
     </div>
+  </div>
 </section>
     <script>
         // Simple animation for stats
