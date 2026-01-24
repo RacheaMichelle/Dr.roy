@@ -927,10 +927,10 @@
         /* ========== MODERN HERO SECTION ========== */
         .modern-hero {
             position: relative;
-            min-height: 50vh;
+            min-height: 90vh;
             display: flex;
             align-items: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             overflow: hidden;
         }
@@ -1347,11 +1347,10 @@
                 padding-top: 80px;
             }
             
-            /* Change this line in the .modern-hero section */
-.modern-hero {
-    min-height: 40vh; /* Reduced from 50vh */
-    padding: 30px 20px; /* Reduced from 40px 20px */
-}
+            .modern-hero {
+                min-height: auto;
+                padding: 40px 15px;
+            }
             
             .hero-title {
                 font-size: 2.8rem;
@@ -4663,32 +4662,33 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
     
-<!-- Modern Hero Section -->
+ <!-- Modern Hero Section -->
     <section class="modern-hero" id="home">
+        <!-- Background Elements -->
         <div class="hero-background">
             <div class="bg-gradient"></div>
             <div class="bg-pattern"></div>
         </div>
-
+        
+        <!-- Hero Content Container -->
         <div class="hero-container">
             <!-- Text Content -->
             <div class="hero-text">
                 <div class="hero-badge">
-                    <i class="fas fa-certificate"></i>
-                    Expert Dermatology Since 2018
+                    <i class="fas fa-heart"></i>
+                    <span>Specialized Dermatology Since 2018</span>
                 </div>
                 
                 <h1 class="hero-title">
-                    Beautiful Skin<br>
-                    For <span class="highlight">Everyone</span>
+                    Beautiful Skin For <span class="highlight">Everyone</span>
                 </h1>
                 
                 <p class="hero-subtitle">
-                    Specialized dermatology and aesthetic treatments designed specifically for 
-                    melanin-rich skin. We celebrate your natural beauty while enhancing your 
-                    confidence with science-backed solutions.
+                    Specialized dermatology and aesthetic treatments designed specifically for melanin-rich skin. 
+                    We celebrate your natural beauty while enhancing your confidence with science-backed solutions.
                 </p>
                 
+                <!-- Features Grid -->
                 <div class="features-grid">
                     <div class="feature-item">
                         <div class="feature-icon">
@@ -4702,10 +4702,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     <div class="feature-item">
                         <div class="feature-icon">
-                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-hand-holding-heart"></i>
                         </div>
                         <div class="feature-text">
-                            <h4>Personalized Care</h4>
+                            <h4>Personalised Care</h4>
                             <p>Tailored to your unique skin</p>
                         </div>
                     </div>
@@ -4722,7 +4722,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     <div class="feature-item">
                         <div class="feature-icon">
-                            <i class="fas fa-award"></i>
+                            <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="feature-text">
                             <h4>Proven Results</h4>
@@ -4731,15 +4731,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 
+                <!-- CTA Buttons -->
                 <div class="hero-cta">
-                    <a href="#contact" class="cta-primary">
+                    <a href="#consultation" class="cta-primary">
                         <i class="fas fa-calendar-check"></i>
-                        Book Consultation
+                        <span>Book Consultation</span>
                     </a>
                     
-                    <a href="#services" class="cta-secondary">
-                        <i class="fas fa-play-circle"></i>
-                        View Our Services
+                    <a href="tel:5551234567" class="cta-secondary">
+                        <i class="fas fa-phone-alt"></i>
+                        <span>Call (555) 123-4567</span>
                     </a>
                 </div>
             </div>
@@ -4749,18 +4750,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="visual-main">
                     <div class="visual-content"></div>
                     
+                    <!-- Stats Overlay -->
                     <div class="stats-overlay">
                         <div class="stat-item">
-                            <div class="stat-number">500+</div>
-                            <div class="stat-label">Happy Clients</div>
+                            <div class="stat-number">50%</div>
+                            <div class="stat-label">Happy Clients Satisfaction Rate</div>
                         </div>
+                        
                         <div class="stat-item">
                             <div class="stat-number">98%</div>
-                            <div class="stat-label">Satisfaction Rate</div>
+                            <div class="stat-label">Open Today 9:00 AM - 7:00 PM</div>
                         </div>
+                        
                         <div class="stat-item">
-                            <div class="stat-number">50+</div>
-                            <div class="stat-label">Treatments</div>
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Satisfied Clients</div>
                         </div>
                     </div>
                 </div>
@@ -4769,31 +4773,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="floating-elements">
                     <div class="float-element float-1">
                         <div class="float-icon">
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-award"></i>
                         </div>
                         <div class="float-text">
-                            <h4>Free Consultation</h4>
-                            <p>Book your first visit free</p>
+                            <h4>Expert Dermatologists</h4>
+                            <p>5+ years experience</p>
                         </div>
                     </div>
                     
                     <div class="float-element float-2">
                         <div class="float-icon">
-                            <i class="fas fa-clock"></i>
+                            <i class="fas fa-clipboard-check"></i>
                         </div>
                         <div class="float-text">
-                            <h4>Open Today</h4>
-                            <p>9:00 AM - 7:00 PM</p>
+                            <h4>Personalized Plans</h4>
+                            <p>Customized for you</p>
                         </div>
                     </div>
                     
                     <div class="float-element float-3">
                         <div class="float-icon">
-                            <i class="fas fa-phone-alt"></i>
+                            <i class="fas fa-shield-alt"></i>
                         </div>
                         <div class="float-text">
-                            <h4>Call Us</h4>
-                            <p>(555) 123-4567</p>
+                            <h4>Safe Procedures</h4>
+                            <p>FDA-approved</p>
                         </div>
                     </div>
                 </div>
@@ -4802,20 +4806,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         <!-- Scroll Indicator -->
         <div class="scroll-indicator">
-            <div class="scroll-text">Explore</div>
+            <span class="scroll-text">Scroll to Explore</span>
             <div class="scroll-line"></div>
         </div>
     </section>
 
     <script>
-        // Add some interactive animations
+        // Add some interactive effects
         document.addEventListener('DOMContentLoaded', function() {
-            // Animate elements on scroll
-            const observerOptions = {
-                threshold: 0.2,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
+            // Animation for feature items on scroll
+            const featureItems = document.querySelectorAll('.feature-item');
+            
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -4823,30 +4824,42 @@ document.addEventListener('DOMContentLoaded', function() {
                         entry.target.style.transform = 'translateY(0)';
                     }
                 });
-            }, observerOptions);
-
-            // Observe hero elements
-            const heroElements = document.querySelectorAll('.hero-title, .hero-subtitle, .feature-item, .visual-main');
-            heroElements.forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(el);
+            }, { threshold: 0.1 });
+            
+            featureItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(item);
             });
-
-            // Stagger feature items
-            document.querySelectorAll('.feature-item').forEach((item, index) => {
-                item.style.transitionDelay = `${index * 0.1}s`;
-            });
-
-            // Add click effects to CTA buttons
-            document.querySelectorAll('.cta-primary, .cta-secondary').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 200);
+            
+            // Smooth scroll for CTA buttons
+            const ctaButtons = document.querySelectorAll('.cta-primary, .cta-secondary');
+            ctaButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.getAttribute('href').startsWith('#')) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 100,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
                 });
+            });
+            
+            // Parallax effect for background
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const heroSection = document.querySelector('.modern-hero');
+                const bgGradient = document.querySelector('.bg-gradient');
+                
+                if (bgGradient) {
+                    bgGradient.style.transform = `translateY(${scrolled * 0.05}px)`;
+                }
             });
         });
     </script>
