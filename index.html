@@ -189,18 +189,23 @@
             box-sizing: border-box;
         }
         
-        :root {
-            --primary: #e63946;
-            --secondary: #f1faee;
-            --accent: #a8dadc;
-            --dark-accent: #457b9d;
-            --light: #f8f9fa;
-            --dark: #1d3557;
-            --text: #2c3e50;
-            --text-light: #666666;
-            --shadow: 0 10px 30px rgba(230, 57, 70, 0.15);
-            --transition: all 0.3s ease;
-        }
+        /* Root variables – customize colors here */
+:root {
+    --primary: #2a7a6f;           /* Teal-green – calming, trustworthy, skin-friendly */
+    --primary-dark: #1e5c54;
+    --primary-light: #3a9a8d;
+    --secondary: #e8b923;         /* Warm gold accent for CTAs */
+    --text-dark: #1a1a1a;
+    --text: #333;
+    --text-light: #555;
+    --bg: #ffffff;
+    --bg-light: #f9f9f9;
+    --border: rgba(0, 0, 0, 0.08);
+    --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+    --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
         
         body {
             font-family: 'Poppins', sans-serif;
@@ -287,23 +292,7 @@
    For Dr Roy Skincare - Melanin-Rich Focus
    ========================================== */
 
-/* Root variables – customize colors here */
-:root {
-    --primary: #2a7a6f;           /* Teal-green – calming, trustworthy, skin-friendly */
-    --primary-dark: #1e5c54;
-    --primary-light: #3a9a8d;
-    --secondary: #e8b923;         /* Warm gold accent for CTAs */
-    --text-dark: #1a1a1a;
-    --text: #333;
-    --text-light: #555;
-    --bg: #ffffff;
-    --bg-light: #f9f9f9;
-    --border: rgba(0, 0, 0, 0.08);
-    --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.1);
-    --radius: 12px;
-    --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-}
+
 
 /* Header Base */
 .premium-header {
@@ -3802,7 +3791,7 @@ input:valid, textarea:valid, select:valid {
         <!-- Logo -->
         <a href="#home" class="brand-logo">
             <div class="logo-symbol">
-                <i class="fas fa-leaf"></i> <!-- Changed to leaf for natural skincare feel; or keep fa-spa -->
+                <i class="fas fa-leaf"></i>
             </div>
             <div class="logo-wordmark">
                 <span class="clinic-name">Dr Roy Skincare</span>
@@ -3846,12 +3835,13 @@ input:valid, textarea:valid, select:valid {
         </button>
     </div>
 
-    <ul class="mobile-links">
+    <!-- Mobile Navigation Links -->
+    <ul class="mobile-nav-list">
         <li><a href="#home" class="mobile-link active">Home</a></li>
-        <li><a href="#about" class="mobile-link">About Us</a></li>
+        <li><a href="#about" class="mobile-link">About</a></li>
         <li><a href="#services" class="mobile-link">Services</a></li>
-        <li><a href="#treatments" class="mobile-link">Specialized Treatments</a></li>
-        <li><a href="#reviews" class="mobile-link">Client Reviews</a></li>
+        <li><a href="#treatments" class="mobile-link">Treatments</a></li>
+        <li><a href="#reviews" class="mobile-link">Reviews</a></li>
         <li><a href="#locations" class="mobile-link">Our Locations</a></li>
     </ul>
 
@@ -3866,73 +3856,6 @@ input:valid, textarea:valid, select:valid {
         </a>
     </div>
 </nav>
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileOverlay"></div>
-
-    <!-- Mobile Navigation -->
-    <div class="mobile-nav" id="mobileNav">
-        <div class="mobile-header">
-            <div class="mobile-logo">
-                <div class="mobile-logo-icon">
-                    <i class="fas fa-spa"></i>
-                </div>
-                <div class="mobile-logo-text">Dr Roy</div>
-            </div>
-            <button class="close-menu" id="closeMenu">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <ul class="mobile-nav-links">
-            <li>
-                <a href="#home" class="mobile-nav-link active">
-                    <i class="fas fa-home"></i>
-                    Home
-                </a>
-            </li>
-            <li>
-                <a href="#about" class="mobile-nav-link">
-                    <i class="fas fa-info-circle"></i>
-                    About Us
-                </a>
-            </li>
-            <li>
-                <a href="#services" class="mobile-nav-link">
-                    <i class="fas fa-spa"></i>
-                    Services
-                </a>
-            </li>
-            <li>
-                <a href="#treatments" class="mobile-nav-link">
-                    <i class="fas fa-star"></i>
-                    Specialized Treatments
-                </a>
-            </li>
-            <li>
-                <a href="#reviews" class="mobile-nav-link">
-                    <i class="fas fa-comment-medical"></i>
-                    Client Reviews
-                </a>
-            </li>
-            <li>
-                <a href="#contact" class="mobile-nav-link">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Our Locations
-                </a>
-            </li>
-        </ul>
-
-        <button class="mobile-appointment-btn">
-            <i class="fas fa-phone-alt"></i>
-            Call: 0742 017 575
-        </button>
-        
-        <button class="mobile-appointment-btn" style="margin-top: 15px; background: linear-gradient(135deg, var(--secondary), #21867a);">
-            <i class="fas fa-calendar-check"></i>
-            Book Appointment
-        </button>
-    </div>
-
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
