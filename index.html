@@ -3965,18 +3965,17 @@ input:valid, textarea:valid, select:valid {
     <div class="floating-element spa" style="top: 10%; right: 15%; font-size: 2.8rem;">
         <i class="fas fa-spa"></i>
     </div>
-    
-     <!-- Static Header -->
-    <header class="static-header">
+  <!-- Modern Header -->
+    <header class="modern-header">
         <div class="header-container">
             <!-- Logo -->
             <a href="#home" class="logo-section">
                 <div class="logo-icon">
-                    <i class="fas fa-leaf"></i>
+                    <i class="fas fa-spa"></i>
                 </div>
                 <div class="logo-text">
                     <div class="logo-title">Dr Roy Skincare</div>
-                    <div class="logo-subtitle">Premium Dermatology</div>
+                    
                 </div>
             </a>
 
@@ -3987,7 +3986,7 @@ input:valid, textarea:valid, select:valid {
                     Home
                 </a>
                 <a href="#about" class="nav-link">
-                    <i class="fas fa-user-md"></i>
+                    <i class="fas fa-info-circle"></i>
                     About
                 </a>
                 <a href="#services" class="nav-link">
@@ -4028,9 +4027,9 @@ input:valid, textarea:valid, select:valid {
         <div class="mobile-header">
             <div class="mobile-logo">
                 <div class="mobile-logo-icon">
-                    <i class="fas fa-leaf"></i>
+                    <i class="fas fa-spa"></i>
                 </div>
-                <div class="mobile-logo-text">Dr Roy Skincare</div>
+                <div class="mobile-logo-text">Dr Roy</div>
             </div>
             <button class="close-menu" id="closeMenu">
                 <i class="fas fa-times"></i>
@@ -4046,7 +4045,7 @@ input:valid, textarea:valid, select:valid {
             </li>
             <li>
                 <a href="#about" class="mobile-nav-link">
-                    <i class="fas fa-user-md"></i>
+                    <i class="fas fa-info-circle"></i>
                     About Us
                 </a>
             </li>
@@ -4059,114 +4058,35 @@ input:valid, textarea:valid, select:valid {
             <li>
                 <a href="#treatments" class="mobile-nav-link">
                     <i class="fas fa-star"></i>
-                    Treatments
+                    Specialized Treatments
                 </a>
             </li>
             <li>
                 <a href="#reviews" class="mobile-nav-link">
                     <i class="fas fa-comment-medical"></i>
-                    Reviews
+                    Client Reviews
                 </a>
             </li>
             <li>
                 <a href="#contact" class="mobile-nav-link">
                     <i class="fas fa-map-marker-alt"></i>
-                    Locations
+                    Our Locations
                 </a>
             </li>
         </ul>
 
-        <div class="mobile-cta">
-            <button class="mobile-appointment-btn">
-                <i class="fas fa-phone-alt"></i>
-                Call: 0742 017 575
-            </button>
-            
-            <button class="mobile-appointment-btn" style="margin-top: 10px; background: var(--accent);">
-                <i class="fas fa-calendar-check"></i>
-                Book Appointment
-            </button>
-        </div>
+        <button class="mobile-appointment-btn">
+            <i class="fas fa-phone-alt"></i>
+            Call: 0742 017 575
+        </button>
+        
+        <button class="mobile-appointment-btn" style="margin-top: 15px; background: linear-gradient(135deg, var(--secondary), #21867a);">
+            <i class="fas fa-calendar-check"></i>
+            Book Appointment
+        </button>
     </div>
 
-    <!-- Simple Professional Hero Section -->
-    <section class="simple-hero" id="home">
-        <!-- Background Elements -->
-        <div class="bg-element bg-circle-1"></div>
-        <div class="bg-element bg-circle-2"></div>
-        
-        <div class="hero-container">
-            <!-- Content Side -->
-            <div class="hero-content">
-                <span class="specialty-tag">Specialized Dermatology</span>
-                
-                <h1 class="hero-title">
-                    Expert Skincare <br>
-                    For <span>Lasting Beauty</span>
-                </h1>
-                
-                <p class="hero-description">
-                    With over a decade of specialized experience in dermatology, Dr. Roy and his team provide personalized, 
-                    science-backed treatments for all skin types. We focus on safe, effective solutions that deliver 
-                    natural-looking, long-lasting results.
-                </p>
-                
-                <ul class="feature-list">
-                    <li>
-                        <i class="fas fa-check-circle"></i>
-                        Board-certified dermatologists
-                    </li>
-                    <li>
-                        <i class="fas fa-check-circle"></i>
-                        Advanced laser technology
-                    </li>
-                    <li>
-                        <i class="fas fa-check-circle"></i>
-                        Personalized treatment plans
-                    </li>
-                    <li>
-                        <i class="fas fa-check-circle"></i>
-                        Focus on melanin-rich skin
-                    </li>
-                </ul>
-                
-                <div class="cta-group">
-                    <button class="primary-btn">
-                        <i class="fas fa-calendar-check"></i>
-                        Book Consultation
-                    </button>
-                    <a href="tel:0742017575" class="secondary-btn">
-                        <i class="fas fa-phone-alt"></i>
-                        Call Our Clinic
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Image Side -->
-            <div class="hero-image">
-                <!-- Doctor image - you can replace with actual image -->
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe29N66ZanLQ2G2-w1GWYoniNUQaL9aRgflQ&s" 
-                     alt="Dr. Roy - Dermatology Specialist" class="doctor-image">
-                
-                <!-- Stats Overlay -->
-                <div class="stats-overlay">
-                    <div class="stat-item">
-                        <div class="stat-number">10+</div>
-                        <div class="stat-label">Years Experience</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">2K+</div>
-                        <div class="stat-label">Patients Treated</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">98%</div>
-                        <div class="stat-label">Satisfaction Rate</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile Menu Toggle
@@ -4175,6 +4095,7 @@ input:valid, textarea:valid, select:valid {
             const mobileOverlay = document.getElementById('mobileOverlay');
             const closeMenu = document.getElementById('closeMenu');
             const body = document.body;
+            const header = document.querySelector('.modern-header');
 
             // Open mobile menu
             mobileToggle.addEventListener('click', () => {
@@ -4198,6 +4119,15 @@ input:valid, textarea:valid, select:valid {
                 link.addEventListener('click', closeMobileMenu);
             });
 
+            // Header scroll effect
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
             // Active link highlighting
             const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
             
@@ -4216,48 +4146,194 @@ input:valid, textarea:valid, select:valid {
                     closeMobileMenu();
                 }
             });
+        });
+    </script>
 
-            // Animated number counting
-            const statNumbers = document.querySelectorAll('.stat-number');
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+<!-- Add this JavaScript right before closing </body> tag -->
+<script>
+// Hero Slideshow - Automatic Rotation
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.hero-slideshow .slide');
+    if (slides.length === 0) return;
+    
+    let currentSlide = 0;
+    let slideInterval;
+    const slideDuration = 5000; // 5 seconds
+    
+    // Function to show specific slide
+    function showSlide(n) {
+        // Remove active class from all slides
+        slides.forEach(slide => {
+            slide.classList.remove('active');
+        });
+        
+        // Calculate new slide index with wrap-around
+        currentSlide = (n + slides.length) % slides.length;
+        
+        // Add active class to current slide
+        slides[currentSlide].classList.add('active');
+    }
+
+    // Next slide function
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    // Start automatic slideshow
+    function startSlideshow() {
+        // Clear any existing interval
+        if (slideInterval) {
+            clearInterval(slideInterval);
+        }
+        
+        // Start new interval
+        slideInterval = setInterval(nextSlide, slideDuration);
+    }
+
+    // Optional: Pause on hover
+    const slideshowContainer = document.querySelector('.hero-slideshow');
+    if (slideshowContainer) {
+        slideshowContainer.addEventListener('mouseenter', function() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+                slideInterval = null;
+            }
+        });
+        
+        slideshowContainer.addEventListener('mouseleave', function() {
+            if (!slideInterval) {
+                startSlideshow();
+            }
+        });
+    }
+
+    // Initialize slideshow
+    // Make sure only first slide is active initially
+    slides.forEach((slide, index) => {
+        if (index !== 0) {
+            slide.classList.remove('active');
+        }
+    });
+    
+    // Start the slideshow
+    startSlideshow();
+});
+</script>
+    
+ <!-- Modern Hero Section -->
+    <section class="modern-hero">
+        <div class="hero-bg"></div>
+        
+        <div class="hero-container">
+            <!-- Content Side -->
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-heart"></i>
+                    <span>❤️ Specialized Dermatology Since 2018</span>
+                </div>
+                
+                <h1 class="hero-title">
+                    Beautiful Skin <br>
+                    For <span>Everyone</span>
+                </h1>
+                
+                <p class="hero-description">
+                    Specialized dermatology and aesthetic treatments designed specifically for melanin-rich skin. 
+                    We celebrate your natural beauty while enhancing your confidence with science-backed solutions.
+                </p>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">5+</div>
+                        <div class="stat-text">Expert Dermatologists</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-text">Satisfied Clients</div>
+                    </div>
+                </div>
+                
+                <div class="hero-cta">
+                    <a href="#book" class="cta-btn cta-primary">
+                        <i class="fas fa-calendar-check"></i>
+                        Book Consultation
+                    </a>
+                    <a href="tel:5551234567" class="cta-btn cta-secondary">
+                        <i class="fas fa-phone-alt"></i>
+                        Call Us Now
+                    </a>
+                </div>
+            </div>
             
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const number = entry.target;
-                        const finalValue = parseInt(number.textContent);
-                        let startValue = 0;
-                        const duration = 1500;
-                        const increment = finalValue / (duration / 16);
-                        
-                        const timer = setInterval(() => {
-                            startValue += increment;
-                            if (startValue >= finalValue) {
-                                clearInterval(timer);
-                                number.textContent = finalValue + (number.textContent.includes('+') ? '+' : '%');
-                            } else {
-                                number.textContent = Math.floor(startValue) + (number.textContent.includes('%') ? '%' : '');
-                            }
-                        }, 16);
-                        
-                        observer.unobserve(number);
-                    }
-                });
-            }, { threshold: 0.5 });
+            <!-- Visual Side -->
+            <div class="hero-visual">
+                <div class="visual-main">
+                    <!-- You can add background image here -->
+                    <div style="width:100%;height:100%;background:#f0f0f0;border-radius:24px;display:flex;align-items:center;justify-content:center;color:var(--text-light);">
+                        <i class="fas fa-user-md" style="font-size:4rem;color:var(--primary-light);"></i>
+                    </div>
+                    
+                    <div class="visual-overlay">
+                        <div class="overlay-stat">
+                            <div class="overlay-number">50%</div>
+                            <div class="overlay-text">Happy Clients</div>
+                        </div>
+                        <div class="overlay-stat">
+                            <div class="overlay-number">98%</div>
+                            <div class="overlay-text">Open Today</div>
+                        </div>
+                        <div class="overlay-stat">
+                            <div class="overlay-number">500+</div>
+                            <div class="overlay-text">Satisfied Clients</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Floating Dots -->
+                <div class="floating-dot dot-1"></div>
+                <div class="floating-dot dot-2"></div>
+                <div class="floating-dot dot-3"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Simple animation for stats
+        document.addEventListener('DOMContentLoaded', function() {
+            const statNumbers = document.querySelectorAll('.stat-number, .overlay-number');
             
             statNumbers.forEach(number => {
-                observer.observe(number);
-            });
-
-            // Button hover effects
-            const buttons = document.querySelectorAll('.primary-btn, .appointment-btn');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                });
+                const originalText = number.textContent;
+                number.textContent = '0';
                 
-                button.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            let start = 0;
+                            const end = parseInt(originalText);
+                            const duration = 1500;
+                            const increment = end / (duration / 16);
+                            
+                            const timer = setInterval(() => {
+                                start += increment;
+                                if (start >= end) {
+                                    clearInterval(timer);
+                                    number.textContent = originalText;
+                                } else {
+                                    number.textContent = Math.floor(start);
+                                }
+                            }, 16);
+                            
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                observer.observe(number);
             });
         });
     </script>
