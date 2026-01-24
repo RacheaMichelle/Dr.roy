@@ -172,6 +172,7 @@
     
     <!-- Mobile Web App Capable (Corrected) -->
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=yes">
     <meta name="theme-color" content="#e63946">
@@ -598,12 +599,16 @@
     }
 }
 
+/* ==========================================================================
+   Mobile-first base styles
+   ========================================================================== */
+
 .hero-section {
   position: relative;
-  min-height: 90vh;
+  min-height: 100vh;           /* better full-screen feel on mobile */
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #1a0f1a 0%, #2b1a2b 50%, #0f1a2b 100%); /* deep luxurious bg */
+  background: linear-gradient(135deg, #1a0f1a 0%, #2b1a2b 50%, #0f1a2b 100%);
   color: white;
   overflow: hidden;
 }
@@ -611,28 +616,41 @@
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(139, 69, 19, 0.15), rgba(218, 165, 32, 0.08)); /* subtle warm overlay */
+  background: linear-gradient(to right, rgba(139, 69, 19, 0.15), rgba(218, 165, 32, 0.08));
   z-index: 1;
 }
 
 .hero-container {
   position: relative;
   z-index: 2;
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 5rem 1.5rem 4rem;   /* more breathing room top/bottom on mobile */
+}
+
+.hero-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 640px;
 }
 
 .hero-title {
-  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  font-size: clamp(2.8rem, 9vw, 4.8rem); /* scales nicely */
   font-weight: 800;
   line-height: 1.05;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   letter-spacing: -1px;
 }
 
 .highlight-gold {
-  color: #f4c430;          /* bright gold – pops on dark skin */
+  color: #f4c430;
   background: linear-gradient(90deg, #f4c430, #ffdd57, #f4c430);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -645,33 +663,85 @@
 }
 
 .hero-subtitle {
-  font-size: 1.4rem;
-  max-width: 520px;
+  font-size: clamp(1.1rem, 4vw, 1.35rem);
   opacity: 0.95;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.8rem 2.5rem;
   margin-bottom: 2.5rem;
-  font-weight: 400;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #f4c430;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  touch-action: manipulation; /* better mobile tap feel */
 }
 
 .btn-primary {
   background: linear-gradient(90deg, #d4a017, #f4c430);
   color: #111;
-  font-weight: 700;
-  padding: 1.1rem 2.4rem;
-  border-radius: 50px;
-  box-shadow: 0 10px 30px rgba(244, 196, 48, 0.3);
-  transition: all 0.4s;
+  box-shadow: 0 8px 25px rgba(244, 196, 48, 0.35);
 }
 
-.btn-primary:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(244, 196, 48, 0.45);
+.btn-primary:hover,
+.btn-primary:focus {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(244, 196, 48, 0.5);
+}
+
+.btn-outline {
+  border: 2px solid #f4c430;
+  color: #f4c430;
+  background: transparent;
+}
+
+.btn-outline:hover,
+.btn-outline:focus {
+  background: rgba(244, 196, 48, 0.1);
+}
+
+.hero-visual {
+  position: relative;
+  width: 100%;
+  max-width: 420px;           /* prevent huge images on very wide phones */
 }
 
 .hero-image-wrapper {
   position: relative;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55);
 }
 
 .hero-main-image {
@@ -679,29 +749,92 @@
   height: auto;
   display: block;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  aspect-ratio: 3 / 4;        /* nice portrait feel – adjust to your image */
 }
 
-.hero-visual:hover .hero-main-image {
-  transform: scale(1.06);
-}
-
-/* Floating glows – make more visible & animated */
+/* Floating glows – toned down a bit on mobile */
 .floating-glow {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(244,196,48,0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(244,196,48,0.18) 0%, transparent 70%);
   pointer-events: none;
-  animation: float 12s infinite ease-in-out;
+  animation: float 14s infinite ease-in-out;
+  opacity: 0.7;
 }
 
-.glow-1 { width: 300px; height: 300px; top: 15%; left: 10%; animation-delay: 0s; }
-.glow-2 { width: 400px; height: 400px; bottom: 10%; right: 5%; animation-delay: 4s; }
-.glow-3 { width: 250px; height: 250px; top: 60%; left: 40%; animation-delay: 8s; }
+.glow-1 { width: 180px; height: 180px; top: 10%; left: 5%; animation-delay: 0s; }
+.glow-2 { width: 220px; height: 220px; bottom: 15%; right: 10%; animation-delay: 5s; }
+.glow-3 { width: 140px; height: 140px; top: 55%; left: 35%; animation-delay: 9s; }
 
 @keyframes float {
-  0%,100% { transform: translate(0, 0); }
-  50%     { transform: translate(30px, -40px); }
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(20px, -30px); }
+}
+
+/* ==========================================================================
+   Tablet & up (≥ 768px)
+   ========================================================================== */
+@media (min-width: 768px) {
+  .hero-container {
+    padding: 6rem 3rem;
+  }
+
+  .hero-grid {
+    flex-direction: row;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .hero-content {
+    text-align: left;
+    max-width: none;
+    flex: 1;
+  }
+
+  .hero-title {
+    font-size: clamp(4rem, 7vw, 6rem);
+  }
+
+  .hero-subtitle {
+    font-size: 1.4rem;
+    max-width: 520px;
+  }
+
+  .hero-cta-group {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+
+  .hero-visual {
+    flex: 1;
+    max-width: 520px;
+  }
+
+  .hero-image-wrapper {
+    border-radius: 24px;
+  }
+
+  /* Bigger glows on larger screens */
+  .glow-1 { width: 300px; height: 300px; }
+  .glow-2 { width: 400px; height: 400px; }
+  .glow-3 { width: 250px; height: 250px; }
+}
+
+/* ==========================================================================
+   Desktop & up (≥ 1100px)
+   ========================================================================== */
+@media (min-width: 1100px) {
+  .hero-container {
+    padding: 8rem 4rem;
+  }
+
+  .hero-title {
+    font-size: clamp(5rem, 6.5vw, 7rem);
+  }
+
+  .hero-visual {
+    max-width: 620px;
+  }
 }
         
         /* Appointment Button */
@@ -4057,35 +4190,42 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
     
-<!-- === Redesigned Modern & Eye-Catching Hero === -->
+<!-- === Redesigned Modern & Eye-Catching Hero (Responsive) === -->
 <section class="hero-section" id="home">
-  <!-- Background layer with subtle gradient + optional image overlay -->
-  <div class="hero-bg">
-    <!-- You can use a high-res background image here or keep gradient -->
-    <!-- <img src="your-hero-bg.jpg" alt="" class="hero-bg-image" loading="eager"> -->
-  </div>
-
+  <!-- Background layer -->
+  <div class="hero-bg"></div>
+  
   <div class="hero-container">
     <div class="hero-grid">
-      <!-- Left: Text Content – made bolder & more prominent -->
+      <!-- Text Content – comes first on mobile (better for SEO & reading) -->
       <div class="hero-content">
         <div class="hero-eyebrow">
           <span class="badge premium-badge">Melanin-Rich Skin Expertise</span>
           <span class="since">Proudly Serving Since 2018</span>
         </div>
-
         <h1 class="hero-title">
-          Unlock <span class="highlight-gold">Spotles,Smooth Beauty</span><br>
+          Unlock <span class="highlight-gold">Radiant, Flawless</span><br>
           Melanin Glow
         </h1>
-
         <p class="hero-subtitle">
           Expert dermatology & aesthetic treatments designed exclusively for rich, beautiful Black and brown skin tones. Safe. Scientific. Stunning results that celebrate <em>you</em>.
         </p>
+        
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-value">500+</span>
+            <span class="stat-label">Transformed Lives</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">5+</span>
+            <span class="stat-label">Melanin Specialists</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">100%</span>
+            <span class="stat-label">Safe for All Tones</span>
+          </div>
+        </div>
 
-       
-
-        <!-- CTAs – bigger, more contrasting, premium feel -->
         <div class="hero-cta-group">
           <a href="#book" class="btn btn-primary btn-lg">
             <i class="fas fa-calendar-check"></i> Book Your Glow-Up Now
@@ -4096,22 +4236,16 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       </div>
 
-      <!-- Right: Visual – make this the star -->
+      <!-- Visual – comes second on mobile -->
       <div class="hero-visual">
-        <!-- Replace with real high-quality photo – confident client, glowing skin, natural lighting -->
         <div class="hero-image-wrapper">
-          <!-- Ideal image: radiant Black woman with healthy, glowing skin post-treatment, looking directly at camera -->
-          <img 
-            src="https://thumbs.dreamstime.com/b/abstract-health-medical-science-healthcare-icon-digital-technolo-technology-doctor-concept-modern-innovation-treatment-medicine-127462799.jpg" 
-            alt="Confident Black woman with radiant melanin-rich skin after aesthetic treatment" 
+          <img
+            src="https://images.unsplash.com/photo-...your-real-image-here..."
+            alt="Confident Black woman with radiant melanin-rich skin after aesthetic treatment"
             class="hero-main-image"
             loading="eager"
           >
-          <!-- Optional: subtle before/after peek or treatment element -->
-          <!-- <div class="image-overlay-glow"></div> -->
         </div>
-
-        <!-- Floating decorative elements – make them more dynamic -->
         <div class="floating-glow glow-1"></div>
         <div class="floating-glow glow-2"></div>
         <div class="floating-glow glow-3"></div>
