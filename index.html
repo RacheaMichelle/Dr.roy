@@ -5272,37 +5272,36 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-// Hero Slideshow - Automatic Only (FIXED VERSION)
+// Hero Slideshow - Fixed Automatic Rotation
 document.addEventListener('DOMContentLoaded', function() {
     const slides = document.querySelectorAll('.hero-slideshow .slide');
     if (slides.length === 0) return;
     
     let currentSlide = 0;
     let slideInterval;
+    const slideDuration = 5000; // 5 seconds
     
     console.log('Found', slides.length, 'slides for automatic slideshow');
 
     // Function to show specific slide
     function showSlide(n) {
-        console.log('Showing slide index:', n);
+        // Remove active class from all slides
+        slides.forEach(slide => {
+            slide.classList.remove('active');
+        });
         
         // Calculate new slide index with wrap-around
         currentSlide = (n + slides.length) % slides.length;
         
-        // Remove active class from all slides
-        slides.forEach((slide, index) => {
-            slide.classList.remove('active');
-            console.log(`Slide ${index}: removed active`);
-        });
-        
         // Add active class to current slide
         slides[currentSlide].classList.add('active');
-        console.log(`Slide ${currentSlide}: added active`);
+        
+        // Debug log
+        console.log(`Now showing slide ${currentSlide + 1} of ${slides.length}`);
     }
 
     // Next slide function
     function nextSlide() {
-        console.log('Moving to next slide');
         showSlide(currentSlide + 1);
     }
 
@@ -5313,19 +5312,19 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(slideInterval);
         }
         
-        // Start new interval (change every 5 seconds)
-        slideInterval = setInterval(nextSlide, 5000);
-        console.log('Automatic slideshow started (5 second intervals)');
+        // Start new interval
+        slideInterval = setInterval(nextSlide, slideDuration);
+        console.log(`Automatic slideshow started (${slideDuration/1000} second intervals)`);
     }
 
-    // Stop automatic slideshow on hover (optional)
+    // Pause on hover (optional feature)
     const slideshowContainer = document.querySelector('.hero-slideshow');
     if (slideshowContainer) {
         slideshowContainer.addEventListener('mouseenter', function() {
             if (slideInterval) {
                 clearInterval(slideInterval);
                 slideInterval = null;
-                console.log('Slideshow paused on hover');
+                console.log('Slideshow paused');
             }
         });
         
@@ -5337,20 +5336,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Initialize - make sure first slide is active
+    // Initialize slideshow
     console.log('Initializing slideshow...');
-    showSlide(0); // Show first slide
-    startSlideshow(); // Start automatic rotation
-
-    // Debug function to check slide status
-    function debugSlides() {
-        slides.forEach((slide, index) => {
-            console.log(`Slide ${index}: has active class = ${slide.classList.contains('active')}`);
-        });
-    }
-
-    // Check every 2 seconds for debugging
-    setInterval(debugSlides, 2000);
+    
+    // Make sure only first slide is active initially
+    slides.forEach((slide, index) => {
+        if (index !== 0) {
+            slide.classList.remove('active');
+        }
+    });
+    
+    // Start the slideshow
+    startSlideshow();
 });
 </script>
 </body>
