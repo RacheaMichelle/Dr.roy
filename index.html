@@ -2961,147 +2961,212 @@
     font-size: 0.95rem;
     line-height: 1.6;
 }
-/* ==================== ACHIEVEMENTS SECTION RESPONSIVE FIX ==================== */
+/* ==================== ACHIEVEMENTS STATISTICS FIX ==================== */
 
 .achievements {
     margin-top: 60px;
-    padding: 40px 0;
-    background: linear-gradient(135deg, rgba(230, 57, 70, 0.05), rgba(255, 123, 156, 0.05));
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #fef5f6 0%, #fff9fa 100%);
     border-radius: 20px;
+    position: relative;
+    overflow: hidden;
 }
 
 .achievements h3 {
     text-align: center;
-    margin: 0 0 40px 0;
-    font-size: 1.8rem;
+    margin: 0 0 50px 0 !important; /* Override inline style */
+    font-size: 2rem;
     color: #333;
-    padding: 0 20px;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+}
+
+.achievements h3::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: #e63946;
+    margin: 15px auto;
+    border-radius: 2px;
 }
 
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
+    gap: 30px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .stat-item {
     background: white;
     border-radius: 15px;
-    padding: 30px 20px;
+    padding: 40px 25px;
     text-align: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 2px solid transparent;
+    box-shadow: 0 10px 30px rgba(230, 57, 70, 0.1);
+    transition: all 0.4s ease;
+    border: 2px solid rgba(230, 57, 70, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #e63946, #ff7b9c);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.stat-item:hover::before {
+    transform: scaleX(1);
 }
 
 .stat-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    border-color: rgba(230, 57, 70, 0.2);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(230, 57, 70, 0.15);
 }
 
+/* FIX FOR STAT NUMBERS NOT SHOWING */
 .stat-number {
-    font-size: 2.8rem;
-    font-weight: 700;
-    color: #e63946;
-    margin-bottom: 10px;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #e63946 !important; /* Force color to show */
+    margin-bottom: 15px;
     line-height: 1;
-    background: linear-gradient(135deg, #e63946, #ff7b9c);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    display: block;
+    text-shadow: none;
+    -webkit-text-fill-color: #e63946 !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
 }
 
 .stat-text {
-    font-size: 1.1rem;
-    color: #555;
-    font-weight: 500;
+    font-size: 1.2rem;
+    color: #555 !important; /* Force color to show */
+    font-weight: 600;
     line-height: 1.4;
+    display: block;
+}
+
+/* Add decorative background elements */
+.achievements::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(230, 57, 70, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 1;
 }
 
 /* ==================== MOBILE RESPONSIVE FIXES ==================== */
-
 @media (max-width: 992px) {
     .achievements {
-        padding: 35px 0;
-        margin-top: 50px;
+        padding: 50px 15px;
     }
     
     .achievements h3 {
-        font-size: 1.7rem;
-        margin-bottom: 35px;
+        font-size: 1.8rem;
+        margin-bottom: 40px !important;
     }
     
     .stats-grid {
-        gap: 20px;
+        gap: 25px;
     }
     
     .stat-item {
-        padding: 25px 15px;
+        padding: 35px 20px;
     }
     
     .stat-number {
-        font-size: 2.5rem;
+        font-size: 3rem;
     }
     
     .stat-text {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 }
 
 @media (max-width: 768px) {
     .achievements h3 {
         font-size: 1.6rem;
-        margin-bottom: 30px;
+        margin-bottom: 30px !important;
     }
     
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-        padding: 0 15px;
+        gap: 25px;
+        max-width: 600px;
     }
     
     .stat-item {
-        padding: 25px 20px;
+        padding: 30px 20px;
     }
     
     .stat-number {
-        font-size: 2.4rem;
+        font-size: 2.8rem;
     }
     
     .stat-text {
-        font-size: 1.05rem;
+        font-size: 1.1rem;
     }
 }
 
 @media (max-width: 576px) {
     .achievements {
-        margin-top: 40px;
-        padding: 30px 0;
+        margin: 40px 15px;
+        padding: 40px 15px;
         border-radius: 15px;
-        margin-left: 10px;
-        margin-right: 10px;
     }
     
     .achievements h3 {
-        font-size: 1.4rem;
-        margin-bottom: 25px;
+        font-size: 1.5rem;
+        margin-bottom: 30px !important;
     }
     
     .stats-grid {
         grid-template-columns: 1fr;
-        max-width: 300px;
-        margin: 0 auto;
+        max-width: 350px;
         gap: 20px;
-        padding: 0 10px;
     }
     
     .stat-item {
-        padding: 25px 20px;
-        margin: 0 5px;
+        padding: 35px 25px;
+    }
+    
+    .stat-number {
+        font-size: 3rem;
+    }
+    
+    .stat-text {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .achievements h3 {
+        font-size: 1.4rem;
+    }
+    
+    .stats-grid {
+        max-width: 280px;
+    }
+    
+    .stat-item {
+        padding: 30px 20px;
     }
     
     .stat-number {
@@ -3113,53 +3178,14 @@
     }
 }
 
-@media (max-width: 375px) {
-    .achievements h3 {
-        font-size: 1.3rem;
-        margin-bottom: 20px;
-    }
-    
-    .stats-grid {
-        max-width: 280px;
-        gap: 15px;
-    }
-    
-    .stat-item {
-        padding: 20px 15px;
-    }
-    
-    .stat-number {
-        font-size: 2.2rem;
-    }
-    
-    .stat-text {
-        font-size: 1rem;
-    }
+/* Emergency override for invisible text */
+.achievements * {
+    color: inherit !important;
 }
 
-/* Optional: Add animation on scroll */
-.stat-item {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.stat-item.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Touch-friendly interactions for mobile */
-@media (hover: none) and (pointer: coarse) {
-    .stat-item:hover {
-        transform: none;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    }
-    
-    .stat-item:active {
-        transform: scale(0.98);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
+.stat-number, .stat-text {
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Form validation styles */
@@ -5056,100 +5082,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     
-   // Slideshow Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    const prevBtn = document.querySelector('.prev');
-    const nextBtn = document.querySelector('.next');
-    let currentSlide = 0;
-    let slideInterval;
 
-    // Function to show specific slide
-    function showSlide(n) {
-        // Remove active class from all slides and dots
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-        
-        // Adjust index if out of bounds
-        currentSlide = (n + slides.length) % slides.length;
-        
-        // Add active class to current slide and dot
-        slides[currentSlide].classList.add('active');
-        dots[currentSlide].classList.add('active');
-    }
-
-    // Next slide function
-    function nextSlide() {
-        showSlide(currentSlide + 1);
-    }
-
-    // Previous slide function
-    function prevSlide() {
-        showSlide(currentSlide - 1);
-    }
-
-    // Start automatic slideshow
-    function startSlideshow() {
-        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
-    }
-
-    // Stop automatic slideshow
-    function stopSlideshow() {
-        clearInterval(slideInterval);
-    }
-
-    // Event Listeners
-    prevBtn.addEventListener('click', function() {
-        prevSlide();
-        stopSlideshow();
-        startSlideshow();
-    });
-
-    nextBtn.addEventListener('click', function() {
-        nextSlide();
-        stopSlideshow();
-        startSlideshow();
-    });
-
-    // Dot click event
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', function() {
-            showSlide(index);
-            stopSlideshow();
-            startSlideshow();
-        });
-    });
-
-    // Pause slideshow on hover
-    const slideshowContainer = document.querySelector('.slideshow-container');
-    slideshowContainer.addEventListener('mouseenter', stopSlideshow);
-    slideshowContainer.addEventListener('mouseleave', startSlideshow);
-
-    // Touch swipe for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    slideshowContainer.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-        stopSlideshow();
-    });
-
-    slideshowContainer.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        if (touchStartX - touchEndX > 50) {
-            nextSlide(); // Swipe left
-        }
-        if (touchEndX - touchStartX > 50) {
-            prevSlide(); // Swipe right
-        }
-        startSlideshow();
-    });
-
-    // Initialize slideshow
-    showSlide(0);
-    startSlideshow();
-});
 
     // ==================== Service Cards Interactivity ====================
     document.querySelectorAll('.service-card, .category-item').forEach(card => {
@@ -5416,6 +5349,144 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
+        // Hero Slideshow Functionality (CORRECTED VERSION)
+document.addEventListener('DOMContentLoaded', function() {
+    // Make sure we only target the hero slideshow
+    const heroSlideshow = document.querySelector('.hero-slideshow');
+    if (!heroSlideshow) return;
+    
+    const slides = heroSlideshow.querySelectorAll('.slide');
+    const dots = heroSlideshow.querySelectorAll('.dot');
+    const prevBtn = heroSlideshow.querySelector('.prev');
+    const nextBtn = heroSlideshow.querySelector('.next');
+    let currentSlide = 0;
+    let slideInterval;
+
+    // Debug: Check if elements are found
+    console.log('Slides found:', slides.length);
+    console.log('Prev button:', prevBtn);
+    console.log('Next button:', nextBtn);
+    console.log('Dots found:', dots.length);
+
+    // Function to show specific slide
+    function showSlide(n) {
+        console.log('Showing slide:', n);
+        
+        // Remove active class from all slides and dots
+        slides.forEach(slide => {
+            slide.classList.remove('active');
+            slide.style.display = 'none';
+        });
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        // Adjust index if out of bounds
+        currentSlide = (n + slides.length) % slides.length;
+        console.log('Current slide index:', currentSlide);
+        
+        // Add active class to current slide and dot
+        slides[currentSlide].classList.add('active');
+        slides[currentSlide].style.display = 'block';
+        if (dots[currentSlide]) {
+            dots[currentSlide].classList.add('active');
+        }
+    }
+
+    // Next slide function
+    function nextSlide() {
+        console.log('Next slide called');
+        showSlide(currentSlide + 1);
+    }
+
+    // Previous slide function
+    function prevSlide() {
+        console.log('Prev slide called');
+        showSlide(currentSlide - 1);
+    }
+
+    // Start automatic slideshow
+    function startSlideshow() {
+        if (slideInterval) clearInterval(slideInterval);
+        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        console.log('Slideshow started');
+    }
+
+    // Stop automatic slideshow
+    function stopSlideshow() {
+        clearInterval(slideInterval);
+        console.log('Slideshow stopped');
+    }
+
+    // Event Listeners with error handling
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Prev button clicked');
+            prevSlide();
+            stopSlideshow();
+            startSlideshow();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Next button clicked');
+            nextSlide();
+            stopSlideshow();
+            startSlideshow();
+        });
+    }
+
+    // Dot click event
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Dot clicked:', index);
+            showSlide(index);
+            stopSlideshow();
+            startSlideshow();
+        });
+    });
+
+    // Pause slideshow on hover
+    const slideshowContainer = heroSlideshow.querySelector('.slideshow-container');
+    if (slideshowContainer) {
+        slideshowContainer.addEventListener('mouseenter', stopSlideshow);
+        slideshowContainer.addEventListener('mouseleave', startSlideshow);
+    }
+
+    // Touch swipe for mobile
+    if (slideshowContainer) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        slideshowContainer.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+            stopSlideshow();
+        });
+
+        slideshowContainer.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) {
+                nextSlide(); // Swipe left
+            }
+            if (touchEndX - touchStartX > 50) {
+                prevSlide(); // Swipe right
+            }
+            startSlideshow();
+        });
+    }
+
+    // Initialize slideshow
+    showSlide(0);
+    startSlideshow();
+    
+    // Make sure slideshow works after page load
+    window.addEventListener('load', function() {
+        showSlide(0);
+        startSlideshow();
+    });
+});
 
 </script>
 </body>
