@@ -4030,7 +4030,30 @@ input:valid, textarea:valid, select:valid {
     }
 }
 
+/* Hover Effects for Booking Options */
+.booking-option:hover {
+    transform: translateY(-5px);
+    border-color: #25D366 !important;
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.15);
+}
 
+/* Responsive Grid */
+@media (max-width: 768px) {
+    .contact-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* WhatsApp Button Animation */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.btn:hover {
+    animation: pulse 0.5s ease-in-out;
+}
     </style>
 </head>
 <body>
