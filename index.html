@@ -3522,7 +3522,7 @@ input:valid, textarea:valid, select:valid {
         font-size: 1.3rem;
     }
 }
-         /* ==================== HERO SLIDESHOW ==================== */
+/* ==================== HERO SLIDESHOW ==================== */
 .hero-slideshow {
     position: relative;
     height: 80vh;
@@ -3608,65 +3608,6 @@ input:valid, textarea:valid, select:valid {
     box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-/* Navigation arrows */
-.slide-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: none;
-    padding: 20px 15px;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 10;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(5px);
-}
-
-.slide-nav:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.prev {
-    left: 20px;
-    border-radius: 0 10px 10px 0;
-}
-
-.next {
-    right: 20px;
-    border-radius: 10px 0 0 10px;
-}
-
-/* Dots indicator */
-.dots-container {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 15px;
-    z-index: 10;
-}
-
-.dot {
-    width: 15px;
-    height: 15px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.dot.active {
-    background: white;
-    transform: scale(1.2);
-}
-
-.dot:hover {
-    background: white;
-}
-
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .hero-slideshow {
@@ -3684,15 +3625,6 @@ input:valid, textarea:valid, select:valid {
     .cta-button {
         padding: 12px 25px;
         font-size: 1rem;
-    }
-    
-    .slide-nav {
-        padding: 15px 10px;
-        font-size: 1.5rem;
-    }
-    
-    .dots-container {
-        bottom: 20px;
     }
 }
 
@@ -3824,7 +3756,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-    <!-- Hero Slideshow -->
+<!-- Hero Slideshow -->
 <section class="hero-slideshow" id="home">
     <div class="slideshow-container">
         <!-- Slide 1 -->
@@ -3849,23 +3781,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         <!-- Slide 3 -->
         <div class="slide">
-            <div class="slide-image" style="background-image: url('data:image/jpeg;base64,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');"></div>
+            <div class="slide-image" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbvG-ifJFzoTLLQBZyT806wseVx3j2yRH3vg&s');"></div>
             <div class="slide-content">
                 <h2>Beauty & Confidence</h2>
                 <p>Celebrate your natural beauty with us</p>
                 <a href="#contact" class="cta-button">Book Appointment</a>
             </div>
-        </div>
-        
-        <!-- Navigation arrows -->
-        <button class="slide-nav prev" aria-label="Previous slide">❮</button>
-        <button class="slide-nav next" aria-label="Next slide">❯</button>
-        
-        <!-- Dots indicator -->
-        <div class="dots-container">
-            <span class="dot active" data-slide="0"></span>
-            <span class="dot" data-slide="1"></span>
-            <span class="dot" data-slide="2"></span>
         </div>
     </div>
 </section>
@@ -5349,37 +5270,21 @@ if (document.readyState === 'loading') {
         createRainbowBorder(card);
     });
 }
-// Hero Slideshow Functionality (SIMPLIFIED VERSION)
+// Hero Slideshow - Automatic Only
 document.addEventListener('DOMContentLoaded', function() {
-    // Get elements
-    const slideshowContainer = document.querySelector('.hero-slideshow');
-    if (!slideshowContainer) return;
-    
-    const slides = slideshowContainer.querySelectorAll('.slide');
-    const dots = slideshowContainer.querySelectorAll('.dot');
-    const prevBtn = slideshowContainer.querySelector('.prev');
-    const nextBtn = slideshowContainer.querySelector('.next');
+    const slides = document.querySelectorAll('.hero-slideshow .slide');
+    if (slides.length === 0) return;
     
     let currentSlide = 0;
     let slideInterval;
     
-    console.log('Slideshow initialized:', {
-        slides: slides.length,
-        dots: dots.length,
-        prevBtn: !!prevBtn,
-        nextBtn: !!nextBtn
-    });
+    console.log('Found', slides.length, 'slides');
 
     // Function to show specific slide
     function showSlide(n) {
-        // Hide all slides
+        // Remove active class from all slides
         slides.forEach(slide => {
             slide.classList.remove('active');
-        });
-        
-        // Remove active from all dots
-        dots.forEach(dot => {
-            dot.classList.remove('active');
         });
         
         // Calculate new slide index with wrap-around
@@ -5388,12 +5293,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show the new slide
         slides[currentSlide].classList.add('active');
         
-        // Activate corresponding dot
-        if (dots[currentSlide]) {
-            dots[currentSlide].classList.add('active');
-        }
-        
-        console.log('Current slide:', currentSlide);
+        console.log('Now showing slide:', currentSlide);
     }
 
     // Next slide function
@@ -5401,72 +5301,39 @@ document.addEventListener('DOMContentLoaded', function() {
         showSlide(currentSlide + 1);
     }
 
-    // Previous slide function
-    function prevSlide() {
-        showSlide(currentSlide - 1);
-    }
-
     // Start automatic slideshow
     function startSlideshow() {
+        // Clear any existing interval
         if (slideInterval) {
             clearInterval(slideInterval);
         }
+        
+        // Start new interval (change every 5 seconds)
         slideInterval = setInterval(nextSlide, 5000);
-        console.log('Slideshow auto-advance started');
+        console.log('Automatic slideshow started');
     }
 
-    // Stop automatic slideshow
-    function stopSlideshow() {
-        if (slideInterval) {
-            clearInterval(slideInterval);
-            slideInterval = null;
-        }
-    }
-
-    // Event Listeners
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Prev button clicked');
-            prevSlide();
-            stopSlideshow();
-            startSlideshow();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Next button clicked');
-            nextSlide();
-            stopSlideshow();
-            startSlideshow();
-        });
-    }
-
-    // Dot click events
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Dot clicked for slide:', index);
-            showSlide(index);
-            stopSlideshow();
-            startSlideshow();
-        });
-    });
-
-    // Pause on hover
+    // Stop automatic slideshow on hover (optional)
+    const slideshowContainer = document.querySelector('.hero-slideshow');
     if (slideshowContainer) {
-        slideshowContainer.addEventListener('mouseenter', stopSlideshow);
-        slideshowContainer.addEventListener('mouseleave', startSlideshow);
+        slideshowContainer.addEventListener('mouseenter', function() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+                slideInterval = null;
+                console.log('Slideshow paused on hover');
+            }
+        });
+        
+        slideshowContainer.addEventListener('mouseleave', function() {
+            if (!slideInterval) {
+                startSlideshow();
+            }
+        });
     }
 
     // Initialize
-    showSlide(0);
-    startSlideshow();
+    showSlide(0); // Show first slide
+    startSlideshow(); // Start automatic rotation
 
     // Re-initialize on window load
     window.addEventListener('load', function() {
@@ -5474,7 +5341,6 @@ document.addEventListener('DOMContentLoaded', function() {
         startSlideshow();
     });
 });
-
 </script>
 </body>
 </html>
